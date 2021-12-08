@@ -1,0 +1,84 @@
+#!/bin/bash
+MAX_RETRY_DELAY=600
+MIN_RETRY_DELAY=10
+REGION=$1
+AUDIENCE="dome9-gcp-logs-collector"
+PROJECT=$2
+TOPIC_NAME="cloudguard-topic"
+SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
+SINK_NAME="cloudguard-sink"
+SUBSCRIPTION_NAME="cloudguard-subscription"
+LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
+
+# service account creation
+serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME" 2>&1)
+if [[ ! "$serviceAccount" =~ "0 items" ]]; then
+  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com)
+  if [[ "$serviceAccount" =~ "ERROR" ]]; then
+    echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME" EXITING WITHOUT DEPLOYMENT"
+    exit 1
+  fi
+fi
+serviceAccount=$(gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME --display-name="$SERVICE_ACCOUNT_NAME" 2>&1)
+echo "$serviceAccount"
+if [[ "$serviceAccount" =~ "ERROR" ]]; then
+    echo "could not create service account "$SERVICE_ACCOUNT_NAME" EXITING WITHOUT DEPLOYMENT"
+    exit 1
+fi
+
+# topic creation
+topic=$(gcloud pubsub topics list --filter="name.scope(topic):"$TOPIC_NAME"" 2>&1)
+if [[ ! "$topic" =~ "0 items" ]]; then
+  topic=$(gcloud pubsub topics delete "$TOPIC_NAME")
+  if [[ "$topic" =~ "ERROR" ]]; then
+    echo "could not delete existing topic "$TOPIC_NAME" EXITING WITHOUT DEPLOYMENT"
+    exit 1
+  fi
+fi
+topic=$(gcloud pubsub topics create "$TOPIC_NAME" 2>&1)
+echo "$topic"
+if [[ "$topic" =~ "ERROR" ]]; then
+    echo "could not create topic "$TOPIC_NAME" EXITING WITHOUT DEPLOYMENT"
+    exit 1
+fi
+
+# subscription creation
+pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" 2>&1)
+if [[ ! "$pubsubSubscription" =~ "0 items" ]]; then
+  pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME")
+  if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
+    echo "could not delete existing subscription "$SUBSCRIPTION_NAME" EXITING WITHOUT DEPLOYMENT"
+    exit 1
+  fi
+fi
+
+pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
+                           --topic="$TOPIC_NAME" \
+                           --push-endpoint=https://"$REGION".falconetix.com \
+                           --push-auth-service-account="$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com \
+                           --push-auth-token-audience="$AUDIENCE" \
+                           --max-retry-delay="$MAX_RETRY_DELAY" \
+                           --min-retry-delay="$MIN_RETRY_DELAY" 2>&1)
+echo "$pubsubSubscription"
+if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
+    echo "could not create subscription "$SUBSCRIPTION_NAME" EXITING WITHOUT DEPLOYMENT"
+    exit 1
+fi
+
+# sink creation
+sink=$(gcloud logging sinks list --filter="name.scope(sink):"$SINK_NAME"" 2>&1)
+if [[ ! "$sink" =~ "0 items" ]]; then
+  sink=$(gcloud logging sinks delete "$SINK_NAME")
+  if [[ "$sink" =~ "ERROR" ]]; then
+    echo "could not delete existing sink "$SINK_NAME" EXITING WITHOUT DEPLOYMENT"
+    exit 1
+  fi
+fi
+sink=$(gcloud logging sinks create "$SINK_NAME" pubsub.googleapis.com/projects/"$PROJECT"/topics/"$TOPIC_NAME" \
+            --log-filter="$LOG_FILTER" 2>&1)
+echo "$sink"
+if [[ "$sink" =~ "ERROR" ]]; then
+    echo "could not create sink "$SINK_NAME" EXITING WITHOUT DEPLOYMENT"
+    exit 1
+fi
+echo "Done onboarding."
