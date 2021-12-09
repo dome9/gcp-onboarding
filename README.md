@@ -1,4 +1,4 @@
-# GCP Onboarding
+# GCP Intelligence Onboarding
 
 ### 🖥️This repository contains the scripts to run in Google Cloud Shell in order to enable Intelligence for your project.
 
