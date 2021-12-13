@@ -81,4 +81,9 @@ if [[ "$sink" =~ "ERROR" ]]; then
     echo "could not create sink "$SINK_NAME" EXITING WITHOUT DEPLOYMENT"
     exit 1
 fi
+
+# granting write permissions to sink
+writerIdentity=$(gcloud logging sinks describe --format='value(writerIdentity)' "$SINK_NAME" 2>&1)
+gcloud pubsub topics add-iam-policy-binding cloudguard-topic --member="$writerIdentity" --role=roles/pubsub.publisher
+
 echo "Done onboarding."
