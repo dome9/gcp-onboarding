@@ -4,7 +4,7 @@
 
 Onboarding Activity Logs to Intelligence process:
 
-![process](img/Untitled.png)
+![process](img/gcp.png)
 
 ### ⚠️Important notes
 
