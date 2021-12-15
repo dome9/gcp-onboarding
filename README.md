@@ -2,6 +2,10 @@
 
 ### 🖥️This repository contains the scripts to run in Google Cloud Shell in order to enable Intelligence for your project.
 
+Onboarding Activity Logs to Intelligence process:
+
+![process](img/Untitled.png)
+
 ### ⚠️Important notes
 
 - please make sure that you are logged in to your GCP account
