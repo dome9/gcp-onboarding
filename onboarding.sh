@@ -92,4 +92,6 @@ fi
 writerIdentity=$(gcloud logging sinks describe --format='value(writerIdentity)' "$SINK_NAME" 2>&1)
 gcloud pubsub topics add-iam-policy-binding cloudguard-topic --member="$writerIdentity" --role=roles/pubsub.publisher
 
-echo "Done onboarding."
+green='\033[0;32m'
+clear='\033[0m'
+echo -e "${green}Done onboarding.${clear}!"
