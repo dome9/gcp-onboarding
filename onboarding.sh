@@ -10,6 +10,12 @@ SINK_NAME="cloudguard-sink"
 SUBSCRIPTION_NAME="cloudguard-subscription"
 LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
 
+if [[ "$REGION" == "central" ]]; then
+  ENDPOINT="https://gcp-activity-collector.secure.dome9.com"
+else
+  ENDPOINT="https://gcp-activity-collector.secure."$REGION".dome9.com"
+fi
+
 # service account creation
 serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME" 2>&1)
 if [[ ! "$serviceAccount" =~ "0 items" ]]; then
@@ -54,7 +60,7 @@ fi
 
 pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
                            --topic="$TOPIC_NAME" \
-                           --push-endpoint=https://"$REGION".falconetix.com \
+                           --push-endpoint="$ENDPOINT" \
                            --push-auth-service-account="$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com \
                            --push-auth-token-audience="$AUDIENCE" \
                            --max-retry-delay="$MAX_RETRY_DELAY" \

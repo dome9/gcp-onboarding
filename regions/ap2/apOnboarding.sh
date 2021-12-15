@@ -4,4 +4,4 @@ echo "setting up default project $1"
 gcloud config set project $1
 echo "Enabling Deployment Manager APIs, which you will need for this deployment."
 gcloud services enable deploymentmanager.googleapis.com
-sh ../../onboarding.sh eu $1
+sh ../../onboarding.sh ap2 $1
