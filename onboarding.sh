@@ -94,4 +94,5 @@ gcloud pubsub topics add-iam-policy-binding cloudguard-topic --member="$writerId
 
 green='\033[0;32m'
 clear='\033[0m'
-echo -e "${green}Done onboarding.${clear}!"
+bold=$(tput bold)
+echo -e "${bold}${green}Done onboarding.${clear}"
