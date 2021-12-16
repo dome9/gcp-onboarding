@@ -22,7 +22,7 @@ Follow the instructions on the right panel: <br>
 :three: During the deployment your project will be set as default and you will be asked to authorize cloud shell.<br>
 <img src="img/Untitled.png" width=50%>
     
-:four: In case this is not your fisrt time onboarding the project :
+:four: :warning: <b>In case this is not your fisrt time onboarding the project : </b>:warning: <br>
 The script will run a clean up before creating all cloudguard resources.
 Make sure to consent to the deletion in the terminal window. <br><br>
 :five: If successful the terminal should output:
