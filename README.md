@@ -9,6 +9,9 @@ Onboarding Activity Logs to Intelligence process:
 ### ⚠️Important notes
 
 - please make sure that you are logged in to your GCP account
+- At first you will be asked to trust our repo. Please make sure to confirm.
+<img src="img/3.png" width=50%>
+
 - follow the instructions on the right panel:
 1. choose the project id you wish to onboard
  
