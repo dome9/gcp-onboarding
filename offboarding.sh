@@ -46,4 +46,7 @@ if [[ ! "$sink" =~ "0 items" ]]; then
   fi
 fi
 
-echo "Done offboarding."
+green='\033[0;32m'
+clear='\033[0m'
+bold=$(tput bold)
+echo -e "${bold}${green}Successfully Offboarded.${clear}"
