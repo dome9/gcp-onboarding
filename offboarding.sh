@@ -49,4 +49,4 @@ fi
 green='\033[0;32m'
 clear='\033[0m'
 bold=$(tput bold)
-echo -e "${bold}${green}Successfully Offboarded.${clear}"
+echo -e "${bold}${green}Project Successfully Offboarded.${clear}"

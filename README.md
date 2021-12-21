@@ -27,7 +27,7 @@ The script will run a clean up before creating all cloudguard resources.
 Make sure to consent to the deletion in the terminal window. <br><br>
 :five: If successful the terminal should output:
 ```diff
-+ Successfully Onboarded.
++ Project Successfully Onboarded.
 ```
 
 **Good Luck!** 
