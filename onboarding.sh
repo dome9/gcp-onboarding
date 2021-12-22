@@ -1,13 +1,15 @@
 #!/bin/bash
-MAX_RETRY_DELAY=600
-MIN_RETRY_DELAY=10
 REGION=$1
 AUDIENCE="dome9-gcp-logs-collector"
 PROJECT=$2
 TOPIC_NAME="cloudguard-topic"
 SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
-SINK_NAME="cloudguard-sink"
 SUBSCRIPTION_NAME="cloudguard-subscription"
+MAX_RETRY_DELAY=60
+MIN_RETRY_DELAY=10
+ACK_DEADLINE=60
+EXPIRATION_PERIOD="never"
+SINK_NAME="cloudguard-sink"
 LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
 
 if [[ "$REGION" == "central" ]]; then
@@ -60,6 +62,8 @@ fi
 
 pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
                            --topic="$TOPIC_NAME" \
+                           --ack-deadline="$ACK_DEADLINE" \
+                           --expiration-period="$EXPIRATION_PERIOD" \
                            --push-endpoint="$ENDPOINT" \
                            --push-auth-service-account="$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com \
                            --push-auth-token-audience="$AUDIENCE" \
