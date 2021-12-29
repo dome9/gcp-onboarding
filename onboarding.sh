@@ -13,9 +13,9 @@ SINK_NAME="cloudguard-sink"
 LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
 
 if [[ "$REGION" == "central" ]]; then
-  ENDPOINT="https://gcp-activity-collector.secure.dome9.com"
+  ENDPOINT="https://gcp-activity-endpoint.dome9.com"
 else
-  ENDPOINT="https://gcp-activity-collector.secure."$REGION".dome9.com"
+  ENDPOINT="https://gcp-activity-endpoint."$REGION".dome9.com"
 fi
 
 # service account creation
