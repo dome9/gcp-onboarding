@@ -18,7 +18,8 @@ The script provided will create the following resources:<br><br>
 :one: Make sure that you are logged in to your GCP account before starting the Intelligence onboarding wizard in the CloudGuard portal.
 
 :two: At first, you will be asked to trust our repo. Please confirm.<br>
-<img src="img/3.png" width=50%>
+<img src="img/3.png" width=50%><br>
+<b>Note:</b> In case you didn't check the "Trust repo" checkbox, you will encounter error messages, the solution is to exit the window and click again on the "Open in Cloudshell" button.
 
 :three: Follow the instructions in the Tutorial panel: <br>
 - Select the Project you wish to onboard <br>
