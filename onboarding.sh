@@ -15,7 +15,7 @@ LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.g
 if [[ "$REGION" == "central" ]]; then
   ENDPOINT="https://gcp-activity-endpoint.dome9.com"
 else
-  ENDPOINT="https://gcp-activity-endpoint."$REGION".dome9.com"
+  ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
 fi
 
 # service account creation
