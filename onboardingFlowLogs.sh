@@ -1,7 +1,7 @@
 ﻿#!/bin/bash
-REGION=$1
-AUDIENCE="dome9-gcp-logs-collector" # todo - need to change for flow logs?
-PROJECT=$2
+REGION="central"
+AUDIENCE="dome9-gcp-logs-collector"
+PROJECT="d9-dev-rotembenhemo"
 TOPIC_NAME="cloudguard-flowlogs-topic"
 SERVICE_ACCOUNT_NAME="cloudguard-fl-authentication"
 SUBSCRIPTION_NAME="cloudguard-flowlogs-subscription"
@@ -94,7 +94,7 @@ fi
 
 # granting write permissions to sink
 writerIdentity=$(gcloud logging sinks describe --format='value(writerIdentity)' "$SINK_NAME" 2>&1)
-gcloud pubsub topics add-iam-policy-binding cloudguard-topic --member="$writerIdentity" --role=roles/pubsub.publisher
+gcloud pubsub topics add-iam-policy-binding "$TOPIC_NAME" --member="$writerIdentity" --role=roles/pubsub.publisher
 
 green='\033[0;32m'
 clear='\033[0m'
