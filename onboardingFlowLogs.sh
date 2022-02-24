@@ -1,21 +1,21 @@
 ﻿#!/bin/bash
-REGION="central"
+REGION=$1
 AUDIENCE="dome9-gcp-logs-collector"
-PROJECT="d9-dev-rotembenhemo"
-TOPIC_NAME="cloudguard-flowlogs-topic"
+PROJECT=$2
+TOPIC_NAME="cloudguard-fl-topic"
 SERVICE_ACCOUNT_NAME="cloudguard-fl-authentication"
-SUBSCRIPTION_NAME="cloudguard-flowlogs-subscription"
+SUBSCRIPTION_NAME="cloudguard-fl-subscription"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10
 ACK_DEADLINE=60
 EXPIRATION_PERIOD="never"
-SINK_NAME="cloudguard-flowlogs-sink"
-LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")' # todo - do we need more filters? 
+SINK_NAME="cloudguard-fl-sink"
+LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")'
 
 if [[ "$REGION" == "central" ]]; then
-  ENDPOINT="https://gcp-flow-logs-endpoint.dome9.com" # todo - need to change to flow logs endpoint and create in dome9
+  ENDPOINT="https://gcp-flow-logs-endpoint.dome9.com" # todo - need to change to flow logs endpoint
 else
-  ENDPOINT="https://gcp-flow-logs-endpoint.logic."$REGION".dome9.com" # todo - need to change to flow logs endpoint and create in dome9
+  ENDPOINT="https://gcp-flow-logs-endpoint.logic."$REGION".dome9.com" # todo - need to change to flow logs endpoint
 fi
 
 # service account creation
