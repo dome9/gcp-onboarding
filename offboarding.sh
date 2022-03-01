@@ -7,7 +7,6 @@ SUBSCRIPTION_NAME="cloudguard-subscription"
 TOPIC_NAME_FL="cloudguard-fl-topic"
 SERVICE_ACCOUNT_NAME_FL="cloudguard-fl-authentication"
 SINK_NAME_FL="cloudguard-fl-sink"
-SUBSCRIPTION_NAME_FL="cloudguard-fl-subscription"
 
 echo "setting up default project "$PROJECT""
 gcloud config set project "$PROJECT"
@@ -20,14 +19,6 @@ if [[ ! "$sink" =~ "0 items" ]]; then
   sink=$(gcloud logging sinks delete "$SINK_NAME")
   if [[ "$sink" =~ "ERROR" ]]; then
     echo "could not delete existing sink "$SINK_NAME" "
-  fi
-fi
-# sink deletion flowlogs
-sink=$(gcloud logging sinks list --filter="name.scope(sink):"$SINK_NAME_FL"" 2>&1)
-if [[ ! "$sink" =~ "0 items" ]]; then
-  sink=$(gcloud logging sinks delete "$SINK_NAME_FL")
-  if [[ "$sink" =~ "ERROR" ]]; then
-    echo "could not delete existing sink "$SINK_NAME_FL" "
   fi
 fi
 
