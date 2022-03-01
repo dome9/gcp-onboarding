@@ -21,6 +21,14 @@ if [[ ! "$sink" =~ "0 items" ]]; then
     echo "could not delete existing sink "$SINK_NAME" "
   fi
 fi
+# sink deletion flowlogs
+sink=$(gcloud logging sinks list --filter="name.scope(sink):"$SINK_NAME_FL"" 2>&1)
+if [[ ! "$sink" =~ "0 items" ]]; then
+  sink=$(gcloud logging sinks delete "$SINK_NAME_FL")
+  if [[ "$sink" =~ "ERROR" ]]; then
+    echo "could not delete existing sink "$SINK_NAME_FL" "
+  fi
+fi
 
 # subscription deletion
 pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" 2>&1)
@@ -28,14 +36,6 @@ if [[ ! "$pubsubSubscription" =~ "0 items" ]]; then
   pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME")
   if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
     echo "could not delete existing subscription "$SUBSCRIPTION_NAME" "
-  fi
-fi
-# subscription deletion flowlogs
-pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME_FL"" 2>&1)
-if [[ ! "$pubsubSubscription" =~ "0 items" ]]; then
-  pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME_FL")
-  if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
-    echo "could not delete existing subscription "$SUBSCRIPTION_NAME_FL" "
   fi
 fi
 
