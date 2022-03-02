@@ -3,7 +3,6 @@ REGION=$1
 AUDIENCE="dome9-gcp-logs-collector"
 PROJECT=$2
 TOPIC_NAME="cloudguard-fl-topic"
-#SERVICE_ACCOUNT_NAME="cloudguard-fl-authentication"
 SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
 SUBSCRIPTION_NAME="cloudguard-fl-subscription"
 MAX_RETRY_DELAY=60
@@ -14,9 +13,9 @@ SINK_NAME="cloudguard-fl-sink"
 LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")'
 
 if [[ "$REGION" == "central" ]]; then
-  ENDPOINT="https://gcp-flow-logs-endpoint.dome9.com" # todo - need to change to flow logs endpoint
+  ENDPOINT="https://gcp-flow-logs-endpoint.dome9.com"
 else
-  ENDPOINT="https://gcp-flow-logs-endpoint.logic."$REGION".dome9.com" # todo - need to change to flow logs endpoint
+  ENDPOINT="https://gcp-flow-logs-endpoint.logic."$REGION".dome9.com"
 fi
 
 # service account creation
