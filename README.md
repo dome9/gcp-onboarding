@@ -13,9 +13,6 @@ The script provided will create the following resources:<br><br>
 
 ![process](img/gcp.png)
 
-### GCP Flow Logs to Intelligence onboarding flow
-This is still on development.
-
 ### Onboarding Steps
 
 :one: Make sure that you are logged in to your GCP account before starting the Intelligence onboarding wizard in the CloudGuard portal.
