@@ -18,7 +18,7 @@ else
   ENDPOINT="https://gcp-flow-logs-endpoint.logic."$REGION".dome9.com"
 fi
 
-# delete all cloudGuard resources if exists
+# delete all cloudGuard resources if exist
 # sink deletion
 sink=$(gcloud logging sinks list --filter="name.scope(sink):"$SINK_NAME"" 2>&1)
 if [[ ! "$sink" =~ "0 items" ]]; then
