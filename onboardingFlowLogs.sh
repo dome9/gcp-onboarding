@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 REGION=$1
 AUDIENCE="dome9-gcp-logs-collector"
 PROJECT=$2
