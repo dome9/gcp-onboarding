@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 
 echo "setting up default project $1"
 gcloud config set project $1
