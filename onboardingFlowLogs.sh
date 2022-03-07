@@ -18,8 +18,7 @@ else
   ENDPOINT="https://gcp-flow-logs-endpoint.logic."$REGION".dome9.com"
 fi
 
-# delete all cloudGuard resources if exist
-# sink deletion
+# delete existing sink if exists
 sink=$(gcloud logging sinks list --filter="name.scope(sink):"$SINK_NAME"" 2>&1)
 if [[ ! "$sink" =~ "0 items" ]]; then
   sink=$(gcloud logging sinks delete "$SINK_NAME")
@@ -28,7 +27,8 @@ if [[ ! "$sink" =~ "0 items" ]]; then
     exit 1
   fi
 fi
-# subscription deletion
+
+# delete existing subscription if exists
 pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" 2>&1)
 if [[ ! "$pubsubSubscription" =~ "0 items" ]]; then
   pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME")
@@ -37,7 +37,8 @@ if [[ ! "$pubsubSubscription" =~ "0 items" ]]; then
     exit 1
   fi
 fi
-# topic deletion
+
+# delete existing topic if exists
 topic=$(gcloud pubsub topics list --filter="name.scope(topic):"$TOPIC_NAME"" 2>&1)
 if [[ ! "$topic" =~ "0 items" ]]; then
   topic=$(gcloud pubsub topics delete "$TOPIC_NAME")
@@ -46,7 +47,8 @@ if [[ ! "$topic" =~ "0 items" ]]; then
     exit 1
   fi
 fi
-# service account deletion
+
+# delete existing service account if exists
 serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME" 2>&1)
 if [[ ! "$serviceAccount" =~ "0 items" ]]; then
   serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com)
@@ -56,7 +58,6 @@ if [[ ! "$serviceAccount" =~ "0 items" ]]; then
   fi
 fi
 
-# create cloudGuard resources
 # service account creation
 serviceAccount=$(gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME --display-name="$SERVICE_ACCOUNT_NAME" 2>&1)
 echo "$serviceAccount"
