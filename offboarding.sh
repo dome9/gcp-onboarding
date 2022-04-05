@@ -8,7 +8,6 @@ TOPIC_NAME_FL="cloudguard-fl-topic"
 SINK_NAME_FL="cloudguard-fl-sink"
 SUBSCRIPTION_NAME_FL="cloudguard-fl-subscription"
 
-
 echo "setting up default project "$PROJECT""
 gcloud config set project "$PROJECT"
 echo "Enabling Deployment Manager APIs, which you will need for the offboarding."
