@@ -69,6 +69,7 @@ def cloudguard_onboarding():
         ],
         "LogType": os.environ['LOG_TYPE']
     }
+    # Need to change to prod path
     r = requests.post('https://api.941298424820.dev.falconetix.com/v2/view/magellan/magellan-gcp-onboarding',
                       data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
 

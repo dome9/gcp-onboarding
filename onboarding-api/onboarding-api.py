@@ -98,11 +98,11 @@ def main():
         return
 
     # Cloud Guard onboarding API
-    """response = cloudguard_onboarding()
+    response = cloudguard_onboarding()
     if response == 'OK':
         print("Project Successfully Onboarded");
     else:
-        print("Project failed  to Onboard");"""
+        print("Project failed  to Onboard");
 
 
 if __name__ == '__main__':

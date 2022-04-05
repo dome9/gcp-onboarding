@@ -29,11 +29,11 @@ def main():
     delete_resources()
 
     # dome9 API
-    """response = cloudguard_offboarding()
+    response = cloudguard_offboarding()
     if response == 'OK':
         print("Project Successfully Offboarded");
     else:
-        print("Project failed to Offboarded");"""
+        print("Project failed to Offboarded");
 
 
 if __name__ == '__main__':
