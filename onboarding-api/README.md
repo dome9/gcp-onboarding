@@ -18,7 +18,7 @@
 - Security Admin <br>
 - Logging Admin <br>
 
-:four: Clone this folder and add the following environment variables:
+:four: Clone this folder and add the following environment variables(change to arguments):
 - GOOGLE_APPLICATION_CREDENTIALS (Value: path to the key) <br>
 - PROJECT_ID <br>
 - REGION <br>
