@@ -1,85 +1,25 @@
-""" Deploy resources in gcp with deployment manager & onboarding gcp project to intelligence """
-
-import yaml
-import functions
 from functions import *
 import sys
 
 
 def main():
+    """
+    Deploy resources in GCP with deployment manager & onboarding GCP project to intelligence
+
+    Arguments:
+    project_id_arg - Your GCP project
+    region_arg - The CloudGuard region you use
+    api_key_arg - The
+    api_secret_arg - The
+    client_id_arg - The CloudGuard client ID
+    log_type_arg - flowlogs/CloudTrail
+    """
+
     set_variables(project_id_arg=sys.argv[1], region_arg=sys.argv[2], api_key_arg=sys.argv[3],
                   api_secret_arg=sys.argv[4], client_id_arg=sys.argv[5], log_type_arg=sys.argv[6])
 
     # configuration
-    resources_json = {
-        "resources": [
-            {
-                "name": functions.service_account_name,
-                "properties": {
-                    "accountId": functions.service_account_name,
-                    "displayName": functions.service_account_name
-                },
-                "type": "gcp-types/iam-v1:projects.serviceAccounts"
-            },
-            {
-                "name": functions.topic_name,
-                "properties": {
-                    "topic": functions.topic_name
-                },
-                "type": "gcp-types/pubsub-v1:projects.topics"
-            },
-            {
-                "name": functions.subscription_name,
-                "properties": {
-                    "ackDeadlineSeconds": functions.ack_deadline,
-                    "expirationPolicy": {},
-                    "pushConfig": {
-                        "oidcToken": {
-                            "audience": functions.audience,
-                            "serviceAccountEmail": f"{functions.service_account_name}@{functions.project_id}.iam.gserviceaccount.com"
-                        },
-                        "pushEndpoint": functions.endpoint
-                    },
-                    "retryPolicy": {
-                        "maximumBackoff": functions.max_retry_delay,
-                        "minimumBackoff": functions.min_retry_delay
-                    },
-                    "subscription": functions.subscription_name,
-                    "topic": f"$(ref.{functions.topic_name}.name)"
-                },
-                "type": "gcp-types/pubsub-v1:projects.subscriptions"
-            },
-            {
-                "name": functions.sink_name,
-                "properties": {
-                    "destination": f"pubsub.googleapis.com/$(ref.{functions.topic_name}.name)",
-                    "filter": functions.sink_filter,
-                    "sink": functions.sink_name
-                },
-                "type": "gcp-types/logging-v2:projects.sinks"
-            },
-            {
-                "accessControl": {
-                    "gcpIamPolicy": {
-                        "bindings": [
-                            {
-                                "members": [
-                                    f"$(ref.{functions.sink_name}.writerIdentity)"
-                                ],
-                                "role": "roles/pubsub.publisher"
-                            }
-                        ]
-                    }
-                },
-                "name": functions.binding_name,
-                "properties": {
-                    "topic": functions.topic_name
-                },
-                "type": "pubsub.v1.topic"
-            }
-        ]
-    }
-    resources_yaml_format = yaml.dump(resources_json)
+    resources_yaml_format = get_resources_yaml()
 
     # Delete previous deployment if exist
     status = delete_deployment()

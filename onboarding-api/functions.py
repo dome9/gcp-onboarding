@@ -2,6 +2,7 @@ import json
 import os
 import time
 import requests
+import yaml
 import googleapiclient.discovery
 from google.cloud import pubsub_v1
 from google.oauth2 import service_account
@@ -26,36 +27,98 @@ max_retry_delay = "60s"
 
 
 def set_variables(project_id_arg, region_arg, api_key_arg, api_secret_arg, client_id_arg, log_type_arg):
-    global project_id
+    global project_id, region, api_key_var, api_secret_var, client_id, log_type_var
     project_id = project_id_arg
-    global region
     region = region_arg
-    global api_key_var
     api_key_var = api_key_arg
-    global api_secret_var
     api_secret_var = api_secret_arg
-    global client_id
     client_id = client_id_arg
-    global log_type_var
     log_type_var = log_type_arg
 
-    global topic_name
+    global topic_name, subscription_name, sink_name, sink_destination, sink_filter, binding_name, endpoint
     topic_name = "cloudguard-fl-topic" if log_type_var == "flowlogs" else "cloudguard-topic"
-    global subscription_name
     subscription_name = "cloudguard-fl-subscription" if log_type_var == "flowlogs" else "cloudguard-subscription"
-    global sink_name
     sink_name = "cloudguard-fl-sink" if log_type_var == "flowlogs" else "cloudguard-sink"
-    global sink_destination
     sink_destination = f"pubsub.googleapis.com/projects/{project_id}/topics/{topic_name}"
-    global sink_filter
     sink_filter = 'LOG_ID("compute.googleapis.com%2Fvpc_flows")' if log_type_var == "flowlogs" else 'LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
-    global binding_name
     binding_name = "cloudguard-fl-binding" if log_type_var == "flowlogs" else "cloudguard-binding"
-    global endpoint
     if region == "central":
         endpoint = "https://gcp-flow-logs-endpoint.dome9.com" if log_type_var == 'flowlogs' else "https://gcp-activity-endpoint.dome9.com"
     else:
         endpoint = f"https://gcp-flow-logs-endpoint.logic.{region}.dome9.com" if log_type_var == 'flowlogs' else f"https://gcp-activity-endpoint.logic.{region}.dome9.com"
+
+
+def get_resources_yaml():
+    resources_json = {
+        "resources": [
+            {
+                "name": service_account_name,
+                "properties": {
+                    "accountId": service_account_name,
+                    "displayName": service_account_name
+                },
+                "type": "gcp-types/iam-v1:projects.serviceAccounts"
+            },
+            {
+                "name": topic_name,
+                "properties": {
+                    "topic": topic_name
+                },
+                "type": "gcp-types/pubsub-v1:projects.topics"
+            },
+            {
+                "name": subscription_name,
+                "properties": {
+                    "ackDeadlineSeconds": ack_deadline,
+                    "expirationPolicy": {},
+                    "pushConfig": {
+                        "oidcToken": {
+                            "audience": audience,
+                            "serviceAccountEmail": f"{service_account_name}@{project_id}.iam.gserviceaccount.com"
+                        },
+                        "pushEndpoint": endpoint
+                    },
+                    "retryPolicy": {
+                        "maximumBackoff": max_retry_delay,
+                        "minimumBackoff": min_retry_delay
+                    },
+                    "subscription": subscription_name,
+                    "topic": f"$(ref.{topic_name}.name)"
+                },
+                "type": "gcp-types/pubsub-v1:projects.subscriptions"
+            },
+            {
+                "name": sink_name,
+                "properties": {
+                    "destination": f"pubsub.googleapis.com/$(ref.{topic_name}.name)",
+                    "filter": sink_filter,
+                    "sink": sink_name
+                },
+                "type": "gcp-types/logging-v2:projects.sinks"
+            },
+            {
+                "accessControl": {
+                    "gcpIamPolicy": {
+                        "bindings": [
+                            {
+                                "members": [
+                                    f"$(ref.{sink_name}.writerIdentity)"
+                                ],
+                                "role": "roles/pubsub.publisher"
+                            }
+                        ]
+                    }
+                },
+                "name": binding_name,
+                "properties": {
+                    "topic": topic_name
+                },
+                "type": "pubsub.v1.topic"
+            }
+        ]
+    }
+    resources_yaml_format = yaml.dump(resources_json)
+    return resources_yaml_format
 
 
 def cloudguard_onboarding():
@@ -65,19 +128,14 @@ def cloudguard_onboarding():
         'Content-Type': 'application/json',
         'Accept': '*/*'
     }
-    # https://localhost:5551/v2/view/magellan/magellan-gcp-onboarding
-    # https://api.dome9.com/v2/view/magellan/magellan-Gcp-onboarding
     data = {
         "CloudAccounts": [
             project_id
         ],
         "LogType": log_type_var
     }
-    # Need to change to prod path
-    r = requests.post('https://api.941298424820.dev.falconetix.com/v2/view/magellan/magellan-gcp-onboarding',
+    r = requests.post('https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
                       data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
-
-    print(r.json())
     print("Done cloud guard onboarding")
     return r.json()
 
@@ -93,10 +151,8 @@ def cloudguard_offboarding():
         "cloudAccountId": client_id,
         "vendor": "GCP"
     }
-    r = requests.post('https://api.941298424820.dev.falconetix.com/v2/view/magellan/disable-magellan-for-cloud-account',
+    r = requests.post('https://api.dome9.com/v2/view/magellan/disable-magellan-for-cloud-account',
                       data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
-
-    print(r.json())
     print("Done cloudguard offboarding")
     return r.json()
 
@@ -106,8 +162,8 @@ def get_deployment_manager_object():
         filename=os.environ['GOOGLE_APPLICATION_CREDENTIALS'],
         scopes=['https://www.googleapis.com/auth/cloud-platform'])
     service = googleapiclient.discovery.build('deploymentmanager', 'v2', credentials=credentials)
-    deployService = service.deployments();
-    return deployService;
+    deploy_service = service.deployments();
+    return deploy_service;
 
 
 def delete_deployment():
