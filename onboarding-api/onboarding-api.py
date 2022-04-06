@@ -3,10 +3,12 @@
 import yaml
 import functions
 from functions import *
+import sys
 
 
 def main():
-    set_variables(os.environ['LOG_TYPE'])
+    set_variables(project_id_arg=sys.argv[1], region_arg=sys.argv[2], api_key_arg=sys.argv[3],
+                  api_secret_arg=sys.argv[4], client_id_arg=sys.argv[5], log_type_arg=sys.argv[6])
 
     # configuration
     resources_json = {
@@ -98,11 +100,11 @@ def main():
         return
 
     # Cloud Guard onboarding API
-    response = cloudguard_onboarding()
+    """response = cloudguard_onboarding()
     if response == 'OK':
         print("Project Successfully Onboarded");
     else:
-        print("Project failed  to Onboard");
+        print("Project failed  to Onboard");"""
 
 
 if __name__ == '__main__':

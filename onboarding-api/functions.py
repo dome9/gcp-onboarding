@@ -15,48 +15,52 @@ class Status:
 
 
 # variables
-project_id = os.environ['PROJECT_ID']
-region = os.environ['REGION']
+project_id, region, api_key_var, api_secret_var, client_id, log_type_var = ""  # user input
+topic_name, subscription_name, sink_name, sink_destination, sink_filter, endpoint, binding_name = ""  # depends on user input
+# const
 service_account_name = "cloudguard-logs-authentication"
 audience = "dome9-gcp-logs-collector"
 ack_deadline = 60
 min_retry_delay = "10s"
 max_retry_delay = "60s"
-topic_name = ""
-subscription_name = ""
-sink_name = ""
-sink_destination = ""
-sink_filter = ""
-endpoint = ""
-binding_name = ""
-logType = ""
 
 
-def set_variables(log_type):
-    global logType
-    logType = log_type
+def set_variables(project_id_arg, region_arg, api_key_arg, api_secret_arg, client_id_arg, log_type_arg):
+    global project_id
+    project_id = project_id_arg
+    global region
+    region = region_arg
+    global api_key_var
+    api_key_var = api_key_arg
+    global api_secret_var
+    api_secret_var = api_secret_arg
+    global client_id
+    client_id = client_id_arg
+    global log_type_var
+    log_type_var = log_type_arg
+
     global topic_name
-    topic_name = "cloudguard-fl-topic" if log_type == "flowlogs" else "cloudguard-topic"
+    topic_name = "cloudguard-fl-topic" if log_type_var == "flowlogs" else "cloudguard-topic"
     global subscription_name
-    subscription_name = "cloudguard-fl-subscription" if log_type == "flowlogs" else "cloudguard-subscription"
+    subscription_name = "cloudguard-fl-subscription" if log_type_var == "flowlogs" else "cloudguard-subscription"
     global sink_name
-    sink_name = "cloudguard-fl-sink" if log_type == "flowlogs" else "cloudguard-sink"
+    sink_name = "cloudguard-fl-sink" if log_type_var == "flowlogs" else "cloudguard-sink"
     global sink_destination
     sink_destination = f"pubsub.googleapis.com/projects/{project_id}/topics/{topic_name}"
     global sink_filter
-    sink_filter = 'LOG_ID("compute.googleapis.com%2Fvpc_flows")' if log_type == "flowlogs" else 'LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
+    sink_filter = 'LOG_ID("compute.googleapis.com%2Fvpc_flows")' if log_type_var == "flowlogs" else 'LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
     global binding_name
-    binding_name = "cloudguard-fl-binding" if log_type == "flowlogs" else "cloudguard-binding"
+    binding_name = "cloudguard-fl-binding" if log_type_var == "flowlogs" else "cloudguard-binding"
     global endpoint
     if region == "central":
-        endpoint = "https://gcp-flow-logs-endpoint.dome9.com" if log_type == 'flowlogs' else "https://gcp-activity-endpoint.dome9.com"
+        endpoint = "https://gcp-flow-logs-endpoint.dome9.com" if log_type_var == 'flowlogs' else "https://gcp-activity-endpoint.dome9.com"
     else:
-        endpoint = f"https://gcp-flow-logs-endpoint.logic.{region}.dome9.com" if log_type == 'flowlogs' else f"https://gcp-activity-endpoint.logic.{region}.dome9.com"
+        endpoint = f"https://gcp-flow-logs-endpoint.logic.{region}.dome9.com" if log_type_var == 'flowlogs' else f"https://gcp-activity-endpoint.logic.{region}.dome9.com"
 
 
 def cloudguard_onboarding():
-    api_key = os.environ['API_KEY']
-    api_secret = os.environ['API_SECRET']
+    api_key = api_key_var
+    api_secret = api_secret_var
     headers = {
         'Content-Type': 'application/json',
         'Accept': '*/*'
@@ -65,9 +69,9 @@ def cloudguard_onboarding():
     # https://api.dome9.com/v2/view/magellan/magellan-Gcp-onboarding
     data = {
         "CloudAccounts": [
-            os.environ['PROJECT_ID']
+            project_id
         ],
-        "LogType": os.environ['LOG_TYPE']
+        "LogType": log_type_var
     }
     # Need to change to prod path
     r = requests.post('https://api.941298424820.dev.falconetix.com/v2/view/magellan/magellan-gcp-onboarding',
@@ -79,14 +83,14 @@ def cloudguard_onboarding():
 
 
 def cloudguard_offboarding():
-    api_key = os.environ['API_KEY']
-    api_secret = os.environ['API_SECRET']
+    api_key = api_key_var
+    api_secret = api_secret_var
     headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
     data = {
-        "cloudAccountId": os.environ['CLIENT_ID'],
+        "cloudAccountId": client_id,
         "vendor": "GCP"
     }
     r = requests.post('https://api.941298424820.dev.falconetix.com/v2/view/magellan/disable-magellan-for-cloud-account',
@@ -109,14 +113,14 @@ def get_deployment_manager_object():
 def delete_deployment():
     deploy_service = get_deployment_manager_object()
     deployment_list = deploy_service.list(
-        project=os.environ['PROJECT_ID'],
-        filter='name=cloudguard-onboarding-api-' + logType.lower()
+        project=project_id,
+        filter='name=cloudguard-onboarding-api-' + log_type_var.lower()
     ).execute()
     if len(deployment_list) > 0:
         print("Start delete previous deployment")
         request = deploy_service.delete(
             project=project_id,
-            deployment="cloudguard-onboarding-api-" + logType.lower(),
+            deployment="cloudguard-onboarding-api-" + log_type_var.lower(),
             deletePolicy='DELETE');
         try:
             response = request.execute()
@@ -176,7 +180,7 @@ def create_resources(resources_yaml_format):
         createPolicy='CREATE_OR_ACQUIRE',
         body=
         {
-            "name": "cloudguard-onboarding-api-" + logType.lower(),
+            "name": "cloudguard-onboarding-api-" + log_type_var.lower(),
             "target": {
                 "config": {
                     "content": resources_yaml_format
@@ -202,7 +206,7 @@ def check_deployment_status():
     while True:
         request = deploy_service.get(
             project=project_id,
-            deployment="cloudguard-onboarding-api-" + logType.lower())
+            deployment="cloudguard-onboarding-api-" + log_type_var.lower())
         try:
             response = request.execute()
             if response['operation']['status'] == 'DONE':
