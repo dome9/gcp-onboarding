@@ -18,12 +18,13 @@
 - Security Admin <br>
 - Logging Admin <br>
 
-:four: Clone this folder and add the following environment variables(change to arguments):
+:four: Clone this folder and add the following environment variables:
 - GOOGLE_APPLICATION_CREDENTIALS (Value: path to the key) <br>
 
-: five: Install the requirments
+:five: Install the required packages
+- pip install -r requirements.txt
 
-:six: Run onboarding-api.py/offboarding-api.py with the following arguments:
+:six: Run onboarding-api.py or offboarding-api.py with the following arguments:
 - project_id_arg - Your GCP project <br>
 - region_arg - The CloudGuard region you use
 - api_key_arg - The
@@ -39,8 +40,8 @@ The script provided will create the following resources in your GCP project:<br>
 :four: Sink "cloudguard-sink"<br>
 
 The script will make an API call to CloudGuard to onboard your GCP Project to CloudGuard Intelligence.<br><br>
-: Path: https://api.941298424820.dev.falconetix.com/v2/view/magellan/magellan-gcp-onboarding
-: Params: { CloudAccounts: ["your GCP project ID"], "LogType" : "CloudTrail"}
+- Path: https://api.941298424820.dev.falconetix.com/v2/view/magellan/magellan-gcp-onboarding
+- Params: { CloudAccounts: ["your GCP project ID"], "LogType" : "CloudTrail"}
 
 ### GCP Network Traffic Logs to Intelligence onboarding flow
 The script provided will create the following resources:<br><br>
@@ -50,7 +51,7 @@ The script provided will create the following resources:<br><br>
 :four: Sink "cloudguard-fl-sink"<br>
 
 The script will make an API call to CloudGuard to onboard your GCP Project to CloudGuard Intelligence.<br><br>
-: Path: https://api.941298424820.dev.falconetix.com/v2/view/magellan/magellan-gcp-onboarding
-: Params: { CloudAccounts: ["your GCP project ID"], "LogType" : "flowlogs"}
+- Path: https://api.941298424820.dev.falconetix.com/v2/view/magellan/magellan-gcp-onboarding
+- Params: { CloudAccounts: ["your GCP project ID"], "LogType" : "flowlogs"}
 
 **Good Luck!**
