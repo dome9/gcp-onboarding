@@ -17,6 +17,7 @@ def main():
 
     set_variables(project_id_arg=sys.argv[1], region_arg=sys.argv[2], api_key_arg=sys.argv[3],
                   api_secret_arg=sys.argv[4], client_id_arg=sys.argv[5], log_type_arg=sys.argv[6])
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sys.argv[7]
 
     # configuration
     resources_yaml_format = get_resources_yaml()

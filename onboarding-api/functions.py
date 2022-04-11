@@ -15,10 +15,8 @@ class Status:
     error = 3
 
 
-# variables
-project_id, region, api_key_var, api_secret_var, client_id, log_type_var = ""  # user input
-topic_name, subscription_name, sink_name, sink_destination, sink_filter, endpoint, binding_name = ""  # depends on user input
-# const
+project_id = region = api_key_var = api_secret_var = client_id = log_type_var = ""  # user input
+topic_name = subscription_name = sink_name = sink_destination = sink_filter = endpoint = binding_name = ""  # depends on user input
 service_account_name = "cloudguard-logs-authentication"
 audience = "dome9-gcp-logs-collector"
 ack_deadline = 60
@@ -42,10 +40,7 @@ def set_variables(project_id_arg, region_arg, api_key_arg, api_secret_arg, clien
     sink_destination = f"pubsub.googleapis.com/projects/{project_id}/topics/{topic_name}"
     sink_filter = 'LOG_ID("compute.googleapis.com%2Fvpc_flows")' if log_type_var == "flowlogs" else 'LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
     binding_name = "cloudguard-fl-binding" if log_type_var == "flowlogs" else "cloudguard-binding"
-    if region == "central":
-        endpoint = "https://gcp-flow-logs-endpoint.dome9.com" if log_type_var == 'flowlogs' else "https://gcp-activity-endpoint.dome9.com"
-    else:
-        endpoint = f"https://gcp-flow-logs-endpoint.logic.{region}.dome9.com" if log_type_var == 'flowlogs' else f"https://gcp-activity-endpoint.logic.{region}.dome9.com"
+    endpoint = f"https://gcp-flow-logs-endpoint.logic.{region}.dome9.com" if log_type_var == 'flowlogs' else f"https://gcp-activity-endpoint.logic.{region}.dome9.com"
 
 
 def get_resources_yaml():
@@ -134,8 +129,12 @@ def cloudguard_onboarding():
         ],
         "LogType": log_type_var
     }
-    r = requests.post('https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
-                      data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
+    if region == 'us':
+        r = requests.post('https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
+                          data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
+    else:
+        r = requests.post(f'https://api.{region}.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
+                          data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
     print("Done cloud guard onboarding")
     return r.json()
 
