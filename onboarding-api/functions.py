@@ -129,6 +129,8 @@ def cloudguard_onboarding():
         ],
         "LogType": log_type_var
     }
+    # https://api.falconetix.com/v2/view/magellan/magellan-gcp-onboarding
+    # https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding
     if region == 'us':
         r = requests.post('https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
                           data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
@@ -147,9 +149,10 @@ def cloudguard_offboarding():
         'Accept': 'application/json'
     }
     data = {
-        "cloudAccountId": client_id,
+        "cloudAccountId": project_id,
         "vendor": "GCP"
     }
+    # https://api.falconetix.com/v2/view/magellan
     r = requests.post('https://api.dome9.com/v2/view/magellan/disable-magellan-for-cloud-account',
                       data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
     print("Done cloudguard offboarding")

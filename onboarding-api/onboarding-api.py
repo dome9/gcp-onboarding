@@ -20,7 +20,7 @@ def main():
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sys.argv[7]
 
     # configuration
-    resources_yaml_format = get_resources_yaml()
+    """resources_yaml_format = get_resources_yaml()
 
     # Delete previous deployment if exist
     status = delete_deployment()
@@ -38,14 +38,14 @@ def main():
     if status == Status.deploy_exist:
         print("Deployment success")
     else:
-        return
+        return"""
 
     # Cloud Guard onboarding API
-    """response = cloudguard_onboarding()
+    response = cloudguard_onboarding()
     if response == 'OK':
         print("Project Successfully Onboarded");
     else:
-        print("Project failed  to Onboard");"""
+        print("Project failed  to Onboard");
 
 
 if __name__ == '__main__':

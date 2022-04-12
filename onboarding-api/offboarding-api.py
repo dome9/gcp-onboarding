@@ -23,7 +23,7 @@ def main():
 
 
     # Delete previous deployment if exist
-    status = delete_deployment()
+    """status = delete_deployment()
     if status == Status.deploy_not_exist:
         print('Delete Previous deployment')
     elif status is not None:
@@ -43,14 +43,14 @@ def main():
         print('Delete Previous deployment failed')
         return
     # delete resources if exists
-    delete_resources()
+    delete_resources()"""
 
     # dome9 API
-    """response = cloudguard_offboarding()
+    response = cloudguard_offboarding()
     if response == 'OK':
         print("Project Successfully Offboarded");
     else:
-        print("Project failed to Offboarded");"""
+        print("Project failed to Offboarded");
 
 
 if __name__ == '__main__':
