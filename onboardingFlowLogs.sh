@@ -13,9 +13,9 @@ SINK_NAME="cloudguard-fl-sink"
 LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")'
 
 if [[ "$REGION" == "central" ]]; then
-  ENDPOINT="https://gcp-flow-logs-endpoint.dome9.com"
+  ENDPOINT="https://gcp-flowlogs-endpoint.dome9.com"
 else
-  ENDPOINT="https://gcp-flow-logs-endpoint.logic."$REGION".dome9.com"
+  ENDPOINT="https://gcp-flowlogs-endpoint.logic."$REGION".dome9.com"
 fi
 
 # delete existing sink if exists
