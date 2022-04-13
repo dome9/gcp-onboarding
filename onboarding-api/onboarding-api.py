@@ -4,13 +4,13 @@ import sys
 
 def main():
     """
-    Deploy resources in GCP with deployment manager & onboarding GCP project to intelligence
+    Deploy resources in GCP with deployment manager & onboarding GCP project to intelligence with API
 
     Arguments:
-    project_id_arg - Your GCP project
+    project_id_arg - Your GCP project name
     region_arg - The CloudGuard region you use
-    api_key_arg - The
-    api_secret_arg - The
+    api_key_arg - The CloudGuard API key
+    api_secret_arg - The CloudGuard API secret key
     client_id_arg - The CloudGuard client ID
     log_type_arg - flowlogs/CloudTrail
     """
@@ -20,7 +20,7 @@ def main():
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sys.argv[7]
 
     # configuration
-    """resources_yaml_format = get_resources_yaml()
+    resources_yaml_format = get_resources_yaml()
 
     # Delete previous deployment if exist
     status = delete_deployment()
@@ -38,7 +38,7 @@ def main():
     if status == Status.deploy_exist:
         print("Deployment success")
     else:
-        return"""
+        return
 
     # Cloud Guard onboarding API
     response = cloudguard_onboarding()

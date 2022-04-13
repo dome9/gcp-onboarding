@@ -40,7 +40,10 @@ def set_variables(project_id_arg, region_arg, api_key_arg, api_secret_arg, clien
     sink_destination = f"pubsub.googleapis.com/projects/{project_id}/topics/{topic_name}"
     sink_filter = 'LOG_ID("compute.googleapis.com%2Fvpc_flows")' if log_type_var == "flowlogs" else 'LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
     binding_name = "cloudguard-fl-binding" if log_type_var == "flowlogs" else "cloudguard-binding"
-    endpoint = f"https://gcp-flow-logs-endpoint.logic.{region}.dome9.com" if log_type_var == 'flowlogs' else f"https://gcp-activity-endpoint.logic.{region}.dome9.com"
+    if region == "central" or region == "us":
+        endpoint = f"https://gcp-flowlogs-endpoint.dome9.com" if log_type_var == 'flowlogs' else f"https://gcp-activity-endpoint.dome9.com"
+    else:
+        endpoint = f"https://gcp-flowlogs-endpoint.logic.{region}.dome9.com" if log_type_var == 'flowlogs' else f"https://gcp-activity-endpoint.logic.{region}.dome9.com"
 
 
 def get_resources_yaml():
@@ -129,15 +132,12 @@ def cloudguard_onboarding():
         ],
         "LogType": log_type_var
     }
-    # https://api.falconetix.com/v2/view/magellan/magellan-gcp-onboarding
-    # https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding
-    if region == 'us':
+    if region == "central" or region == "us":
         r = requests.post('https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
                           data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
     else:
         r = requests.post(f'https://api.{region}.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
                           data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
-    print("Done cloud guard onboarding")
     return r.json()
 
 
@@ -152,10 +152,12 @@ def cloudguard_offboarding():
         "cloudAccountId": project_id,
         "vendor": "GCP"
     }
-    # https://api.falconetix.com/v2/view/magellan
-    r = requests.post('https://api.dome9.com/v2/view/magellan/disable-magellan-for-cloud-account',
-                      data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
-    print("Done cloudguard offboarding")
+    if region == "central" or region == "us":
+        r = requests.post('https://api.dome9.com/v2/view/magellan/disable-magellan-for-cloud-account',
+                          data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
+    else:
+        r = requests.post(f'https://api.{region}.dome9.com/v2/view/magellan/disable-magellan-for-cloud-account',
+                          data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
     return r.json()
 
 
@@ -175,7 +177,7 @@ def delete_deployment():
         filter='name=cloudguard-onboarding-api-' + log_type_var.lower()
     ).execute()
     if len(deployment_list) > 0:
-        print("Start delete previous deployment")
+        print("Start Deleting Deployment");
         request = deploy_service.delete(
             project=project_id,
             deployment="cloudguard-onboarding-api-" + log_type_var.lower(),
