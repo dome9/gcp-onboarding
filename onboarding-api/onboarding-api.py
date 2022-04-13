@@ -13,6 +13,7 @@ def main():
     api_secret_arg - Your CloudGuard API secret key
     client_id_arg - Your CloudGuard client ID
     log_type_arg - flowlogs/CloudTrail
+    GOOGLE_APPLICATION_CREDENTIALS - The path to your key file
     """
 
     set_variables(project_id_arg=sys.argv[1], region_arg=sys.argv[2], api_key_arg=sys.argv[3],

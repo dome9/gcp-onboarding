@@ -38,7 +38,7 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 - Pub/Sub Admin <br>
 - Deployment Manager Editor <br>
 
-:two: Choose the service account you created and create a service account key in GCP.<br>
+:two: Choose the service account you created. Add a service account key and download the private key in json format.<br>
 
 :three: Give the following permissions to this user: {accountId}@cloudservices.gserviceaccount.com (under IAM & ADMIN -> IAM):
 - Security Admin <br>
@@ -50,9 +50,10 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 :five: Run onboarding-api.py or offboarding-api.py with the following arguments:
 - project_id_arg - Your GCP project name 
 - region_arg - The CloudGuard region you use 
-- api_key_arg - The CloudGuard API key 
-- api_secret_arg - The CloudGuard API secret key 
-- client_id_arg - The CloudGuard client ID 
-- log_type_arg - flowlogs/CloudTrail (only in onboarding) <br>
+- api_key_arg - Your CloudGuard API key 
+- api_secret_arg - Your CloudGuard API secret key 
+- client_id_arg - Your CloudGuard client ID 
+- log_type_arg - flowlogs/CloudTrail (only in onboarding)
+- GOOGLE_APPLICATION_CREDENTIALS - The path to your private key file<br>
 
 **Good Luck!**

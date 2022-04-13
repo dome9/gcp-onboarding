@@ -12,7 +12,7 @@ def main():
     api_key_arg - Your CloudGuard API key
     api_secret_arg - Your CloudGuard API secret key
     client_id_arg - Your CloudGuard client ID
-    GOOGLE_APPLICATION_CREDENTIALS - Your GCP credentials
+    GOOGLE_APPLICATION_CREDENTIALS - The path to your key file
     """
 
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sys.argv[6]
