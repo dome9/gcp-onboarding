@@ -27,15 +27,15 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 - Params: { CloudAccounts: ["your GCP project ID"], "LogType" : "flowlogs"}
 
 ### Onboarding Steps
-:one: Create a service account in GCP with the following permissions: <br>
+:one: Create a service account in GCP with the following permissions(under IAM & ADMIN -> Service Accounts):<br>
 - Service Account Admin <br>
 - Logging Admin <br>
 - Pub/Sub Admin <br>
 - Deployment Manager Editor <br>
 
-:two: Create a service account key in GCP. <br>
+:two: Choose the service account you created and create a service account key in GCP.<br>
 
-:three: Give the following permissions to this user: {accountId}@cloudservices.gserviceaccount.com:
+:three: Give the following permissions to this user: {accountId}@cloudservices.gserviceaccount.com (under IAM & ADMIN -> IAM):
 - Security Admin <br>
 - Logging Admin <br>
 
