@@ -42,7 +42,7 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 :four: Clone this folder and install the required packages
 - pip install -r requirements.txt
 
-:six: Run onboarding-api.py or offboarding-api.py with the following arguments:
+:five: Run onboarding-api.py or offboarding-api.py with the following arguments:
 - project_id_arg - Your GCP project name 
 - region_arg - The CloudGuard region you use 
 - api_key_arg - The CloudGuard API key 
