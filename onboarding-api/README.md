@@ -14,7 +14,7 @@ The script provided will create the following resources in your GCP project:<br>
 The script will make an API call to CloudGuard to onboard your GCP Project to CloudGuard Intelligence:<br>
 - Path: https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding
 - Params: { CloudAccounts: ["your GCP project ID"], "LogType" : "CloudTrail"}
-- You can see example here: https://api-v2-docs.dome9.com (search for Gcp Onboarding)
+- See example: https://api-v2-docs.dome9.com (search for Gcp Onboarding)
 
 ### GCP Network Traffic Logs to Intelligence onboarding flow
 The script provided will create the following resources:<br><br>
@@ -26,10 +26,10 @@ The script provided will create the following resources:<br><br>
 The script will make an API call to CloudGuard to onboard your GCP Project to CloudGuard Intelligence:<br>
 - Path: https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding
 - Params: { CloudAccounts: ["your GCP project ID"], "LogType" : "flowlogs"}
-- You can see example here: https://api-v2-docs.dome9.com (search for Gcp Onboarding)
+- See example: https://api-v2-docs.dome9.com (search for Gcp Onboarding)
 
 ### Onboarding Steps
-:one: Create a service account in GCP with the following permissions(under IAM & ADMIN -> Service Accounts):<br>
+:one: Create a service account in GCP with the following permissions (under IAM & ADMIN -> Service Accounts):<br>
 - Service Account Admin <br>
 - Logging Admin <br>
 - Pub/Sub Admin <br>
@@ -41,7 +41,7 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 - Security Admin <br>
 - Logging Admin <br>
 
-:four: Clone this folder and install the required packages
+:four: Clone this folder and install the required packages:
 - pip install -r requirements.txt
 
 :five: Run onboarding-api.py or offboarding-api.py with the following arguments:
