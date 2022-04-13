@@ -23,9 +23,9 @@ def main():
     # Delete previous deployment if exist
     status = delete_deployment()
     if status == Status.deploy_not_exist:
-        print('Delete Previous deployment')
+        print('Previous deployment successfully deleted')
     elif status is not None:
-        print('Delete Previous deployment failed')
+        print('Previous deployment failed to delete')
         return
     # delete resources if exists
     delete_resources()
@@ -36,9 +36,9 @@ def main():
     # Delete previous deployment if exist
     status = delete_deployment()
     if status == Status.deploy_not_exist:
-        print('Delete Previous deployment')
+        print('Previous deployment successfully deleted')
     elif status is not None:
-        print('Delete Previous deployment failed')
+        print('Previous deployment failed to delete')
         return
     # delete resources if exists
     delete_resources()
@@ -48,7 +48,7 @@ def main():
     if response == 'OK':
         print("Project Successfully Offboarded");
     else:
-        print("Project failed to Offboarded");
+        print("Project failed to Offboard");
 
 
 if __name__ == '__main__':

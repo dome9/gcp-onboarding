@@ -9,9 +9,9 @@ def main():
     Arguments:
     project_id_arg - Your GCP project name
     region_arg - The CloudGuard region you use
-    api_key_arg - The CloudGuard API key
-    api_secret_arg - The CloudGuard API secret key
-    client_id_arg - The CloudGuard client ID
+    api_key_arg - Your CloudGuard API key
+    api_secret_arg - Your CloudGuard API secret key
+    client_id_arg - Your CloudGuard client ID
     log_type_arg - flowlogs/CloudTrail
     """
 
@@ -25,9 +25,9 @@ def main():
     # Delete previous deployment if exist
     status = delete_deployment()
     if status == Status.deploy_not_exist:
-        print('Delete Previous deployment')
+        print('Previous deployment successfully deleted')
     elif status is not None:
-        print('Delete Previous deployment failed')
+        print('Previous deployment failed to delete')
         return
 
     # delete resources if already exist
@@ -45,7 +45,7 @@ def main():
     if response == 'OK':
         print("Project Successfully Onboarded");
     else:
-        print("Project failed  to Onboard");
+        print("Project failed to Onboard");
 
 
 if __name__ == '__main__':

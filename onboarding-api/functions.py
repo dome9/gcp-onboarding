@@ -177,7 +177,7 @@ def delete_deployment():
         filter='name=cloudguard-onboarding-api-' + log_type_var.lower()
     ).execute()
     if len(deployment_list) > 0:
-        print("Start Deleting Deployment");
+        print("Starting to delete previous deployment");
         request = deploy_service.delete(
             project=project_id,
             deployment="cloudguard-onboarding-api-" + log_type_var.lower(),
@@ -198,7 +198,7 @@ def delete_resources():
     sink = logging_client.sink(sink_name)
     if sink.exists():
         sink.delete()
-        print("Deleted sink {}".format(sink.name))
+        print("Sink deleted: {}".format(sink.name))
 
     # subscription deletion
     subscriber = pubsub_v1.SubscriberClient()
@@ -229,11 +229,11 @@ def delete_resources():
                 name='projects/' + project_id + '/serviceAccounts/' + service_account_name + '@' + project_id + ".iam.gserviceaccount.com")
             if request is not None:
                 response = request.execute()
-                print('Deleted service account')
+                print(f'Service account deleted: {service_account_name}')
 
 
 def create_resources(resources_yaml_format):
-    print("Start Deployment");
+    print("Deployment Started");
     deploy_service = get_deployment_manager_object()
     request = deploy_service.insert(
         project=project_id,
