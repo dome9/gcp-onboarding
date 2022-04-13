@@ -23,9 +23,9 @@ def main():
     # Delete previous deployment if exist
     status = delete_deployment()
     if status == Status.deploy_not_exist:
-        print('Previous deployment successfully deleted')
+        print('Previous flowlogs deployment successfully deleted')
     elif status is not None:
-        print('Previous deployment failed to delete')
+        print('Previous flowlogs deployment failed to delete')
         return
     # delete resources if exists
     delete_resources()
@@ -36,9 +36,9 @@ def main():
     # Delete previous deployment if exist
     status = delete_deployment()
     if status == Status.deploy_not_exist:
-        print('Previous deployment successfully deleted')
+        print('Previous cloudtrail deployment successfully deleted')
     elif status is not None:
-        print('Previous deployment failed to delete')
+        print('Previous cloudtrail deployment failed to delete')
         return
     # delete resources if exists
     delete_resources()
