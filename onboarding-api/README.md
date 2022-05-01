@@ -31,6 +31,9 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 - Params: { CloudAccounts: ["your GCP project ID"], "LogType" : "flowlogs"}
 - See example: https://api-v2-docs.dome9.com (search for Gcp Onboarding)
 
+### Prerequisites
+:one: Make sure you have python installed on your computer.
+
 ### Onboarding Steps
 :one: Create a service account in GCP with the following permissions (under IAM & ADMIN -> Service Accounts):<br>
 - Service Account Admin <br>
@@ -48,8 +51,8 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 - pip install -r requirements.txt
 
 :five: Run onboarding-api.py or offboarding-api.py with the following arguments:
-- project_id_arg - Your GCP project name 
-- region_arg - The CloudGuard region you use 
+- project_id_arg - Your GCP project name (in lower case)
+- region_arg - The CloudGuard region you use (us/eu1/ap1/ap2/ap3/cace1)
 - api_key_arg - Your CloudGuard API key 
 - api_secret_arg - Your CloudGuard API secret key 
 - client_id_arg - Your CloudGuard client ID 
