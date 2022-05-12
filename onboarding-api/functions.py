@@ -133,12 +133,12 @@ def cloudguard_onboarding():
         "LogType": log_type_var
     }
     if region == "central" or region == "us":
-        r = requests.post('https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
+        response = requests.post('https://api.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
                           data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
     else:
-        r = requests.post(f'https://api.{region}.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
+        response = requests.post(f'https://api.{region}.dome9.com/v2/view/magellan/magellan-gcp-onboarding',
                           data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
-    return r.json()
+    return response.json()
 
 
 def cloudguard_offboarding():
@@ -153,21 +153,21 @@ def cloudguard_offboarding():
         "vendor": "GCP"
     }
     if region == "central" or region == "us":
-        r = requests.post('https://api.dome9.com/v2/view/magellan/disable-magellan-for-cloud-account',
+        response = requests.post('https://api.dome9.com/v2/view/magellan/disable-magellan-for-cloud-account',
                           data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
     else:
-        r = requests.post(f'https://api.{region}.dome9.com/v2/view/magellan/disable-magellan-for-cloud-account',
+        response = requests.post(f'https://api.{region}.dome9.com/v2/view/magellan/disable-magellan-for-cloud-account',
                           data=json.dumps(data), headers=headers, auth=(api_key, api_secret))
-    return r.json()
+    return response.json()
 
 
 def get_deployment_manager_object():
     credentials = service_account.Credentials.from_service_account_file(
         filename=os.environ['GOOGLE_APPLICATION_CREDENTIALS'],
         scopes=['https://www.googleapis.com/auth/cloud-platform'])
-    service = googleapiclient.discovery.build('deploymentmanager', 'v2', credentials=credentials)
-    deploy_service = service.deployments();
-    return deploy_service;
+    deploymentmanager_service = googleapiclient.discovery.build('deploymentmanager', 'v2', credentials=credentials)
+    deployments_service = deploymentmanager_service.deployments();
+    return deployments_service;
 
 
 def delete_deployment():
@@ -176,6 +176,7 @@ def delete_deployment():
         project=project_id,
         filter='name=cloudguard-onboarding-api-' + log_type_var.lower()
     ).execute()
+    # check if deployment already exist
     if len(deployment_list) > 0:
         print("Starting to delete previous deployment");
         request = deploy_service.delete(
@@ -221,11 +222,11 @@ def delete_resources():
     credentials = service_account.Credentials.from_service_account_file(
         filename=os.environ['GOOGLE_APPLICATION_CREDENTIALS'],
         scopes=['https://www.googleapis.com/auth/cloud-platform'])
-    service = googleapiclient.discovery.build('iam', 'v1', credentials=credentials)
-    service_accounts = service.projects().serviceAccounts().list(name='projects/' + project_id).execute()
+    iam_service = googleapiclient.discovery.build('iam', 'v1', credentials=credentials)
+    service_accounts = iam_service.projects().serviceAccounts().list(name='projects/' + project_id).execute()
     for service_account_item in service_accounts['accounts']:
         if service_account_item['displayName'] == service_account_name:
-            request = service.projects().serviceAccounts().delete(
+            request = iam_service.projects().serviceAccounts().delete(
                 name='projects/' + project_id + '/serviceAccounts/' + service_account_name + '@' + project_id + ".iam.gserviceaccount.com")
             if request is not None:
                 response = request.execute()

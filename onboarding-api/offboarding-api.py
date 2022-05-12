@@ -15,6 +15,7 @@ def main():
     GOOGLE_APPLICATION_CREDENTIALS - The path to your key file
     """
 
+    # The path to your key file
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sys.argv[6]
 
     """ Delete flow logs resources from GCP """

@@ -47,15 +47,19 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 - Security Admin <br>
 - Logging Admin <br>
 
-:four: Clone this folder and install the required packages:
+:four: Create API key in CloudGuard
+- Go to SETTING -> Credentials and click on 'CREATE API KEY'
+- Copy the Secret because it will not be accessible later.
+
+:five: Clone this folder and install the required packages:
 - pip install -r requirements.txt
 
-:five: Run onboarding-api.py or offboarding-api.py with the following arguments:
+:six: Run onboarding-api.py or offboarding-api.py with the following arguments:
 - project_id_arg - Your GCP project name (in lower case)
 - region_arg - The CloudGuard region you use (us/eu1/ap1/ap2/ap3/cace1)
 - api_key_arg - Your CloudGuard API key 
 - api_secret_arg - Your CloudGuard API secret key 
-- client_id_arg - Your CloudGuard client ID 
+- client_id_arg - Your CloudGuard client ID
 - log_type_arg - flowlogs/CloudTrail (only in onboarding)
 - GOOGLE_APPLICATION_CREDENTIALS - The path to your private key file<br>
 

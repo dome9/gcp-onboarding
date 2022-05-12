@@ -7,8 +7,8 @@ def main():
     Deploy resources in GCP with deployment manager & onboarding GCP project to intelligence with API
 
     Arguments:
-    project_id_arg - Your GCP project name
-    region_arg - The CloudGuard region you use
+    project_id_arg - Your GCP project name (in lower case)
+    region_arg - The CloudGuard region you use (us/eu1/ap1/ap2/ap3/cace1)
     api_key_arg - Your CloudGuard API key
     api_secret_arg - Your CloudGuard API secret key
     client_id_arg - Your CloudGuard client ID
@@ -23,7 +23,7 @@ def main():
     # configuration
     resources_yaml_format = get_resources_yaml()
 
-    # Delete previous deployment if exist
+    # delete previous deployment if exist
     status = delete_deployment()
     if status == Status.deploy_not_exist:
         print('Previous deployment successfully deleted')
