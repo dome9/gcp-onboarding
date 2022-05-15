@@ -63,5 +63,5 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 - log_type_arg - flowlogs/CloudTrail (only in onboarding)
 - GOOGLE_APPLICATION_CREDENTIALS - The local path to your private key file from step :two:<br>
 
-**Good Luck!**
+**Good Luck!**<br>
 For any issues or help needed please contact Support as usual or your Customer Success Manager.
