@@ -56,7 +56,13 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 
 :six: Run onboarding-api.py or offboarding-api.py with the following arguments:
 - project_id_arg - Your GCP project name (in lower case)
-- region_arg - The CloudGuard region you use (e.g. us/eu1/ap1/ap2/ap3/cace1)
+- region_arg - The CloudGuard region (Data Center) you use:
+  - us for United States
+  - eu1 for Ireland
+  - ap1 for Singapore
+  - ap2 for Australia
+  - ap3 for India
+  - cace1 for Canada
 - api_key_arg - Your CloudGuard API key (ID) from step :four:
 - api_secret_arg - Your CloudGuard API secret key from step :four:
 - client_id_arg - Your CloudGuard client ID (under Setting -> Account Info)
