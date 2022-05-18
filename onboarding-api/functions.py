@@ -33,17 +33,17 @@ def set_variables(project_id_arg, region_arg, api_key_arg, api_secret_arg, clien
     log_type_var = log_type_arg
 
     global topic_name, subscription_name, sink_name, sink_destination, sink_filter, binding_name, endpoint, service_account_name
-    topic_name = "cloudguard-fl-topic" if log_type_var == "flowlogs" else "cloudguard-topic"
-    subscription_name = "cloudguard-fl-subscription" if log_type_var == "flowlogs" else "cloudguard-subscription"
-    sink_name = "cloudguard-fl-sink" if log_type_var == "flowlogs" else "cloudguard-sink"
+    topic_name = "cloudguard-fl-topic" if log_type_var == "NetworkTraffic" else "cloudguard-topic"
+    subscription_name = "cloudguard-fl-subscription" if log_type_var == "NetworkTraffic" else "cloudguard-subscription"
+    sink_name = "cloudguard-fl-sink" if log_type_var == "NetworkTraffic" else "cloudguard-sink"
     sink_destination = f"pubsub.googleapis.com/projects/{project_id}/topics/{topic_name}"
-    sink_filter = 'LOG_ID("compute.googleapis.com%2Fvpc_flows")' if log_type_var == "flowlogs" else 'LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
-    binding_name = "cloudguard-fl-binding" if log_type_var == "flowlogs" else "cloudguard-binding"
-    service_account_name = "cloudguard-fl-authentication" if log_type_var == "flowlogs" else "cloudguard-logs-authentication"
+    sink_filter = 'LOG_ID("compute.googleapis.com%2Fvpc_flows")' if log_type_var == "NetworkTraffic" else 'LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
+    binding_name = "cloudguard-fl-binding" if log_type_var == "NetworkTraffic" else "cloudguard-binding"
+    service_account_name = "cloudguard-fl-authentication" if log_type_var == "NetworkTraffic" else "cloudguard-logs-authentication"
     if region == "central" or region == "us":
-        endpoint = f"https://gcp-flowlogs-endpoint.dome9.com" if log_type_var == 'flowlogs' else f"https://gcp-activity-endpoint.dome9.com"
+        endpoint = f"https://gcp-flowlogs-endpoint.dome9.com" if log_type_var == 'NetworkTraffic' else f"https://gcp-activity-endpoint.dome9.com"
     else:
-        endpoint = f"https://gcp-flowlogs-endpoint.logic.{region}.dome9.com" if log_type_var == 'flowlogs' else f"https://gcp-activity-endpoint.logic.{region}.dome9.com"
+        endpoint = f"https://gcp-flowlogs-endpoint.logic.{region}.dome9.com" if log_type_var == 'NetworkTraffic' else f"https://gcp-activity-endpoint.logic.{region}.dome9.com"
 
 
 def get_resources_yaml():

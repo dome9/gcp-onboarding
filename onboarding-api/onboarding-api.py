@@ -12,7 +12,7 @@ def main():
     api_key_arg - Your CloudGuard API key
     api_secret_arg - Your CloudGuard API secret key
     client_id_arg - Your CloudGuard client ID
-    log_type_arg - flowlogs/CloudTrail
+    log_type_arg - NetworkTraffic/AccountActivity
     GOOGLE_APPLICATION_CREDENTIALS - The path to your key file
     """
 

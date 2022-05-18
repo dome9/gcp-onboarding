@@ -66,7 +66,7 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 - api_key_arg - Your CloudGuard API key (ID) from step :four:
 - api_secret_arg - Your CloudGuard API secret key from step :four:
 - client_id_arg - Your CloudGuard client ID (under Setting -> Account Info)
-- log_type_arg - flowlogs/CloudTrail (only in onboarding)
+- log_type_arg - NetworkTraffic/AccountActivity (only in onboarding)
 - GOOGLE_APPLICATION_CREDENTIALS - The local path to your private key file from step :two:<br>
 
 **Good Luck!**<br>
