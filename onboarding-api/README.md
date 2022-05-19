@@ -31,6 +31,8 @@ The script will make an API call to CloudGuard to onboard your GCP Project to Cl
 - Params: { CloudAccounts: ["your GCP project ID"], "LogType" : "flowlogs"}
 - See example: https://api-v2-docs.dome9.com/#intelligence_gcponboarding
 
+Notice: If your flow logs are not enabled, please follow the Intelligence onboarding "Prerequisites" screen on the CloudGuard portal.
+
 ### Prerequisites
 :one: Make sure you have python installed on your computer.
 

@@ -18,28 +18,28 @@ def main():
     # The path to your key file
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sys.argv[6]
 
-    """ Delete flow logs resources from GCP """
+    """ Delete network-traffic resources from GCP """
     set_variables(project_id_arg=sys.argv[1], region_arg=sys.argv[2], api_key_arg=sys.argv[3],
-                  api_secret_arg=sys.argv[4], client_id_arg=sys.argv[5], log_type_arg='flowlogs')
+                  api_secret_arg=sys.argv[4], client_id_arg=sys.argv[5], log_type_arg='NetworkTraffic')
     # Delete previous deployment if exist
     status = delete_deployment()
     if status == Status.deploy_not_exist:
-        print('Previous flowlogs deployment successfully deleted')
+        print('Previous network-traffic deployment successfully deleted')
     elif status is not None:
-        print('Previous flowlogs deployment failed to delete')
+        print('Previous network-traffic deployment failed to delete')
         return
     # delete resources if exists
     delete_resources()
 
-    """ Delete CloudTrail resources from GCP """
+    """ Delete account-activity resources from GCP """
     set_variables(project_id_arg=sys.argv[1], region_arg=sys.argv[2], api_key_arg=sys.argv[3],
-                  api_secret_arg=sys.argv[4], client_id_arg=sys.argv[5], log_type_arg='CloudTrail')
+                  api_secret_arg=sys.argv[4], client_id_arg=sys.argv[5], log_type_arg='AccountActivity')
     # Delete previous deployment if exist
     status = delete_deployment()
     if status == Status.deploy_not_exist:
-        print('Previous cloudtrail deployment successfully deleted')
+        print('Previous account-activity deployment successfully deleted')
     elif status is not None:
-        print('Previous cloudtrail deployment failed to delete')
+        print('Previous account-activity deployment failed to delete')
         return
     # delete resources if exists
     delete_resources()
@@ -47,9 +47,9 @@ def main():
     # dome9 API
     response = cloudguard_offboarding()
     if response == 'OK':
-        print("Project Successfully Offboarded");
+        print("Project successfully offboarded from CloudGuard");
     else:
-        print("Project failed to Offboard");
+        print("Project failed to offboard from CloudGuard");
 
 
 if __name__ == '__main__':

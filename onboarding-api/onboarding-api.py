@@ -44,9 +44,9 @@ def main():
     # Cloud Guard onboarding API
     response = cloudguard_onboarding()
     if response == 'OK':
-        print("Project Successfully Onboarded");
+        print("Project successfully onboarded to CloudGuard");
     else:
-        print("Project failed to Onboard");
+        print("Project failed to onboard to CloudGuard");
 
 
 if __name__ == '__main__':
