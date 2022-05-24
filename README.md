@@ -26,9 +26,6 @@ The script provided will create the following resources:<br><br>
 <br><img src="img/trust-issues.png" width=20%>
 
 :three: Follow the instructions in the Tutorial panel: <br>
-- Select the Project you wish to onboard <br>
-  <img src="img/2.png" width=50%>
-
 - Run the script (copy it, paste it to the terminal and click Enter)<br>
   <img src="img/1.png" width=50%>
 
