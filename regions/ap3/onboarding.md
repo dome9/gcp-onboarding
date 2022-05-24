@@ -1,13 +1,15 @@
-# GCP Onboarding
+# GCP Onboarding to CloudGuard Intelligence
 
-## Select a project for deployment to Intelligence 
+Copy and paste the script below, into the cloudshell tab at the bottom of this screen, then hit Enter to run.
 
-<walkthrough-project-setup></walkthrough-project-setup>
+For project_ID go into the project's main dashboard > Project Info > Project ID or by clicking the project from the top left area and seeing the ID.
 
-## Setup
+<ins>Note:</ins> Project ID is lower case so paste as is, and don't close this right panel till completion.
 
-Run the deployment script
 
-```sh  
-./apOnboarding.sh {{project-id}}
+``` 
+./apOnboarding.sh project_ID
 ```
+
+
+E.g. if the project_ID is 'project1-cg' then the script you will need to paste and run is ./apOnboarding.sh project1-cg
