@@ -26,8 +26,8 @@ The script provided will create the following resources:<br><br>
 <br><img src="img/trust-issues.png" width=20%>
 
 :three: Follow the instructions in the Tutorial panel: <br>
-- Run the script (copy it, paste it to the terminal and click Enter)<br>
-  <img src="img/1.png" width=50%>
+- Run the script (copy it, paste it, add your project id and click Enter)<br>
+  <img src="img/1.PNG" width=50%>
 
 - During the deployment, your project will be set as default and you will be asked to authorize Cloud Shell.<br>
   <img src="img/Untitled.png" width=50%>
