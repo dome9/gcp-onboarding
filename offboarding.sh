@@ -5,6 +5,7 @@ SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
 SINK_NAME="cloudguard-sink"
 SUBSCRIPTION_NAME="cloudguard-subscription"
 TOPIC_NAME_FL="cloudguard-fl-topic"
+SERVICE_ACCOUNT_NAME_FL= "cloudguard-fl-authentication"
 SINK_NAME_FL="cloudguard-fl-sink"
 SUBSCRIPTION_NAME_FL="cloudguard-fl-subscription"
 
@@ -70,6 +71,14 @@ if [[ ! "$serviceAccount" =~ "0 items" ]]; then
   serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com)
   if [[ "$serviceAccount" =~ "ERROR" ]]; then
     echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME" "
+  fi
+fi
+# service account deletion flowlogs
+serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME_FL" 2>&1)
+if [[ ! "$serviceAccount" =~ "0 items" ]]; then
+  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME_FL"@"$PROJECT".iam.gserviceaccount.com)
+  if [[ "$serviceAccount" =~ "ERROR" ]]; then
+    echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME_FL" "
   fi
 fi
 
