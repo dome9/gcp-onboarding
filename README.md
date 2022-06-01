@@ -1,7 +1,6 @@
 # :cloud: GCP Intelligence Onboarding/Offboarding :cloud:
 
-:heavy_exclamation_mark:<b>As for today ,CloudGuard supports onboarding GCP activity logs.
-GCP flow logs onboarding is currently in development stage.</b>
+The scripts here are being used when onboarding to CloudGuard Intelligence through the UI. Here is additional info on how to do that: [GCP Onboarding Documentation](https://sc1.checkpoint.com/documents/CloudGuard_Dome9/Documentation/Intelligence/Intelligence-Onboard-GCP.htm)
 
 ### This repository contains Google Cloud Shell scripts allowing you to:
 - Onboard your GCP Project to CloudGuard Intelligence
