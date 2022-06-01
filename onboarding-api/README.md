@@ -68,8 +68,5 @@ Notice: If your flow logs are not enabled, please follow the Intelligence onboar
 - log_type_arg - NetworkTraffic/AccountActivity (only in onboarding)
 - GOOGLE_APPLICATION_CREDENTIALS - The local path to your private key file from step :two:<br>
 
-:heavy_exclamation_mark: <b>Please do not forget to click on "NEXT" button in the CloudGuard onboarding wizard in your CloudGuard account. 
-This step is mendatory to activate Intelligence on your GCP projects. </b>
-
 **Good Luck!**<br>
 For any issues or help needed please contact Support as usual or your Customer Success Manager.
