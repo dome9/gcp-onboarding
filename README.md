@@ -1,7 +1,6 @@
 # :cloud: GCP Intelligence Onboarding/Offboarding :cloud:
 
-The scripts here are being used when onboarding to CloudGuard Intelligence through the UI, here is additional info on how to do that:
-https://sc1.checkpoint.com/documents/CloudGuard_Dome9/Documentation/Intelligence/Intelligence-Onboard-GCP.htm
+The scripts here are being used when onboarding to CloudGuard Intelligence through the UI. Here is additional info on how to do that: [GCP Onboarding Documentation](https://sc1.checkpoint.com/documents/CloudGuard_Dome9/Documentation/Intelligence/Intelligence-Onboard-GCP.htm)
 
 ### This repository contains Google Cloud Shell scripts allowing you to:
 - Onboard your GCP Project to CloudGuard Intelligence
