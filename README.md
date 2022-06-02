@@ -38,5 +38,8 @@ The script provided will create the following resources:<br><br>
 + Project Successfully Onboarded
 ```
 
+:heavy_exclamation_mark: <b>Please do not forget to click on "NEXT" button in the CloudGuard onboarding wizard in your CloudGuard account. 
+This step is mendatory to activate Intelligence on your GCP projects. </b>
+
 **Good Luck!**
 <img src="img/google-cloud-platform-solution-hero-floating-image-400x400-1_(1).png" width=20%>
