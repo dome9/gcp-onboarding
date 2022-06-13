@@ -5,7 +5,7 @@ SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
 SINK_NAME="cloudguard-sink"
 SUBSCRIPTION_NAME="cloudguard-subscription"
 TOPIC_NAME_FL="cloudguard-fl-topic"
-SERVICE_ACCOUNT_NAME_FL= "cloudguard-fl-authentication"
+SERVICE_ACCOUNT_NAME_FL="cloudguard-fl-authentication"
 SINK_NAME_FL="cloudguard-fl-sink"
 SUBSCRIPTION_NAME_FL="cloudguard-fl-subscription"
 
