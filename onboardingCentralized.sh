@@ -46,7 +46,7 @@ fi
 # delete exsiting service account if exists
 serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME" 2>&1)
 if [[ ! "$serviceAccount" =~ "0 items" ]]; then
-  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com --quiet)
+  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com --quiet 2>&1)
   if [[ "$serviceAccount" =~ "ERROR" ]]; then
     echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME" EXITING WITHOUT DEPLOYMENT"
     exit 1
