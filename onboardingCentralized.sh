@@ -46,7 +46,7 @@ fi
 # delete exsiting service account if exists
 serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME" 2>&1)
 if [[ ! "$serviceAccount" =~ "0 items" ]]; then
-  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME@$PROJECT".iam.gserviceaccount.com --quiet)
+  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com --quiet)
   if [[ "$serviceAccount" =~ "ERROR" ]]; then
     echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME" EXITING WITHOUT DEPLOYMENT"
     exit 1
@@ -89,7 +89,7 @@ pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
                            --ack-deadline="$ACK_DEADLINE" \
                            --expiration-period="$EXPIRATION_PERIOD" \
                            --push-endpoint="$ENDPOINT" \
-                           --push-auth-service-account="$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com \
+                           --push-auth-service-account="$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com \
                            --push-auth-token-audience="$AUDIENCE" \
                            --max-retry-delay="$MAX_RETRY_DELAY" \
                            --min-retry-delay="$MIN_RETRY_DELAY" \2>&1)
