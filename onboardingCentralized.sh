@@ -58,7 +58,7 @@ for PROJECT_ID in "$@"
 do
 	sink=$(gcloud logging sinks list --project="$PROJECT_ID" --filter="name.scope(sink):"$SINK_NAME"" 2>&1)
 	if [[ ! "$sink" =~ "0 items" ]]; then
-		sink=$(gcloud logging sinks delete "$SINK_NAME" --quiet)
+		sink=$(gcloud logging sinks delete "$SINK_NAME" --project="$PROJECT_ID" --quiet)
 		if [[ "$sink" =~ "ERROR" ]]; then
 			echo "could not delete existing sink "$SINK_NAME" EXITING WITHOUT DEPLOYMENT"
 			exit 1
