@@ -107,7 +107,7 @@ do
 
 	# granting write permissions to sink
 	writerIdentity=$(gcloud logging sinks describe "$SINK_NAME" --project "$PROJECT_ID" --format="value(writerIdentity)")
-    gcloud pubsub topics add-iam-policy-binding "$CENTRALIZED_TOPIC_NAME" --member="$writerIdentity" --role="roles/pubsub.publisher"
+  gcloud pubsub topics add-iam-policy-binding "$TOPIC_NAME" --member="$writerIdentity" --role="roles/pubsub.publisher"
 	echo "$sink"
 	if [[ "$sink" =~ "ERROR" ]]; then
 		echo "could not create sink "$SINK_NAME" in project "$PROJECT_ID" EXITING WITHOUT DEPLOYMENT"
