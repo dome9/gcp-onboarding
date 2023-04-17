@@ -5,7 +5,7 @@ shift
 shift
 AUDIENCE="dome9-gcp-logs-collector"
 TOPIC_NAME="cloudguard-centralized-topic"
-SERVICE_ACCOUNT_NAME="cloudguard-centralized-logs-authentication"
+SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
 SUBSCRIPTION_NAME="cloudguard-centralized-subscription"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10
