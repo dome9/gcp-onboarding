@@ -20,6 +20,9 @@ else
   ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
 fi
 
+echo "$ENDPOINT"
+echo "$@"
+
 # delete exsiting subscription if exists
 pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" --quiet 2>&1)
 if [[ ! "$pubsubSubscription" =~ "0 items" ]]; then
