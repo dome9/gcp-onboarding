@@ -92,7 +92,7 @@ pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
                            --push-auth-service-account="$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com \
                            --push-auth-token-audience="$AUDIENCE" \
                            --max-retry-delay="$MAX_RETRY_DELAY" \
-                           --min-retry-delay="$MIN_RETRY_DELAY" \2>&1)
+                           --min-retry-delay="$MIN_RETRY_DELAY")
 echo "$pubsubSubscription"
 if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
     echo "could not create subscription "$SUBSCRIPTION_NAME" EXITING WITHOUT DEPLOYMENT"
