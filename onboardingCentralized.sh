@@ -84,7 +84,7 @@ if [[ "$topic" =~ "ERROR" ]]; then
 fi
 
 # subscription creation
-pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
+pubsubSubscription=$(gcloud pubsub subscriptions create projects/"$CENTRALIZED_PROJECT"/subscriptions/"$SUBSCRIPTION_NAME" \
                            --topic="$TOPIC_NAME" \
                            --ack-deadline="$ACK_DEADLINE" \
                            --expiration-period="$EXPIRATION_PERIOD" \
