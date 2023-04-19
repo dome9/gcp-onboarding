@@ -15,7 +15,7 @@ SINK_NAME="cloudguard-sink-to-centralized"
 LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
 
 if [[ "$REGION" == "central" ]]; then
-  ENDPOINT="https://gcp-activity-endpoint.dome9.com"
+  ENDPOINT="https://gcp-activity-endpoint.330372055916.logic.941298424820.dev.falconetix.com"
 else
   ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
 fi
