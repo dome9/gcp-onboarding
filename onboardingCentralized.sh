@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo""
 echo "setting up default project $2"
 gcloud config set project $2
 echo "Enabling Deployment Manager APIs, which you will need for this deployment."
