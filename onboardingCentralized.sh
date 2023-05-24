@@ -1,4 +1,10 @@
 #!/bin/bash
+
+echo "setting up default project $2"
+gcloud config set project $2
+echo "Enabling Deployment Manager APIs, which you will need for this deployment."
+gcloud services enable deploymentmanager.googleapis.com
+
 REGION=$1
 CENTRALIZED_PROJECT=$2
 shift
@@ -19,9 +25,6 @@ if [[ "$REGION" == "central" ]]; then
 else
   ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
 fi
-
-echo "$ENDPOINT"
-echo "$@"
 
 # delete exsiting subscription if exists
 pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" --quiet 2>&1)
