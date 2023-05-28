@@ -15,18 +15,6 @@ ACK_DEADLINE=60
 EXPIRATION_PERIOD="never"
 SINK_NAME="cloudguard-sink-to-centralized"
 
-if [[ "$REGION" == "central" ]]; then
-  ENDPOINT="https://gcp-activity-endpoint.330372055916.logic.941298424820.dev.falconetix.com"
-else
-  ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
-fi
-
-if [[ "$LOG_TYPE" == "activity" ]]; then
-  LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
-else
-  LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")';
-fi
-
 # Parse the named arguments
 while getopts ":region:logType:centralizedProject:projectsToOnboard:" opt; do
     case ${opt} in
@@ -40,8 +28,8 @@ while getopts ":region:logType:centralizedProject:projectsToOnboard:" opt; do
             CENTRALIZED_PROJECT=${OPTARG}
             ;;
         projectsToOnboard)
-                    projects=${OPTARG}
-                    ;;
+            projects=${OPTARG}
+            ;;
         \?)
             echo "Invalid option: -$OPTARG"
             usage
@@ -60,6 +48,18 @@ if [[ -z $REGION ]] || [[ -z $LOG_TYPE ]] || [[ -z $CENTRALIZED_PROJECT ]] || [[
     echo "Missing required arguments."
     usage
     exit 1
+fi
+
+if [[ "$REGION" == "central" ]]; then
+  ENDPOINT="https://gcp-activity-endpoint.330372055916.logic.941298424820.dev.falconetix.com"
+else
+  ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
+fi
+
+if [[ "$LOG_TYPE" == "activity" ]]; then
+  LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
+else
+  LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")';
 fi
 
 # Split the list argument into an array
