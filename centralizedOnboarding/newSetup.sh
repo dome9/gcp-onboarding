@@ -21,18 +21,18 @@ usage() {
 }
 
 # Parse the named arguments
-while getopts ":region:logType:centralizedProject:projectsToOnboard:" opt; do
+while getopts ":r:l:c:p:" opt; do
     case ${opt} in
-        region)
+        r)
             REGION=${OPTARG}
             ;;
-        logType)
+        l)
             LOG_TYPE=${OPTARG}
             ;;
-        centralizedProject)
+        c)
             CENTRALIZED_PROJECT=${OPTARG}
             ;;
-        projectsToOnboard)
+        p)
             projects=${OPTARG}
             ;;
         \?)
