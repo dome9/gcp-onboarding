@@ -61,6 +61,10 @@ gcloud config set project $CENTRALIZED_PROJECT
 echo "Enabling Deployment Manager APIs, which you will need for this deployment."
 gcloud services enable deploymentmanager.googleapis.com
 
+echo""
+echo "Start cleaning redundant resources if exist."
+echo ""
+
 # delete exsiting subscription if exists
 pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" --quiet 2>&1)
 if [[ ! "$pubsubSubscription" =~ "0 items" ]]; then
@@ -107,6 +111,9 @@ do
 	fi
 done
 
+echo ""
+echo "Cleanup completed, starting onboarding process..."
+echo ""
 
 # service account creation
 serviceAccount=$(gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME --display-name="$SERVICE_ACCOUNT_NAME" 2>&1)
@@ -156,6 +163,7 @@ do
 	fi
 done
 
+echo ""
 green='\033[0;32m'
 clear='\033[0m'
 bold=$(tput bold)
