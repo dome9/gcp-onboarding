@@ -49,7 +49,7 @@ MIN_RETRY_DELAY=10
 ACK_DEADLINE=60
 EXPIRATION_PERIOD="never"
 TOPIC_NAME="cloudguard-$ONBOARDING_TYPE-centralized-topic"
-SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-authentication"
+SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-auth"
 SUBSCRIPTION_NAME="cloudguard-$ONBOARDING_TYPE-centralized-subscription"
 SINK_NAME="cloudguard-$ONBOARDING_TYPE-sink-to-centralized"
 
