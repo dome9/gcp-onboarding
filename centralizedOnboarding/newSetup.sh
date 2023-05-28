@@ -1,33 +1,18 @@
 #!/bin/bash
 
-#REGION=$1
-#LOG_TYPE=$2
-#CENTRALIZED_PROJECT=$3
-#IFS=', ' read -ra PROJECTS_TO_ONBOARD <<< "$4"
-
-AUDIENCE="dome9-gcp-logs-collector"
-TOPIC_NAME="cloudguard-centralized-topic"
-SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
-SUBSCRIPTION_NAME="cloudguard-centralized-subscription"
-MAX_RETRY_DELAY=60
-MIN_RETRY_DELAY=10
-ACK_DEADLINE=60
-EXPIRATION_PERIOD="never"
-SINK_NAME="cloudguard-sink-to-centralized"
-
-# Define the usage function
+# Define the usage function of this script
 usage() {
-    echo "Usage: script.sh -a <arg1> -b <arg2> -c <arg3> -l <list>"
+    echo "Usage: script.sh -r <region> -o <onboarding type> -c <centralized project> -p <list of projects to onboard>"
 }
 
 # Parse the named arguments
-while getopts ":r:l:c:p:" opt; do
+while getopts ":r:o:c:p:" opt; do
     case ${opt} in
         r)
             REGION=${OPTARG}
             ;;
-        l)
-            LOG_TYPE=${OPTARG}
+        o)
+            ONBOARDING_TYPE=${OPTARG}
             ;;
         c)
             CENTRALIZED_PROJECT=${OPTARG}
@@ -48,16 +33,15 @@ while getopts ":r:l:c:p:" opt; do
     esac
 done
 
-echo "$REGION"
-echo "$CENTRALIZED_PROJECT"
-echo "$LOG_TYPE"
-
-# Validate the required arguments
-if [[! -n $REGION ]] || [[! -n $LOG_TYPE ]] || [[! -n $CENTRALIZED_PROJECT ]] || [[! -n $PROJECTS_TO_ONBOARD]]; then
-    echo "Missing required arguments."
-    usage
-    exit 1
-fi
+AUDIENCE="dome9-gcp-logs-collector"
+TOPIC_NAME="cloudguard-centralized-topic"
+SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
+SUBSCRIPTION_NAME="cloudguard-centralized-subscription"
+MAX_RETRY_DELAY=60
+MIN_RETRY_DELAY=10
+ACK_DEADLINE=60
+EXPIRATION_PERIOD="never"
+SINK_NAME="cloudguard-sink-to-centralized"
 
 if [[ "$REGION" == "central" ]]; then
   ENDPOINT="https://gcp-activity-endpoint.330372055916.logic.941298424820.dev.falconetix.com"
@@ -65,14 +49,11 @@ else
   ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
 fi
 
-if [[ "$LOG_TYPE" == "activity" ]]; then
+if [[ "$ONBOARDING_TYPE" == "activity" ]]; then
   LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
 else
   LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")';
 fi
-
-# Split the list argument into an array
-IFS=', ' read -ra PROJECTS_TO_ONBOARD <<< "$projects"
 
 echo""
 echo "setting up default project $CENTRALIZED_PROJECT"
@@ -109,6 +90,9 @@ if [[ ! "$serviceAccount" =~ "0 items" ]]; then
     exit 1
   fi
 fi
+
+# Split the list argument of projects into an array
+IFS=',' read -ra PROJECTS_TO_ONBOARD <<< "$projects"
 
 # delete exsiting sink from each onboarded project if exists
 for PROJECT_ID in "${PROJECTS_TO_ONBOARD[@]}"
@@ -157,7 +141,7 @@ if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
 fi
 
 # sink creation in each onboarded project
-for PROJECT_ID in "$PROJECTS_TO_ONBOARD"
+for PROJECT_ID in "${PROJECTS_TO_ONBOARD[@]}"
 do
 	sink=$(gcloud logging sinks create "$SINK_NAME" pubsub.googleapis.com/projects/"$CENTRALIZED_PROJECT"/topics/"$TOPIC_NAME" \
             --project="$PROJECT_ID" --log-filter="$LOG_FILTER" 2>&1)
