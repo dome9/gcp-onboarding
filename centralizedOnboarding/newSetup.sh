@@ -53,7 +53,7 @@ echo "$CENTRALIZED_PROJECT"
 echo "$LOG_TYPE"
 
 # Validate the required arguments
-if [[ -z $REGION ]] || [[ -z $LOG_TYPE ]] || [[ -z $CENTRALIZED_PROJECT ]] || [[-z $PROJECTS_TO_ONBOARD]]; then
+if [[! -n $REGION ]] || [[! -n $LOG_TYPE ]] || [[! -n $CENTRALIZED_PROJECT ]] || [[! -n $PROJECTS_TO_ONBOARD]]; then
     echo "Missing required arguments."
     usage
     exit 1
