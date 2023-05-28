@@ -1,14 +1,37 @@
 #!/bin/bash
 
-echo""
-echo "setting up default project $2"
-gcloud config set project $2
-echo "Enabling Deployment Manager APIs, which you will need for this deployment."
-gcloud services enable deploymentmanager.googleapis.com
+# Define the usage function of this script
+usage() {
+    echo "Usage: script.sh -r <region> -o <onboarding type> -c <centralized project> -t <pubsub topic name>"
+}
 
-REGION=$1
-CENTRALIZED_PROJECT=$2
-PUBSUB_TOPIC_NAME = $3
+# Parse the named arguments
+while getopts ":r:o:c:t:" opt; do
+    case ${opt} in
+        r)
+            REGION=${OPTARG}
+            ;;
+        o)
+            ONBOARDING_TYPE=${OPTARG}
+            ;;
+        c)
+            CENTRALIZED_PROJECT=${OPTARG}
+            ;;
+        t)
+            PUBSUB_TOPIC_NAME=${OPTARG}
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG"
+            usage
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument."
+            usage
+            exit 1
+            ;;
+    esac
+done
 
 AUDIENCE="dome9-gcp-logs-collector"
 SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication-es"
@@ -23,6 +46,17 @@ if [[ "$REGION" == "central" ]]; then
 else
   ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
 fi
+
+echo""
+echo "setting up default project $CENTRALIZED_PROJECT"
+gcloud config set project $CENTRALIZED_PROJECT
+echo "Enabling Deployment Manager APIs, which you will need for this deployment."
+gcloud services enable deploymentmanager.googleapis.com
+echo ""
+
+echo""
+echo "Start cleaning redundant resources from previous deployment if exist."
+echo ""
 
 # delete exsiting subscription if exists
 pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" --quiet 2>&1)
@@ -54,6 +88,10 @@ if [[ "$serviceAccount" =~ "ERROR" ]]; then
     exit 1
 fi
 
+echo ""
+echo "Cleanup completed, starting onboarding process..."
+echo ""
+
 # subscription creation
 pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
                            --topic="$PUBSUB_TOPIC_NAME" \
@@ -70,6 +108,7 @@ if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
     exit 1
 fi
 
+echo ""
 green='\033[0;32m'
 clear='\033[0m'
 bold=$(tput bold)
