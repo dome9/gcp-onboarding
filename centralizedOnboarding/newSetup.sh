@@ -48,6 +48,10 @@ while getopts ":region:logType:centralizedProject:projectsToOnboard:" opt; do
     esac
 done
 
+echo "$REGION"
+echo "$CENTRALIZED_PROJECT"
+echo "$LOG_TYPE"
+
 # Validate the required arguments
 if [[ -z $REGION ]] || [[ -z $LOG_TYPE ]] || [[ -z $CENTRALIZED_PROJECT ]] || [[-z $PROJECTS_TO_ONBOARD]]; then
     echo "Missing required arguments."
