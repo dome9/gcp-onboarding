@@ -33,9 +33,13 @@ while getopts ":r:o:c:t:" opt; do
     esac
 done
 
+if [[ $ONBOARDING_TYPE != "activity" && $ONBOARDING_TYPE != "flowlogs" ]]; then
+  echo "invalid onboarding type, EXITING WITHOUT DEPLOYMENT!"
+  exit 1
+
 AUDIENCE="dome9-gcp-logs-collector"
-SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication-es"
-SUBSCRIPTION_NAME="cloudguard-centralized-subscription-es"
+SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-auth-es"
+SUBSCRIPTION_NAME="cloudguard-$ONBOARDING_TYPE-centralized-subscription-es"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10
 ACK_DEADLINE=60
@@ -55,7 +59,7 @@ gcloud services enable deploymentmanager.googleapis.com
 echo ""
 
 echo""
-echo "Start cleaning redundant resources from previous deployment if exist."
+echo "Start cleaning redundant resources from previous deployment if exist..."
 echo ""
 
 # delete exsiting subscription if exists
