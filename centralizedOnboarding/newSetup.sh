@@ -1,11 +1,5 @@
 #!/bin/bash
 
-echo""
-echo "setting up default project $2"
-gcloud config set project $2
-echo "Enabling Deployment Manager APIs, which you will need for this deployment."
-gcloud services enable deploymentmanager.googleapis.com
-
 #REGION=$1
 #LOG_TYPE=$2
 #CENTRALIZED_PROJECT=$3
@@ -70,6 +64,12 @@ fi
 
 # Split the list argument into an array
 IFS=', ' read -ra PROJECTS_TO_ONBOARD <<< "$projects"
+
+echo""
+echo "setting up default project $CENTRALIZED_PROJECT"
+gcloud config set project $CENTRALIZED_PROJECT
+echo "Enabling Deployment Manager APIs, which you will need for this deployment."
+gcloud services enable deploymentmanager.googleapis.com
 
 # delete exsiting subscription if exists
 pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" --quiet 2>&1)
