@@ -6,10 +6,11 @@ gcloud config set project $2
 echo "Enabling Deployment Manager APIs, which you will need for this deployment."
 gcloud services enable deploymentmanager.googleapis.com
 
-REGION=$1
-CENTRALIZED_PROJECT=$2
-shift
-shift
+#REGION=$1
+#LOG_TYPE=$2
+#CENTRALIZED_PROJECT=$3
+#IFS=', ' read -ra PROJECTS_TO_ONBOARD <<< "$4"
+
 AUDIENCE="dome9-gcp-logs-collector"
 TOPIC_NAME="cloudguard-centralized-topic"
 SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
@@ -19,13 +20,56 @@ MIN_RETRY_DELAY=10
 ACK_DEADLINE=60
 EXPIRATION_PERIOD="never"
 SINK_NAME="cloudguard-sink-to-centralized"
-LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
 
 if [[ "$REGION" == "central" ]]; then
   ENDPOINT="https://gcp-activity-endpoint.330372055916.logic.941298424820.dev.falconetix.com"
 else
   ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
 fi
+
+if [[ "$LOG_TYPE" == "activity" ]]; then
+  LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
+else
+  LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")';
+fi
+
+# Parse the named arguments
+while getopts ":region:logType:centralizedProject:projectsToOnboard:" opt; do
+    case ${opt} in
+        region)
+            REGION=${OPTARG}
+            ;;
+        logType)
+            LOG_TYPE=${OPTARG}
+            ;;
+        centralizedProject)
+            CENTRALIZED_PROJECT=${OPTARG}
+            ;;
+        projectsToOnboard)
+                    projects=${OPTARG}
+                    ;;
+        \?)
+            echo "Invalid option: -$OPTARG"
+            usage
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument."
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+# Validate the required arguments
+if [[ -z $REGION ]] || [[ -z $LOG_TYPE ]] || [[ -z $CENTRALIZED_PROJECT ]] || [[-z $PROJECTS_TO_ONBOARD]]; then
+    echo "Missing required arguments."
+    usage
+    exit 1
+fi
+
+# Split the list argument into an array
+IFS=', ' read -ra PROJECTS_TO_ONBOARD <<< "$projects"
 
 # delete exsiting subscription if exists
 pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" --quiet 2>&1)
@@ -58,7 +102,7 @@ if [[ ! "$serviceAccount" =~ "0 items" ]]; then
 fi
 
 # delete exsiting sink from each onboarded project if exists
-for PROJECT_ID in "$@"
+for PROJECT_ID in "${PROJECTS_TO_ONBOARD[@]}"
 do
 	sink=$(gcloud logging sinks list --project="$PROJECT_ID" --filter="name.scope(sink):"$SINK_NAME"" 2>&1)
 	if [[ ! "$sink" =~ "0 items" ]]; then
@@ -104,7 +148,7 @@ if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
 fi
 
 # sink creation in each onboarded project
-for PROJECT_ID in "$@"
+for PROJECT_ID in "$PROJECTS_TO_ONBOARD"
 do
 	sink=$(gcloud logging sinks create "$SINK_NAME" pubsub.googleapis.com/projects/"$CENTRALIZED_PROJECT"/topics/"$TOPIC_NAME" \
             --project="$PROJECT_ID" --log-filter="$LOG_FILTER" 2>&1)
