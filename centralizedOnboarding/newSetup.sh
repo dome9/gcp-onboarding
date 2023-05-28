@@ -15,6 +15,11 @@ ACK_DEADLINE=60
 EXPIRATION_PERIOD="never"
 SINK_NAME="cloudguard-sink-to-centralized"
 
+# Define the usage function
+usage() {
+    echo "Usage: script.sh -a <arg1> -b <arg2> -c <arg3> -l <list>"
+}
+
 # Parse the named arguments
 while getopts ":region:logType:centralizedProject:projectsToOnboard:" opt; do
     case ${opt} in
