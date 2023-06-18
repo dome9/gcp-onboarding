@@ -33,13 +33,14 @@ while getopts ":r:o:c:t:" opt; do
     esac
 done
 
-if [[ $ONBOARDING_TYPE != "activity" && $ONBOARDING_TYPE != "flowlogs" ]]; then
+if [[ $ONBOARDING_TYPE != "AccountActivity" && $ONBOARDING_TYPE != "NetworkTraffic" ]]; then
   echo "invalid onboarding type, EXITING WITHOUT DEPLOYMENT!"
   exit 1
 
+# Don't change those namings because some validation functions using these values to check onboarding status after onboarding finished.
 AUDIENCE="dome9-gcp-logs-collector"
 SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-auth-es"
-SUBSCRIPTION_NAME="cloudguard-$ONBOARDING_TYPE-centralized-subscription-es"
+SUBSCRIPTION_NAME="cloudguard-centralized-$ONBOARDING_TYPE-subscription-es"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10
 ACK_DEADLINE=60

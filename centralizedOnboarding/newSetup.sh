@@ -33,25 +33,26 @@ while getopts ":r:o:c:p:" opt; do
     esac
 done
 
-if [[ $ONBOARDING_TYPE == "activity" ]]; then
+if [[ $ONBOARDING_TYPE == "AccountActivity" ]]; then
     LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
 
-elif [[ $ONBOARDING_TYPE == "flowlogs" ]]; then
+elif [[ $ONBOARDING_TYPE == "NetworkTraffic" ]]; then
     LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")'
 else
   echo "invalid onboarding type, EXITING WITHOUT DEPLOYMENT!"
   exit 1
 fi
 
+# Don't change those namings because some validation functions using these values to check onboarding status after onboarding finished.
+TOPIC_NAME="cloudguard-centralized-$ONBOARDING_TYPE-topic"
+SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-auth"
+SUBSCRIPTION_NAME="cloudguard-centralized-$ONBOARDING_TYPE-subscription"
+SINK_NAME="cloudguard-$ONBOARDING_TYPE-sink-to-centralized"
 AUDIENCE="dome9-gcp-logs-collector"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10
 ACK_DEADLINE=60
 EXPIRATION_PERIOD="never"
-TOPIC_NAME="cloudguard-$ONBOARDING_TYPE-centralized-topic"
-SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-auth"
-SUBSCRIPTION_NAME="cloudguard-$ONBOARDING_TYPE-centralized-subscription"
-SINK_NAME="cloudguard-$ONBOARDING_TYPE-sink-to-centralized"
 
 if [[ $REGION == "central" ]]; then
   ENDPOINT="https://gcp-activity-endpoint.330372055916.logic.941298424820.dev.falconetix.com"
