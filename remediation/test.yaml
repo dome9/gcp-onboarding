@@ -2,6 +2,7 @@ resources:
   - name: yaelRole1
     type: gcp-types/iam-v1:projects.roles
     properties:
+      parent: projects/chkp-gcp-yaelel-box
       roleId: yaelRole1
       role:
         title: yaelRole1
