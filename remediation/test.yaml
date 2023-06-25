@@ -1,8 +1,7 @@
 resources:
   - name: yaelRole1
-    type: gcp-types/iam-v1:projects.roles
+    type: iam.v1.role
     properties:
-      parent: projects/your-project-id
       roleId: yaelRole1
       role:
         title: yaelRole1
@@ -25,20 +24,20 @@ resources:
           - storage.buckets.setIamPolicy
 
   - name: yaelServiceAccount1
-    type: gcp-types/iam-v1:projects.serviceAccounts
+    type: iam.v1.serviceAccount
     properties:
       accountId: yaelServiceAccount1
       displayName: yaelServiceAccount1
+      project: your-project-id
 
   - name: yaelRoleBinding1
-    action: gcp-types/cloudresourcemanager-v1:cloudresourcemanager.projects.setIamPolicy
+    type: iam.v1.binding
     properties:
-      resource: projects/your-project-id
-      policy:
-        bindings:
-          - role: projects/your-project-id/roles/$(ref.yaelRole1.roleId)
-            members:
-              - serviceAccount:$(ref.yaelServiceAccount1.email)
+      role: $(ref.yaelRole1.name)
+      members:
+        - serviceAccount:$(ref.yaelServiceAccount1.email)
+      etag: $(ref.yaelRole1.etag)
+      project: your-project-id
 
   - name: yaelFunction1
     type: gcp-types/cloudfunctions-v1:projects.locations.functions
@@ -47,7 +46,6 @@ resources:
       function:
         name: yaelFunction1
         runtime: python37
-        sourceArchiveUrl: gs://your-bucket/function.zip
         httpsTrigger: {}
         ingressSettings: ALLOW_ALL
         serviceAccountEmail: $(ref.yaelServiceAccount1.email)
@@ -56,10 +54,7 @@ resources:
         entryPoint: main
 
   - name: yaelBucket1
-    type: gcp-types/storage-v1:buckets
+    type: storage.v1.bucket
     properties:
       bucket: yaelBucket1
-
-# Handling for potential "COLLECTION_NOT_FOUND" errors
-imports:
-  - path: "https://storage.googleapis.com/deploymentmanager-community-resources/cloud-foundation-toolkit/secure-baseline/secure-baseline.py"
+      project: chkp-gcp-yaelel-box
