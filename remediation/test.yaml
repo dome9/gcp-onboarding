@@ -31,10 +31,10 @@ resources:
       displayName: yaelServiceAccount1
 
   - name: yaelRoleBinding1
-    type: gcp-types/iam-v1:projects.serviceAccounts.setIamPolicy
+    action: gcp-types/cloudresourcemanager-v1:cloudresourcemanager.projects.setIamPolicy
     properties:
-      resource: $(ref.yaelServiceAccount1.name)
-      policyData:
+      resource: projects/your-project-id
+      policy:
         bindings:
           - role: projects/your-project-id/roles/$(ref.yaelRole1.roleId)
             members:
@@ -59,3 +59,7 @@ resources:
     type: gcp-types/storage-v1:buckets
     properties:
       bucket: yaelBucket1
+
+# Handling for potential "COLLECTION_NOT_FOUND" errors
+imports:
+  - path: "https://storage.googleapis.com/deploymentmanager-community-resources/cloud-foundation-toolkit/secure-baseline/secure-baseline.py"
