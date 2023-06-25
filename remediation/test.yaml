@@ -33,10 +33,9 @@ resources:
   - name: yaelRoleBinding1
     type: iam.v1.binding
     properties:
-      role: $(ref.yaelRole1.name)
+      role: projects/chkp-gcp-yaelel-box/roles/remediation create role
       members:
         - serviceAccount:$(ref.yaelServiceAccount1.email)
-        - role: roles/iam.roleAdmin
       etag: $(ref.yaelRole1.etag)
       project: chkp-gcp-yaelel-box
 
