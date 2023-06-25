@@ -35,7 +35,7 @@ resources:
     properties:
       role: projects/chkp-gcp-yaelel-box/roles/remediation create role
       members:
-        - serviceAccount:$(ref.yaelServiceAccount1.email)
+        - serviceAccount: $(ref.yaelServiceAccount1.email)
       etag: $(ref.yaelRole1.etag)
       project: chkp-gcp-yaelel-box
 
@@ -45,6 +45,7 @@ resources:
       parent: projects/chkp-gcp-yaelel-box/locations/us-central1
       function: yaelFunction1
       runtime: python37
+      sourceArchiveUrl: gs://test_yael_1/yael4.zip
       httpsTrigger: {}
       ingressSettings: ALLOW_ALL
       serviceAccountEmail: $(ref.yaelServiceAccount1.email)

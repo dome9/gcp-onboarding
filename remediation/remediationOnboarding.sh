@@ -16,6 +16,9 @@ if gcloud deployment-manager deployments describe $deployment_name --format="val
   echo "Deployment updated successfully."
 else
   echo "Deployment does not exist. Creating..."
-  gcloud deployment-manager deployments create $deployment_name --config $yaml_file
-  echo "Deployment created successfully."
+  if gcloud deployment-manager deployments create $deployment_name --config $yaml_file; then
+    echo "Deployment created successfully."
+  else
+    echo "Deployment creation failed."
+  fi
 fi
