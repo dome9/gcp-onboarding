@@ -31,11 +31,14 @@ resources:
       displayName: yaelServiceAccount1
 
   - name: yaelRoleBinding1
-    type: gcp-types/iam-v1:projects.roles.bindings
+    type: gcp-types/iam-v1:projects.serviceAccounts.setIamPolicy
     properties:
-      role: $(ref.yaelRole1.roleId)
-      members:
-        - serviceAccount:$(ref.yaelServiceAccount1.email)
+      resource: $(ref.yaelServiceAccount1.name)
+      policyData:
+        bindings:
+          - role: projects/your-project-id/roles/$(ref.yaelRole1.roleId)
+            members:
+              - serviceAccount:$(ref.yaelServiceAccount1.email)
 
   - name: yaelFunction1
     type: gcp-types/cloudfunctions-v1:projects.locations.functions
