@@ -1,6 +1,6 @@
 resources:
   - name: yaelRole1
-    type: iam.v1.Role
+    type: gcp-types/iam-v1:projects.roles
     properties:
       roleId: yaelRole1
       role:
