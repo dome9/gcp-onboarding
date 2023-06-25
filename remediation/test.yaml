@@ -1,6 +1,6 @@
 resources:
   - name: yaelRole1
-    type: roles/v1beta.Role
+    type: iam.v1.Role
     properties:
       roleId: yaelRole1
       role:
