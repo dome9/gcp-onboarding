@@ -28,7 +28,7 @@ resources:
     properties:
       accountId: yaelServiceAccount1
       displayName: yaelServiceAccount1
-      project: your-project-id
+      project: chkp-gcp-yaelel-box
 
   - name: yaelRoleBinding1
     type: iam.v1.binding
@@ -37,21 +37,20 @@ resources:
       members:
         - serviceAccount:$(ref.yaelServiceAccount1.email)
       etag: $(ref.yaelRole1.etag)
-      project: your-project-id
+      project: chkp-gcp-yaelel-box
 
   - name: yaelFunction1
     type: gcp-types/cloudfunctions-v1:projects.locations.functions
     properties:
-      parent: projects/your-project-id/locations/us-central1
-      function:
-        name: yaelFunction1
-        runtime: python37
-        httpsTrigger: {}
-        ingressSettings: ALLOW_ALL
-        serviceAccountEmail: $(ref.yaelServiceAccount1.email)
-        labels:
-          created-by: deployment-manager
-        entryPoint: main
+      parent: projects/chkp-gcp-yaelel-box/locations/us-central1
+      function: yaelFunction1  # Updated the function property to a string
+      runtime: python37
+      httpsTrigger: {}
+      ingressSettings: ALLOW_ALL
+      serviceAccountEmail: $(ref.yaelServiceAccount1.email)
+      labels:
+        created-by: deployment-manager
+      entryPoint: main
 
   - name: yaelBucket1
     type: storage.v1.bucket
