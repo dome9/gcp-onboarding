@@ -1,6 +1,6 @@
 resources:
   - name: yaelRole1
-    type: iam.v1.role
+    type: roles/v1beta.Role
     properties:
       roleId: yaelRole1
       role:
@@ -43,7 +43,7 @@ resources:
     type: gcp-types/cloudfunctions-v1:projects.locations.functions
     properties:
       parent: projects/chkp-gcp-yaelel-box/locations/us-central1
-      function: yaelFunction1  # Updated the function property to a string
+      function: yaelFunction1
       runtime: python37
       httpsTrigger: {}
       ingressSettings: ALLOW_ALL
