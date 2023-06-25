@@ -1,7 +1,18 @@
 #!/bin/bash
 
-echo "setting up $1"
-gcloud config set $1
+
+# Set the deployment name
+deployment_name="yael-deployment"
+
+# Set the YAML file name
+yaml_file="test.yaml"
+
+
 echo "Enabling Deployment Manager APIs, which you will need for this deployment."
 gcloud services enable deploymentmanager.googleapis.com
-sh ../remediationOnboarding.sh "GCP Remediation Onboarding" $1
+
+echo "Creating deployment..."
+gcloud deployment-manager deployments create $deployment_name --config $yaml_file
+
+echo "Deployment created successfully."
+
