@@ -32,7 +32,26 @@ resources:
   - name: yaelRoleBinding1
     type: gcp-types/iam-v1:projects.roles.bindings
     properties:
-      role: $(ref.yaelRole1.name)
+      role: $(ref.yaelRole1.roleId)
       members:
         - serviceAccount:$(ref.yaelServiceAccount1.email)
-      etag: $(ref.yaelRole1
+
+  - name: yaelFunction1
+    type: gcp-types/cloudfunctions-v1:projects.locations.functions
+    properties:
+      parent: projects/your-project-id/locations/us-central1
+      function:
+        name: yaelFunction1
+        runtime: python37
+        sourceArchiveUrl: gs://your-bucket/function.zip
+        httpsTrigger: {}
+        ingressSettings: ALLOW_ALL
+        serviceAccountEmail: $(ref.yaelServiceAccount1.email)
+        labels:
+          created-by: deployment-manager
+        entryPoint: main
+
+  - name: yaelBucket1
+    type: gcp-types/storage-v1:buckets
+    properties:
+      bucket: yaelBucket1
