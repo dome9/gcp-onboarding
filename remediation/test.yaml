@@ -36,6 +36,7 @@ resources:
       role: $(ref.yaelRole1.name)
       members:
         - serviceAccount:$(ref.yaelServiceAccount1.email)
+        - role: roles/iam.roleAdmin
       etag: $(ref.yaelRole1.etag)
       project: chkp-gcp-yaelel-box
 
