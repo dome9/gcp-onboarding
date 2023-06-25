@@ -29,7 +29,6 @@ resources:
     properties:
       accountId: yaelServiceAccount1
       displayName: yaelServiceAccount1
-      project: chkp-gcp-yaelel-box
 
   - name: yaelRoleBinding1
     type: iam.v1.binding
@@ -53,7 +52,7 @@ resources:
         created-by: deployment-manager
       entryPoint: main
 
-  - name: yaelBucket1
+  - name: yaelbucket-a
     type: storage.v1.bucket
     properties:
       bucket: yaelBucket1
