@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the deployment name
-deployment_name="yael-deployment3"
+deployment_name="$1"
 
 # Set the YAML file name
 yaml_file="test.yaml"
