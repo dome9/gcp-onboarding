@@ -1,0 +1,61 @@
+resources:
+  - name: yaelRole1
+    type: iam.v1.role
+    properties:
+      roleId: yaelRole1
+      role:
+        title: yaelRole1
+        description: Custom role with specific permissions
+        includedPermissions:
+          - cloudsql.instances.get
+          - cloudsql.instances.update
+          - compute.firewalls.delete
+          - compute.instances.get
+          - compute.instances.setLabels
+          - compute.instances.stop
+          - compute.instances.deleteAccessConfig
+          - compute.networks.updatePolicy
+          - compute.subnetworks.get
+          - compute.subnetworks.setPrivateIpGoogleAccess
+          - compute.subnetworks.update
+          - container.clusters.update
+          - gkemulticloud.awsNodePools.update
+          - storage.buckets.getIamPolicy
+          - storage.buckets.setIamPolicy
+
+  - name: yaelServiceAccount1
+    type: iam.v1.serviceAccount
+    properties:
+      accountId: yaelServiceAccount1
+      displayName: yaelServiceAccount1
+      project: your-project-id
+
+  - name: yaelRoleBinding1
+    type: iam.v1.binding
+    properties:
+      role: $(ref.yaelRole1.name)
+      members:
+        - serviceAccount:$(ref.yaelServiceAccount1.email)
+      etag: $(ref.yaelRole1.etag)
+      project: your-project-id
+
+  - name: yaelFunction1
+    type: gcp-types/cloudfunctions-v1:projects.locations.functions
+    properties:
+      parent: projects/your-project-id/locations/us-central1
+      function:
+        name: yaelFunction1
+        runtime: python37
+        sourceArchiveUrl: gs://your-bucket/function.zip
+        httpsTrigger: {}
+        ingressSettings: ALLOW_ALL
+        serviceAccountEmail: $(ref.yaelServiceAccount1.email)
+        labels:
+          created-by: deployment-manager
+        entryPoint: main
+
+  - name: yaelBucket1
+    type: storage.v1.bucket
+    properties:
+      bucket: yaelBucket1
+      project: your-project-id
