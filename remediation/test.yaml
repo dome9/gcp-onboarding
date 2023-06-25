@@ -1,7 +1,8 @@
 resources:
   - name: yaelRole1
-    type: iam.v1.role
+    type: roles/v1beta.Role
     properties:
+      parent: projects/chkp-gcp-yaelel-box
       roleId: yaelRole1
       role:
         title: yaelRole1
@@ -28,14 +29,14 @@ resources:
     properties:
       accountId: yaelServiceAccount1
       displayName: yaelServiceAccount1
-      project: chkp-gcp-yaelel-box
+      projectId: chkp-gcp-yaelel-box
 
   - name: yaelRoleBinding1
     type: iam.v1.binding
     properties:
       role: $(ref.yaelRole1.name)
       members:
-        - serviceAccount:$(ref.yaelServiceAccount1.email)
+        - serviceAccount: $(ref.yaelServiceAccount1.email)
       etag: $(ref.yaelRole1.etag)
       project: chkp-gcp-yaelel-box
 
@@ -43,7 +44,7 @@ resources:
     type: gcp-types/cloudfunctions-v1:projects.locations.functions
     properties:
       parent: projects/chkp-gcp-yaelel-box/locations/us-central1
-      function: yaelFunction1  # Updated the function property to a string
+      function: yaelFunction1
       runtime: python37
       httpsTrigger: {}
       ingressSettings: ALLOW_ALL
