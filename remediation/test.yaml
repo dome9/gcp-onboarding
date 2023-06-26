@@ -31,7 +31,7 @@ resources:
       displayName: yaelServiceAccount1
 
   - name: yaelRoleBinding1
-    type: iam.v1.binding
+    type: gcp-types/iam-v1:projects.roles.bindings
     properties:
       role: projects/chkp-gcp-yaelel-box/roles/remediation create role
       members:
