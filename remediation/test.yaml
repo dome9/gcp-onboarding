@@ -1,11 +1,11 @@
 resources:
-  - name: yaelRole1
+  - name: yaelRole2
     type: gcp-types/iam-v1:projects.roles
     properties:
       parent: projects/chkp-gcp-yaelel-box
-      roleId: yaelRole1
+      roleId: yaelRole2
       role:
-        title: yaelRole1
+        title: yaelRole2
         description: Custom role with specific permissions
         includedPermissions:
           - cloudsql.instances.get
@@ -36,7 +36,7 @@ resources:
       role: projects/chkp-gcp-yaelel-box/roles/remediation create role
       members:
         - serviceAccount: $(ref.yaelServiceAccount1.email)
-      etag: $(ref.yaelRole1.etag)
+      etag: $(ref.yaelRole2.etag)
       project: chkp-gcp-yaelel-box
 
   - name: yaelFunction1

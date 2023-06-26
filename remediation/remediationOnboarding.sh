@@ -8,7 +8,8 @@ yaml_file="test.yaml"
 
 echo "Enabling Deployment Manager APIs, which you will need for this deployment."
 gcloud services enable deploymentmanager.googleapis.com
-
+gcloud services enable deploymentmanager.googleapis.com cloudfunctions.googleapis.com iam.googleapis.com storage-component.googleapis.com
+sleep 3
 echo "Creating or updating deployment..."
 if gcloud deployment-manager deployments describe $deployment_name --format="value(name)" &> /dev/null; then
   echo "Deployment exists. Updating..."
