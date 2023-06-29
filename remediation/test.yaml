@@ -31,7 +31,7 @@ resources:
       displayName: yaelServiceAccount1
 
   - name: yaelRoleBinding1
-    type: iam.cnrm.cloud.google.com/v1beta1:IAMPolicy
+    type: gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding
     properties:
       resourceRef:
         apiVersion: iam.cnrm.cloud.google.com/v1beta1
