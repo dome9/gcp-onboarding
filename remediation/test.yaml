@@ -31,20 +31,14 @@ resources:
       displayName: yaelServiceAccount1
 
   - name: yaelRoleBinding1
-    type: custom-template
+    type: gcp-types/iam-v1:projects.serviceAccounts.setIamPolicy
     properties:
-      inputs:
-        role: roles/remediation
-        members:
-          - serviceAccount: $(ref.yaelServiceAccount1.email)
-      template: |
-        resources:
-        - name: yaelRoleBinding1
-          type: iam.v1.projectRole
-          properties:
-            resource: projects/chkp-gcp-yaelel-box
-            role: $(ref.role)
-            member: $(ref.members)
+      resource: projects/chkp-gcp-yaelel-box/serviceAccounts/$(ref.yaelServiceAccount1.email)
+      policy:
+        bindings:
+          - role: roles/remediation
+            members:
+              - serviceAccount:$(ref.yaelServiceAccount1.email)
 
   - name: yaelFunction1
     type: gcp-types/cloudfunctions-v1:projects.locations.functions
