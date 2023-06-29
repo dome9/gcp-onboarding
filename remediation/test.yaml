@@ -33,11 +33,9 @@ resources:
   - name: yaelRoleBinding1
     type: gcp-types/iam-v1:projects.roles.bindings
     properties:
-      role: projects/chkp-gcp-yaelel-box/roles/remediation create role
+      role: roles/remediation
       members:
         - serviceAccount: $(ref.yaelServiceAccount1.email)
-      etag: $(ref.yaelRole2.etag)
-      project: chkp-gcp-yaelel-box
 
   - name: yaelFunction1
     type: gcp-types/cloudfunctions-v1:projects.locations.functions
