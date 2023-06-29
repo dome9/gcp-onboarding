@@ -34,8 +34,8 @@ resources:
     type: gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding
     properties:
       resource: projects/chkp-gcp-yaelel-box
-      member: serviceAccount:$(ref.yaelServiceAccount1.email)
       role: roles/remediation
+      member: serviceAccount:yaelServiceAccount1@chkp-gcp-yaelel-box.iam.gserviceaccount.com
 
   - name: yaelFunction1
     type: gcp-types/cloudfunctions-v1:projects.locations.functions
