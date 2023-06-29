@@ -33,7 +33,7 @@ resources:
   - name: yaelRoleBinding1
     type: gcp-types/iam-v1:projects.roleBindings
     properties:
-      role: roles/remediation
+      role: projects/chkp-gcp-yaelel-box/roles/remediation
       members:
         - serviceAccount: $(ref.yaelServiceAccount1.email)
 
