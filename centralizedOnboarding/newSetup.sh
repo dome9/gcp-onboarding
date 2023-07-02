@@ -118,7 +118,7 @@ echo "Cleanup completed, starting onboarding process..."
 echo ""
 
 # service account creation
-service_account_info=$(gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com --format="value(email)" 2>&1)
+serviceAccount=$(gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com --format="value(email)" 2>&1)
 if [[ ! $? -eq 0 ]]; then
   serviceAccount=$(gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME --display-name="$SERVICE_ACCOUNT_NAME" 2>&1)
     if [[ "$serviceAccount" =~ "ERROR" ]]; then
