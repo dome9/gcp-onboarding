@@ -2,14 +2,14 @@
 
 # Define the usage function of this script
 usage() {
-    echo "Usage: script.sh -r <region> -o <onboarding type> -c <centralized project> -t <pubsub topic name>"
+    echo "Usage: script.sh -e <endpoint> -o <onboarding type> -c <centralized project> -t <pubsub topic name>"
 }
 
 # Parse the named arguments
-while getopts ":r:o:c:t:" opt; do
+while getopts ":e:o:c:t:s:" opt; do
     case ${opt} in
         r)
-            REGION=${OPTARG}
+            ENDPOINT=${OPTARG}
             ;;
         o)
             ONBOARDING_TYPE=${OPTARG}
@@ -19,6 +19,9 @@ while getopts ":r:o:c:t:" opt; do
             ;;
         t)
             PUBSUB_TOPIC_NAME=${OPTARG}
+            ;;
+        s)
+            SUBSCRIPTION_NAME=${OPTARG}
             ;;
         \?)
             echo "Invalid option: -$OPTARG"
@@ -40,17 +43,10 @@ if [[ $ONBOARDING_TYPE != "AccountActivity" && $ONBOARDING_TYPE != "NetworkTraff
 # Don't change those namings because some validation functions using these values to check onboarding status after onboarding finished.
 AUDIENCE="dome9-gcp-logs-collector"
 SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-auth-es"
-SUBSCRIPTION_NAME="cloudguard-centralized-$ONBOARDING_TYPE-subscription-es"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10
 ACK_DEADLINE=60
 EXPIRATION_PERIOD="never"
-
-if [[ "$REGION" == "central" ]]; then
-  ENDPOINT="https://gcp-activity-endpoint.330372055916.logic.941298424820.dev.falconetix.com"
-else
-  ENDPOINT="https://gcp-activity-endpoint.logic."$REGION".dome9.com"
-fi
 
 echo""
 echo "setting up default project $CENTRALIZED_PROJECT"
@@ -63,18 +59,8 @@ echo""
 echo "Start cleaning redundant resources from previous deployment if exist..."
 echo ""
 
-# delete exsiting subscription if exists
-pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" --quiet 2>&1)
-if [[ ! "$pubsubSubscription" =~ "0 items" ]]; then
-  pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME")
-  if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
-    echo "could not delete existing subscription "$SUBSCRIPTION_NAME" EXITING WITHOUT DEPLOYMENT"
-    exit 1
-  fi
-fi
 
-
-# delete exsiting service account if exists
+# delete existing service account if exists
 serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME" 2>&1)
 if [[ ! "$serviceAccount" =~ "0 items" ]]; then
   serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com --quiet)

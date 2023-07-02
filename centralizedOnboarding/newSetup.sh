@@ -2,14 +2,14 @@
 
 # Define the usage function of this script
 usage() {
-    echo "Usage: script.sh -r <region> -o <onboarding type> -c <centralized project> -p <list of projects to onboard>"
+    echo "Usage: script.sh -e <endpoint> -o <onboarding type> -c <centralized project> -p <list of projects to onboard>"
 }
 
 # Parse the named arguments
-while getopts ":r:o:c:p:" opt; do
+while getopts ":e:o:c:t:s:p:" opt; do
     case ${opt} in
         r)
-            REGION=${OPTARG}
+            ENDPOINT=${OPTARG}
             ;;
         o)
             ONBOARDING_TYPE=${OPTARG}
@@ -17,8 +17,14 @@ while getopts ":r:o:c:p:" opt; do
         c)
             CENTRALIZED_PROJECT=${OPTARG}
             ;;
+        t)
+            TOPIC_NAME=${OPTARG}
+            ;;
+        s)
+            SUBSCRIPTION_NAME=${OPTARG}
+            ;;
         p)
-            projects=${OPTARG}
+            PROJECTS=${OPTARG}
             ;;
         \?)
             echo "Invalid option: -$OPTARG"
@@ -43,22 +49,13 @@ else
   exit 1
 fi
 
-# Don't change those namings because some validation functions using these values to check onboarding status after onboarding finished.
-TOPIC_NAME="cloudguard-centralized-$ONBOARDING_TYPE-topic"
 SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-auth"
-SUBSCRIPTION_NAME="cloudguard-centralized-$ONBOARDING_TYPE-subscription"
 SINK_NAME="cloudguard-$ONBOARDING_TYPE-sink-to-centralized"
 AUDIENCE="dome9-gcp-logs-collector"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10
 ACK_DEADLINE=60
 EXPIRATION_PERIOD="never"
-
-if [[ $REGION == "central" ]]; then
-  ENDPOINT="https://gcp-activity-endpoint.330372055916.logic.941298424820.dev.falconetix.com"
-else
-  ENDPOINT="https://gcp-activity-endpoint.logic.$REGION.dome9.com"
-fi
 
 echo""
 echo "setting up default project $CENTRALIZED_PROJECT"
@@ -101,7 +98,7 @@ if [[ ! "$serviceAccount" =~ "0 items" ]]; then
 fi
 
 # Split the list argument of projects into an array
-IFS=',' read -ra PROJECTS_TO_ONBOARD <<< "$projects"
+IFS=' ' read -ra PROJECTS_TO_ONBOARD <<< "$PROJECTS"
 
 # delete exsiting sink from each onboarded project if exists
 for PROJECT_ID in "${PROJECTS_TO_ONBOARD[@]}"
