@@ -8,7 +8,7 @@ usage() {
 # Parse the named arguments
 while getopts ":e:o:c:t:p:" opt; do
     case ${opt} in
-        r)
+        e)
             ENDPOINT=${OPTARG}
             ;;
         o)
