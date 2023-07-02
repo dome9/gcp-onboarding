@@ -49,7 +49,7 @@ else
   exit 1
 fi
 
-SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-auth"
+SERVICE_ACCOUNT_NAME="cloudguard-logs-auth"
 SINK_NAME="cloudguard-$ONBOARDING_TYPE-sink-to-centralized"
 AUDIENCE="dome9-gcp-logs-collector"
 MAX_RETRY_DELAY=60
@@ -118,12 +118,15 @@ echo "Cleanup completed, starting onboarding process..."
 echo ""
 
 # service account creation
-serviceAccount=$(gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME --display-name="$SERVICE_ACCOUNT_NAME" 2>&1)
-echo "$serviceAccount"
-if [[ "$serviceAccount" =~ "ERROR" ]]; then
-    echo "could not create service account "$SERVICE_ACCOUNT_NAME", EXITING WITHOUT DEPLOYMENT!"
-    exit 1
+service_account_info=$(gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com --format="value(email)" 2>&1)
+if [[ ! $? -eq 0 ]]; then
+  serviceAccount=$(gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME --display-name="$SERVICE_ACCOUNT_NAME" 2>&1)
+    if [[ "$serviceAccount" =~ "ERROR" ]]; then
+        echo "could not create service account "$SERVICE_ACCOUNT_NAME", EXITING WITHOUT DEPLOYMENT!"
+        exit 1
+    fi
 fi
+
 
 # topic creation
 topic=$(gcloud pubsub topics create "$TOPIC_NAME" 2>&1)
