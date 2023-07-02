@@ -26,6 +26,7 @@ while getopts ":s:p:" opt; do
             ;;
     esac
 done
+IFS=' ' read -ra PROJECTS_TO_ONBOARD <<< "$PROJECTS"
 
 # sink creation in each onboarded project
 for PROJECT_ID in "${PROJECTS_TO_ONBOARD[@]}"
