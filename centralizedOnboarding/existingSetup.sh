@@ -1,43 +1,41 @@
 #!/bin/bash
 
-# Define the usage function of this script
+# Function to display usage information
 usage() {
-    echo "Usage: script.sh -e <endpoint> -o <onboarding type> -c <centralized project> -t <pubsub topic name>"
+  echo "Usage: $0 [OPTIONS]"
+  echo "Options:"
+  echo "  --endpoint=<ENDPOINT>             Specify the cloudguard endpoint"
+  echo "  --onboarding-type=<TYPE>          Specify the onboarding type"
+  echo "  --centralized-project=<PROJECT>   Specify the centralized project id"
+  echo "  --topic-name=<TOPIC>              Specify the topic name"
+  echo "  --subscription-name=<SUBSCRIPTION> Specify the subscription name"
 }
 
 # Parse the named arguments
-while getopts ":e:o:c:t:s:" opt; do
-    case ${opt} in
-        e)
-            ENDPOINT=${OPTARG}
-            ;;
-        o)
-            ONBOARDING_TYPE=${OPTARG}
-            ;;
-        c)
-            CENTRALIZED_PROJECT=${OPTARG}
-            ;;
-        t)
-            PUBSUB_TOPIC_NAME=${OPTARG}
-            ;;
-        s)
-            SUBSCRIPTION_NAME=${OPTARG}
-            ;;
-        \?)
-            echo "Invalid option: -$OPTARG"
-            usage
-            exit 1
-            ;;
-        :)
-            echo "Option -$OPTARG requires an argument."
-            usage
-            exit 1
-            ;;
-    esac
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --endpoint=*) ENDPOINT="${1#*=}";;
+    --onboarding-type=*) ONBOARDING_TYPE="${1#*=}";;
+    --centralized-project=*) CENTRALIZED_PROJECT="${1#*=}";;
+    --topic-name=*) TOPIC_NAME="${1#*=}";;
+    --subscription-name=*) SUBSCRIPTION_NAME="${1#*=}";;
+    *)
+      echo "Invalid option: $1"
+      usage
+      exit 1
+      ;;
+  esac
+  shift
 done
 
+if [[ -z "$ENDPOINT" || -z "$ONBOARDING_TYPE" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SUBSCRIPTION_NAME" ]]; then
+  echo "Missing one or more required arguments."
+  usage
+  exit 1
+fi
+
 if [[ $ONBOARDING_TYPE != "AccountActivity" && $ONBOARDING_TYPE != "NetworkTraffic" ]]; then
-  echo "invalid onboarding type, EXITING WITHOUT DEPLOYMENT!"
+  echo "invalid onboarding type $ONBOARDING_TYPE, EXITING WITHOUT DEPLOYMENT!"
   exit 1
 
 # Don't change those namings because some validation functions using these values to check onboarding status after onboarding finished.
@@ -85,7 +83,7 @@ echo ""
 
 # subscription creation
 pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
-                           --topic="$PUBSUB_TOPIC_NAME" \
+                           --topic="$TOPIC_NAME" \
                            --ack-deadline="$ACK_DEADLINE" \
                            --expiration-period="$EXPIRATION_PERIOD" \
                            --push-endpoint="$ENDPOINT" \

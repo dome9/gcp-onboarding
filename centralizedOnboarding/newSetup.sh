@@ -1,43 +1,40 @@
 #!/bin/bash
 
-# Define the usage function of this script
+# Function to display usage information
 usage() {
-    echo "Usage: script.sh -e <endpoint> -o <onboarding type> -c <centralized project> -p <list of projects to onboard>"
+  echo "Usage: $0 [OPTIONS]"
+  echo "Options:"
+  echo "  --endpoint=<ENDPOINT>             Specify the cloudguard endpoint"
+  echo "  --onboarding-type=<TYPE>          Specify the onboarding type"
+  echo "  --centralized-project=<PROJECT>   Specify the centralized project"
+  echo "  --topic-name=<TOPIC>              Specify the topic name"
+  echo "  --subscription-name=<SUBSCRIPTION> Specify the subscription name"
+  echo "  --projects-to-onboard=<PROJECTS>  Specify the projects to onboard (space-separated, ex: \"projectA projectB ...\")"
 }
 
 # Parse the named arguments
-while getopts ":e:o:c:t:s:p:" opt; do
-    case ${opt} in
-        e)
-            ENDPOINT=${OPTARG}
-            ;;
-        o)
-            ONBOARDING_TYPE=${OPTARG}
-            ;;
-        c)
-            CENTRALIZED_PROJECT=${OPTARG}
-            ;;
-        t)
-            TOPIC_NAME=${OPTARG}
-            ;;
-        s)
-            SUBSCRIPTION_NAME=${OPTARG}
-            ;;
-        p)
-            PROJECTS=${OPTARG}
-            ;;
-        \?)
-            echo "Invalid option: -$OPTARG"
-            usage
-            exit 1
-            ;;
-        :)
-            echo "Option -$OPTARG requires an argument."
-            usage
-            exit 1
-            ;;
-    esac
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --endpoint=*) ENDPOINT="${1#*=}";;
+    --onboarding-type=*) ONBOARDING_TYPE="${1#*=}";;
+    --centralized-project=*) CENTRALIZED_PROJECT="${1#*=}";;
+    --topic-name=*) TOPIC_NAME="${1#*=}";;
+    --subscription-name=*) SUBSCRIPTION_NAME="${1#*=}";;
+    --projects-to-onboard=*) PROJECTS_TO_ONBOARD="${1#*=}";;
+    *)
+      echo "Invalid option: $1"
+      usage
+      exit 1
+      ;;
+  esac
+  shift
 done
+
+if [[ -z "$ENDPOINT" || -z "$ONBOARDING_TYPE" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SUBSCRIPTION_NAME" || -z "$PROJECTS_TO_ONBOARD" ]]; then
+  echo "Missing one or more required arguments."
+  usage
+  exit 1
+fi
 
 if [[ $ONBOARDING_TYPE == "AccountActivity" ]]; then
     LOG_FILTER='LOG_ID("cloudaudit.googleapis.com/activity") OR LOG_ID("cloudaudit.googleapis.com%2Fdata_access") OR LOG_ID("cloudaudit.googleapis.com%2Fpolicy")'
@@ -45,7 +42,7 @@ if [[ $ONBOARDING_TYPE == "AccountActivity" ]]; then
 elif [[ $ONBOARDING_TYPE == "NetworkTraffic" ]]; then
     LOG_FILTER='LOG_ID("compute.googleapis.com%2Fvpc_flows")'
 else
-  echo "invalid onboarding type, EXITING WITHOUT DEPLOYMENT!"
+  echo "invalid onboarding type $ONBOARDING_TYPE, EXITING WITHOUT DEPLOYMENT!"
   exit 1
 fi
 
@@ -97,11 +94,8 @@ if [[ ! "$serviceAccount" =~ "0 items" ]]; then
   fi
 fi
 
-# Split the list argument of projects into an array
-IFS=' ' read -ra PROJECTS_TO_ONBOARD <<< "$PROJECTS"
-
 # delete exsiting sink from each onboarded project if exists
-for PROJECT_ID in "${PROJECTS_TO_ONBOARD[@]}"
+for PROJECT_ID in $PROJECTS_TO_ONBOARD
 do
 	sink=$(gcloud logging sinks list --project="$PROJECT_ID" --filter="name.scope(sink):"$SINK_NAME"" 2>&1)
 	if [[ ! "$sink" =~ "0 items" ]]; then
@@ -153,7 +147,7 @@ if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
 fi
 
 # sink creation in each onboarded project
-for PROJECT_ID in "${PROJECTS_TO_ONBOARD[@]}"
+for PROJECT_ID in $PROJECTS_TO_ONBOARD
 do
 	sink=$(gcloud logging sinks create "$SINK_NAME" pubsub.googleapis.com/projects/"$CENTRALIZED_PROJECT"/topics/"$TOPIC_NAME" \
             --project="$PROJECT_ID" --log-filter="$LOG_FILTER" 2>&1)
