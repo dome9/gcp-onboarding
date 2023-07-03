@@ -40,7 +40,7 @@ if [[ $ONBOARDING_TYPE != "AccountActivity" && $ONBOARDING_TYPE != "NetworkTraff
 
 # Don't change those namings because some validation functions using these values to check onboarding status after onboarding finished.
 AUDIENCE="dome9-gcp-logs-collector"
-SERVICE_ACCOUNT_NAME="cloudguard-$ONBOARDING_TYPE-auth-es"
+SERVICE_ACCOUNT_NAME="cloudguard-logs-auth"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10
 ACK_DEADLINE=60
