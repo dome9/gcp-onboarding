@@ -36,11 +36,18 @@ resources:
       parent: projects/chkp-gcp-yaelel-box/locations/us-central1
       function: yaelFunction1
       runtime: python37
-      sourceArchiveUrl: https://s3.amazonaws.com/yael-test-1/yael.zip
-
+      sourceArchiveUrl: gs://your-gcs-bucket-name/yael.zip
       httpsTrigger: {}
       ingressSettings: ALLOW_ALL
       serviceAccountEmail: $(ref.yaelServiceAccount1.email)
       labels:
         created-by: deployment-manager
       entryPoint: main
+
+  - name: copyFromAwsToGcs
+    action: gcp-types/storage-v1:storage.buckets.objects.copy
+    properties:
+      sourceBucket: yael-test-1
+      sourceObject: yael.zip
+      destinationBucket: your-gcs-bucket-name
+      destinationObject: yael.zip
