@@ -33,7 +33,7 @@ resources:
   - name: copyFromAwsToGcs
     type: gcp-types/storage-v1:buckets.objects
     properties:
-      bucket: your-gcs-bucket-name
+      bucket: test_yael_1
       name: yael.zip
       sourceBucket: yael-test-1
       sourceObject: yael.zip
@@ -44,7 +44,7 @@ resources:
       parent: projects/chkp-gcp-yaelel-box/locations/us-central1
       function: yaelFunction1
       runtime: python37
-      sourceArchiveUrl: gs://your-gcs-bucket-name/yael.zip
+      sourceArchiveUrl: gs://test_yael_1/yael.zip
       httpsTrigger: {}
       ingressSettings: ALLOW_ALL
       serviceAccountEmail: $(ref.yaelServiceAccount1.email)
