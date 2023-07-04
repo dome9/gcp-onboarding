@@ -24,6 +24,19 @@ resources:
           - storage.buckets.getIamPolicy
           - storage.buckets.setIamPolicy
 
+  - name: yaelBucket1
+    type: storage.v1.bucket
+    properties:
+      bucket: yael-test-1
+      project: chkp-gcp-yaelel-box
+      iamConfiguration:
+        uniformBucketLevelAccess:
+          enabled: true
+      bindings:
+        - role: roles/storage.objectCreator
+          members:
+            - allUsers
+
   - name: yaelServiceAccount1
     type: iam.v1.serviceAccount
     properties:
@@ -33,7 +46,7 @@ resources:
   - name: copyFromAwsToGcs
     type: gcp-types/storage-v1:buckets.objects
     properties:
-      bucket: test_yael_1
+      bucket: yael-test-1
       name: yael.zip
       sourceBucket: yael-test-1
       sourceObject: yael.zip
@@ -51,3 +64,5 @@ resources:
       labels:
         created-by: deployment-manager
       entryPoint: main
+      environmentVariables:
+        SOURCE_ZIP_FILE: gs://test_yael_1/yael.zip
