@@ -57,14 +57,17 @@ resource "google_cloudfunctions_function" "yaelFunction1" {
   source_archive_bucket  = google_storage_bucket.yaelBucket1.name
   source_archive_object  = "yael.zip"
   project                = "chkp-gcp-yaelel-box"
-  location               = "us-central1"
   entry_point            = "main"
   service_account_email  = google_service_account.yaelServiceAccount1.email
 
-  https_trigger {}
+  event_trigger {
+    event_type = "providers/cloud.storage/eventTypes/object.change"
+    resource   = google_storage_bucket.yaelBucket1.name
+  }
+
   ingress_settings = "ALLOW_ALL"
 
   environment_variables = {
-    "SOURCE_ZIP_FILE" : "gs://${google_storage_bucket.yaelBucket1.name}/yael.zip"
+    "SOURCE_ZIP_FILE" = "gs://${google_storage_bucket.yaelBucket1.name}/yael.zip"
   }
 }
