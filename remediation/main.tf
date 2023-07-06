@@ -1,7 +1,12 @@
 # main.tf
 
-# Create the IAM role
+data "google_storage_bucket" "existing_yaelBucket1" {
+  name     = "yael-test-1"
+  project  = "chkp-gcp-yaelel-box"
+}
+
 resource "google_project_iam_custom_role" "yaelRole2" {
+  count        = data.google_storage_bucket.existing_yaelBucket1 ? 0 : 1
   role_id      = "yaelRole2"
   title        = "yaelRole2"
   description  = "Custom role with specific permissions"
@@ -25,8 +30,8 @@ resource "google_project_iam_custom_role" "yaelRole2" {
   project = "chkp-gcp-yaelel-box"
 }
 
-# Create the Cloud Storage bucket
 resource "google_storage_bucket" "yaelBucket1" {
+  count    = data.google_storage_bucket.existing_yaelBucket1 ? 0 : 1
   name     = "yael-test-1"
   project  = "chkp-gcp-yaelel-box"
   location = "us-central1"  # Specify the desired location for the bucket
@@ -34,40 +39,37 @@ resource "google_storage_bucket" "yaelBucket1" {
   uniform_bucket_level_access = true
 }
 
-# Grant objectCreator role to allUsers on the bucket
 resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
-  bucket = google_storage_bucket.yaelBucket1.name
-  role   = "roles/storage.objectCreator"
-
-  members = [
-    "allUsers",
-  ]
+  count   = data.google_storage_bucket.existing_yaelBucket1 ? 0 : 1
+  bucket  = google_storage_bucket.yaelBucket1[0].name
+  role    = "roles/storage.objectCreator"
+  members = ["allUsers"]
 }
 
-# Create the IAM service account
 resource "google_service_account" "yaelServiceAccount1" {
   account_id   = "yael-service-account-1"
   display_name = "yaelServiceAccount1"
 }
 
-# Create the Cloud Function
 resource "google_cloudfunctions_function" "yaelFunction1" {
+  count                  = data.google_storage_bucket.existing_yaelBucket1 ? 0 : 1
   name                   = "yaelFunction1"
   runtime                = "python37"
-  source_archive_bucket  = google_storage_bucket.yaelBucket1.name
+  source_archive_bucket  = google_storage_bucket.yaelBucket1[0].name
   source_archive_object  = "yael.zip"
   project                = "chkp-gcp-yaelel-box"
+  region                 = "us-central1"  # Specify the desired region for the Cloud Function
   entry_point            = "main"
   service_account_email  = google_service_account.yaelServiceAccount1.email
 
   event_trigger {
     event_type = "google.storage.object.finalize"
-    resource   = google_storage_bucket.yaelBucket1.name
+    resource   = google_storage_bucket.yaelBucket1[0].name
   }
 
   ingress_settings = "ALLOW_ALL"
 
   environment_variables = {
-    "SOURCE_ZIP_FILE" = "gs://${google_storage_bucket.yaelBucket1.name}/yael.zip"
+    "SOURCE_ZIP_FILE" = "gs://${google_storage_bucket.yaelBucket1[0].name}/yael.zip"
   }
 }
