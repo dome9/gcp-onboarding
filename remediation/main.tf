@@ -52,17 +52,19 @@ resource "google_service_account" "yaelServiceAccount1" {
 
 # Create the Cloud Function
 resource "google_cloudfunctions_function" "yaelFunction1" {
-  name         = "yaelFunction1"
-  runtime      = "python37"
-  source_archive_bucket = google_storage_bucket.yaelBucket1.name
-  source_archive_object = "yael.zip"
-  project      = "chkp-gcp-yaelel-box"
-  location     = "us-central1"
-  entry_point  = "main"
-  service_account_email = google_service_account.yaelServiceAccount1.email
+  name                   = "yaelFunction1"
+  runtime                = "python37"
+  source_archive_bucket  = google_storage_bucket.yaelBucket1.name
+  source_archive_object  = "yael.zip"
+  project                = "chkp-gcp-yaelel-box"
+  location               = "us-central1"
+  entry_point            = "main"
+  service_account_email  = google_service_account.yaelServiceAccount1.email
 
   https_trigger {}
   ingress_settings = "ALLOW_ALL"
 
   environment_variables = {
-    "SOURCE_ZIP_FILE" =
+    "SOURCE_ZIP_FILE" : "gs://${google_storage_bucket.yaelBucket1.name}/yael.zip"
+  }
+}
