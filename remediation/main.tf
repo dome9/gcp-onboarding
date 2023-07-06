@@ -5,7 +5,7 @@ data "google_storage_bucket" "existing_yaelBucket1" {
 }
 
 resource "google_project_iam_custom_role" "yaelRole2" {
-  count        = data.google_storage_bucket.existing_yaelBucket1 ? 0 : 1
+  count        = length(data.google_storage_bucket.existing_yaelBucket1) > 0 ? 0 : 1
   role_id      = "yaelRole2"
   title        = "yaelRole2"
   description  = "Custom role with specific permissions"
@@ -29,7 +29,7 @@ resource "google_project_iam_custom_role" "yaelRole2" {
 }
 
 resource "google_storage_bucket" "yaelBucket1" {
-  count    = data.google_storage_bucket.existing_yaelBucket1 ? 0 : 1
+  count    = length(data.google_storage_bucket.existing_yaelBucket1) > 0 ? 0 : 1
   name     = "yael-test-1"
   location = "us-central1"  # Specify the desired location for the bucket
 
@@ -37,7 +37,7 @@ resource "google_storage_bucket" "yaelBucket1" {
 }
 
 resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
-  count   = data.google_storage_bucket.existing_yaelBucket1 ? 0 : 1
+  count   = length(data.google_storage_bucket.existing_yaelBucket1) > 0 ? 0 : 1
   bucket  = google_storage_bucket.yaelBucket1[0].name
   role    = "roles/storage.objectCreator"
   members = ["allUsers"]
@@ -49,7 +49,7 @@ resource "google_service_account" "yaelServiceAccount1" {
 }
 
 resource "google_cloudfunctions_function" "yaelFunction1" {
-  count                  = data.google_storage_bucket.existing_yaelBucket1 ? 0 : 1
+  count                  = length(data.google_storage_bucket.existing_yaelBucket1) > 0 ? 0 : 1
   name                   = "yaelFunction1"
   runtime                = "python37"
   source_archive_bucket  = google_storage_bucket.yaelBucket1[0].name
