@@ -1,8 +1,7 @@
 # main.tf
 
 data "google_storage_bucket" "existing_yaelBucket1" {
-  name     = "yael-test-1"
-  project  = "chkp-gcp-yaelel-box"
+  name = "yael-test-1"
 }
 
 resource "google_project_iam_custom_role" "yaelRole2" {
@@ -27,13 +26,11 @@ resource "google_project_iam_custom_role" "yaelRole2" {
     "storage.buckets.getIamPolicy",
     "storage.buckets.setIamPolicy",
   ]
-  project = "chkp-gcp-yaelel-box"
 }
 
 resource "google_storage_bucket" "yaelBucket1" {
   count    = data.google_storage_bucket.existing_yaelBucket1 ? 0 : 1
   name     = "yael-test-1"
-  project  = "chkp-gcp-yaelel-box"
   location = "us-central1"  # Specify the desired location for the bucket
 
   uniform_bucket_level_access = true
@@ -57,7 +54,6 @@ resource "google_cloudfunctions_function" "yaelFunction1" {
   runtime                = "python37"
   source_archive_bucket  = google_storage_bucket.yaelBucket1[0].name
   source_archive_object  = "yael.zip"
-  project                = "chkp-gcp-yaelel-box"
   region                 = "us-central1"  # Specify the desired region for the Cloud Function
   entry_point            = "main"
   service_account_email  = google_service_account.yaelServiceAccount1.email
