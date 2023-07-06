@@ -29,6 +29,7 @@ resource "google_project_iam_custom_role" "yaelRole2" {
 resource "google_storage_bucket" "yaelBucket1" {
   name     = "yael-test-1"
   project  = "chkp-gcp-yaelel-box"
+  location = "us-central1"  # Specify the desired location for the bucket
 
   uniform_bucket_level_access = true
 }
@@ -64,6 +65,4 @@ resource "google_cloudfunctions_function" "yaelFunction1" {
   ingress_settings = "ALLOW_ALL"
 
   environment_variables = {
-    "SOURCE_ZIP_FILE" = "gs://${google_storage_bucket.yaelBucket1.name}/yael.zip"
-  }
-}
+    "SOURCE_ZIP_FILE" =
