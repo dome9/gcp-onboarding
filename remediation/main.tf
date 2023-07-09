@@ -44,14 +44,6 @@ resource "google_service_account" "yaelServiceAccount1" {
   display_name = "yaelServiceAccount1"
 }
 
-resource "google_project_iam_binding" "yaelRole2Binding" {
-  project = google_project.project.project_id
-  role    = google_project_iam_custom_role.yaelRole2.role_id
-  members = [
-    "serviceAccount:${google_service_account.yaelServiceAccount1.email}"
-  ]
-}
-
 resource "google_cloudfunctions_function" "yaelFunction1" {
   name                  = "yaelFunction1"
   runtime               = "python37"
