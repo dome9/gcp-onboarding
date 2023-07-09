@@ -58,10 +58,16 @@ resource "google_project_iam_binding" "yaelRole2Binding" {
   members = ["serviceAccount:${google_service_account.yaelServiceAccount1.email}"]
 }
 
+# Define the IAM binding for the Cloud Function and the custom role
+resource "google_cloudfunctions_function_iam_binding" "yaelFunction1Binding" {
+  function_name = google_cloudfunctions_function.yaelFunction1[0].name
+  members       = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
+}
+
 # Define the existing Cloud Function
 data "google_cloudfunctions_function" "existing_function" {
   name   = "yaelFunction1"
-  region = data.google_compute_region.current.name
+  region = data.google_region.current.name
 }
 
 resource "google_cloudfunctions_function" "yaelFunction1" {
@@ -70,9 +76,9 @@ resource "google_cloudfunctions_function" "yaelFunction1" {
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
-  region                = data.google_compute_region.current.name
+  region                = data.google_region.current.name
   entry_point           = "main"
-  service_account_email = google_service_account.yaelServiceAccount1.email
+  service_account_email = google_service_account.yaelServiceAccount1[0].email
 
   event_trigger {
     event_type = "google.storage.object.finalize"
