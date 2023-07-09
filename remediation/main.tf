@@ -26,9 +26,16 @@ variable "bucket_name" {
   type        = string
 }
 
+resource "google_storage_bucket" "yaelBucket1" {
+  name     = var.bucket_name
+  location = "us-central1"  # Specify the desired location for the bucket
+
+  uniform_bucket_level_access = true
+}
+
 resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
   count   = can(data.google_storage_bucket.existing_bucket) ? 1 : 0
-  bucket  = var.bucket_name
+  bucket  = google_storage_bucket.yaelBucket1.name
   role    = "roles/storage.objectCreator"
   members = ["allUsers"]
 }
@@ -39,6 +46,7 @@ resource "google_service_account" "yaelServiceAccount1" {
 }
 
 resource "google_project_iam_binding" "yaelRole2Binding" {
+  project = google_project.project.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
   members = [
     "serviceAccount:${google_service_account.yaelServiceAccount1.email}"
@@ -46,7 +54,7 @@ resource "google_project_iam_binding" "yaelRole2Binding" {
 }
 
 resource "google_cloudfunctions_function" "yaelFunction1" {
-  count                 = length(data.google_storage_bucket.existing_bucket) > 0 ? 1 : 0
+  count                 = can(data.google_storage_bucket.existing_bucket) ? 1 : 0
   name                  = "yaelFunction1"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
