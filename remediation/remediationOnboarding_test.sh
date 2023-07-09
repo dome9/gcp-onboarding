@@ -16,7 +16,7 @@ else
   if gsutil mb gs://${BUCKET_NAME} >/dev/null 2>&1; then
     echo "Bucket ${BUCKET_NAME} created successfully."
   else
-    echo "Failed to create bucket ${BUCKET_NAME}. Exiting."
+    echo "Failed to create bucket ${BUCKET_NAME}. Error: $(gsutil mb gs://${BUCKET_NAME} 2>&1). Exiting."
     exit 1
   fi
 fi
@@ -34,7 +34,7 @@ fi
 if gsutil cp yael.zip gs://${BUCKET_NAME}/yael.zip >/dev/null 2>&1; then
   echo "Zip file uploaded to GCP bucket successfully."
 else
-  echo "Failed to upload the zip file to the GCP bucket. Exiting."
+  echo "Failed to upload the zip file to the GCP bucket. Error: $(gsutil cp yael.zip gs://${BUCKET_NAME}/yael.zip 2>&1). Exiting."
   exit 1
 fi
 
