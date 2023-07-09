@@ -11,4 +11,9 @@ fi
 
 # Download zip file from AWS S3
 S3_URL="https://yael-test-1.s3.amazonaws.com/yael.zip"
-gsutil cp ${S3_URL} gs://${BUCKET_NAME}/yael.zip
+wget ${S3_URL} -O yael.zip
+
+# Upload zip file to GCP bucket
+gsutil cp yael.zip gs://${BUCKET_NAME}/yael.zip
+
+
