@@ -26,7 +26,7 @@ ZIP_URL="https://yael-test-1.s3.amazonaws.com/yael.zip"
 if wget -q ${ZIP_URL} -O yael.zip; then
   echo "Zip file downloaded successfully."
 else
-  echo "Failed to create bucket ${BUCKET_NAME}. Error: $(gsutil mb gs://${BUCKET_NAME} 2>&1). Exiting."
+  echo "Failed to download the zip file from ${ZIP_URL}. Error: $(wget -S ${ZIP_URL} -O yael.zip 2>&1). Exiting."
   exit 1
 fi
 
