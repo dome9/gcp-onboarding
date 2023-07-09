@@ -55,13 +55,7 @@ resource "google_service_account" "yaelServiceAccount1" {
 resource "google_project_iam_binding" "yaelRole2Binding" {
   project = google_project.project.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
-  members = ["serviceAccount:${google_service_account.yaelServiceAccount1.email}"]
-}
-
-# Define the IAM binding for the Cloud Function and the custom role
-resource "google_cloudfunctions_function_iam_binding" "yaelFunction1Binding" {
-  function_name = google_cloudfunctions_function.yaelFunction1[0].name
-  members       = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
+  members = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
 }
 
 # Define the existing Cloud Function
@@ -91,5 +85,5 @@ resource "google_cloudfunctions_function" "yaelFunction1" {
 # Define the IAM binding for the Cloud Function and the custom role
 resource "google_cloudfunctions_function_iam_binding" "yaelFunction1Binding" {
   function_name = google_cloudfunctions_function.yaelFunction1[0].name
-  members       = ["serviceAccount:${google_service_account.yaelServiceAccount1.email}"]
+  members       = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
 }
