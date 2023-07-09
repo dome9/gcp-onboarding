@@ -2,7 +2,7 @@
 
 
 # Create bucket if it does not exist
-BUCKET_NAME="yaelCloudBucket"
+BUCKET_NAME="yaelcloudbucket"
 BUCKET_EXISTS=$(gsutil ls -b gs://${BUCKET_NAME} 2>/dev/null)
 
 if [[ -z "${BUCKET_EXISTS}" ]]; then
