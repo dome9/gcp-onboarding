@@ -5,10 +5,10 @@ data "google_storage_bucket" "existing_yaelBucket1" {
 }
 
 resource "google_project_iam_custom_role" "yaelRole2" {
-  count       = length(data.google_storage_bucket.existing_yaelBucket1) > 0 ? 0 : 1
-  role_id     = "yaelRole2"
-  title       = "yaelRole2"
-  description = "Custom role with specific permissions"
+  count        = length(data.google_storage_bucket.existing_yaelBucket1) > 0 ? 0 : 1
+  role_id      = "yaelRole2"
+  title        = "yaelRole2"
+  description  = "Custom role with specific permissions"
   permissions = [
     "cloudsql.instances.get",
     "cloudsql.instances.update",
@@ -29,9 +29,9 @@ resource "google_project_iam_custom_role" "yaelRole2" {
 }
 
 resource "google_storage_bucket" "yaelBucket1" {
-  count    = length(data.google_storage_bucket.existing_yaelBucket1) > 0 ? 0 : 1
-  name     = "yael-test-1"
-  location = "us-central1"  # Specify the desired location for the bucket
+  count     = length(data.google_storage_bucket.existing_yaelBucket1) > 0 ? 0 : 1
+  name      = "yael-test-1"
+  location  = "us-central1"  # Specify the desired location for the bucket
 
   uniform_bucket_level_access = true
 }
