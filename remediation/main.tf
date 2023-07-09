@@ -34,7 +34,6 @@ resource "google_storage_bucket" "yaelBucket1" {
 }
 
 resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
-  count   = can(data.google_storage_bucket.existing_bucket) ? 1 : 0
   bucket  = google_storage_bucket.yaelBucket1.name
   role    = "roles/storage.objectCreator"
   members = ["allUsers"]
