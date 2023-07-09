@@ -41,7 +41,25 @@ fi
 # Clean up the downloaded zip file
 rm yael.zip
 
+
 # Run Terraform commands
+terraform init
+
+# Execute terraform plan and capture errors
+plan_output=$(terraform plan -var="bucket_name=${BUCKET_NAME}" 2>&1)
+if [ $? -ne 0 ]; then
+  echo "Error occurred during 'terraform plan':"
+  echo "$plan_output"
+  exit 1
+fi
+
+# Execute terraform apply and capture errors
+apply_output=$(terraform apply -var="bucket_name=${BUCKET_NAME}" 2>&1)
+if [ $? -ne 0 ]; then
+  echo "Error occurred during 'terraform apply':"
+  echo "$apply_output"
+  exit 1
+fi
 
 
 echo "Script completed successfully."

@@ -1,5 +1,4 @@
 resource "google_project_iam_custom_role" "yaelRole2" {
-  count       = can(data.google_storage_bucket.existing_yaelBucket1)
   role_id     = "yaelRole2"
   title       = "yaelRole2"
   description = "Custom role with specific permissions"
@@ -22,17 +21,14 @@ resource "google_project_iam_custom_role" "yaelRole2" {
   ]
 }
 
-resource "google_storage_bucket" "yaelBucket1" {
-  count      = can(data.google_storage_bucket.existing_yaelBucket1) ? 0 : 1
-  name       = "yael-test-1"
-  location   = "us-central1"  # Specify the desired location for the bucket
-
-  uniform_bucket_level_access = true
+variable "bucket_name" {
+  description = "The name of the GCP bucket"
+  type        = string
 }
 
 resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
-  count   = can(data.google_storage_bucket.existing_yaelBucket1) ? 1 : 0
-  bucket  = google_storage_bucket.yaelBucket1[0].name
+  count   = can(data.google_storage_bucket.existing_bucket) ? 1 : 0
+  bucket  = var.bucket_name
   role    = "roles/storage.objectCreator"
   members = ["allUsers"]
 }
@@ -42,11 +38,18 @@ resource "google_service_account" "yaelServiceAccount1" {
   display_name = "yaelServiceAccount1"
 }
 
+resource "google_project_iam_binding" "yaelRole2Binding" {
+  role    = google_project_iam_custom_role.yaelRole2.role_id
+  members = [
+    "serviceAccount:${google_service_account.yaelServiceAccount1.email}"
+  ]
+}
+
 resource "google_cloudfunctions_function" "yaelFunction1" {
-  count                 = can(data.google_storage_bucket.existing_yaelBucket1) ? 1 : 0
+  count                 = length(data.google_storage_bucket.existing_bucket) > 0 ? 1 : 0
   name                  = "yaelFunction1"
   runtime               = "python37"
-  source_archive_bucket = google_storage_bucket.yaelBucket1[0].name
+  source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
   region                = "us-central1"  # Specify the desired region for the Cloud Function
   entry_point           = "main"
@@ -54,12 +57,8 @@ resource "google_cloudfunctions_function" "yaelFunction1" {
 
   event_trigger {
     event_type = "google.storage.object.finalize"
-    resource   = google_storage_bucket.yaelBucket1[0].name
+    resource   = var.bucket_name
   }
 
   ingress_settings = "ALLOW_ALL"
-
-  environment_variables = {
-    "SOURCE_ZIP_FILE" = "gs://${google_storage_bucket.yaelBucket1[0].name}/yael.zip"
-  }
 }
