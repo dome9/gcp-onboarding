@@ -1,7 +1,8 @@
 # main.tf
 
 data "google_storage_bucket" "existing_yaelBucket1" {
-  name = "yael-test-1"
+  name           = "yael-test-1"
+  ignore_errors  = true
 }
 
 resource "google_project_iam_custom_role" "yaelRole2" {
