@@ -53,7 +53,6 @@ resource "google_project_iam_binding" "yaelRole2Binding" {
 }
 
 resource "google_cloudfunctions_function" "yaelFunction1" {
-  count                 = can(data.google_storage_bucket.existing_bucket) ? 1 : 0
   name                  = "yaelFunction1"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
