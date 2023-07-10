@@ -30,17 +30,16 @@ resource "google_project_iam_custom_role" "yaelRole2" {
 
 
 
-data "google_project" "project" {}
+data "google_project" "current" {}
 
 resource "google_service_account" "yael_service_account" {
   account_id   = "yael-service-account"
   display_name = "Yael Service Account"
 }
 
-
 resource "google_project_iam_binding" "service_role_binding" {
-  role    = "projects/${data.google_project.project.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
-  project = data.google_project.project.project_id
+  role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
+  project = data.google_project.current.project_id
   members = [
     "serviceAccount:${google_service_account.yael_service_account.email}",
   ]
