@@ -47,7 +47,8 @@ terraform init
 #terraform validate
 #terraform refresh
 # Execute terraform plan and capture errors
-plan_output=$(terraform plan -var="bucket_name=${BUCKET_NAME}" 2>&1)
+plan_output_file="terraform_plan.tfplan"
+terraform plan -var="bucket_name=${BUCKET_NAME}" -out="${plan_output_file}"
 if [ $? -ne 0 ]; then
   echo "Error occurred during 'terraform plan':"
   echo "$plan_output"
@@ -55,7 +56,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Execute terraform apply and capture errors
-apply_output=$(terraform apply -var="bucket_name=${BUCKET_NAME}" 2>&1)
+apply_output=$(terraform apply "${plan_output_file}" 2>&1)
 if [ $? -ne 0 ]; then
   echo "Error occurred during 'terraform apply':"
   echo "$apply_output"
