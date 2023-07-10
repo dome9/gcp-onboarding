@@ -1,83 +1,3 @@
-# Enable debug logging
-provider "google" {
-  project = var.project_id
-  region  = var.region
-
-  # Enable debug logging for the Google provider
-  # Uncomment the following line to enable debug logging
-  # log_config {
-  #   enable_debug_logging = true
-  # }
-}
-
-# Define the project ID and region as variables
-variable "project_id" {
-  description = "The ID of the Google Cloud project"
-  type        = string
-}
-
-variable "region" {
-  description = "The region where resources will be created"
-  type        = string
-}
-
-# Retrieve the current project ID
-data "google_project" "current" {
-  # Output the current project ID for debugging
-  output "current_project_id" {
-    value = data.google_project.current.project_id
-  }
-}
-
-# Output the bucket name for debugging
-output "bucket_name" {
-  value = var.bucket_name
-}
-
-# Define the bucket name as a variable
-variable "bucket_name" {
-  description = "The name of the GCP bucket"
-  type        = string
-}
-
-# Define the IAM binding for allUsers
-resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
-  bucket  = var.bucket_name
-  role    = "roles/storage.objectCreator"
-  members = ["allUsers"]
-}
-
-# Output the service account name for debugging
-output "service_account_name" {
-  value = google_service_account.yaelServiceAccount1.name
-}
-
-# Create the service account only if it doesn't exist
-resource "google_service_account" "yaelServiceAccount1" {
-  account_id   = "yael-service-account-1"
-  display_name = "yaelServiceAccount1"
-
-  count = length(data.google_service_account.yaelServiceAccount1) > 0 ? 0 : 1
-}
-
-# Output the service account email for debugging
-output "service_account_email" {
-  value = google_service_account.yaelServiceAccount1.email
-}
-
-# Connect the custom role to the service account
-resource "google_project_iam_binding" "yaelRole2Binding" {
-  project = data.google_project.current.project_id
-  role    = google_project_iam_custom_role.yaelRole2.role_id
-  members = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
-}
-
-# Output the role ID for debugging
-output "role_id" {
-  value = google_project_iam_custom_role.yaelRole2.role_id
-}
-
-# Define the custom role
 resource "google_project_iam_custom_role" "yaelRole2" {
   role_id     = "yaelRole2"
   title       = "yaelRole2"
@@ -99,15 +19,61 @@ resource "google_project_iam_custom_role" "yaelRole2" {
     "storage.buckets.getIamPolicy",
     "storage.buckets.setIamPolicy",
   ]
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [
+      permissions,
+    ]
+  }
 }
 
-# Output the plan result for debugging
-output "plan_result" {
-  value = terraform.workspace_status.plan
+
+
+data "google_project" "project" {}
+
+resource "google_service_account" "yael_service_account" {
+  account_id   = "yael-service-account"
+  display_name = "Yael Service Account"
 }
+
+/* resource "google_project_iam_custom_role" "mservice_infra_admin" {
+  role_id     = "mservice_infra_admin"
+  title       = "mservice_infra_admin"
+  description = "Infrastructure Administrator Custom Role"
+  permissions = ["compute.disks.create", "compute.firewalls.create", "compute.firewalls.delete", "compute.firewalls.get", "compute.instanceGroupManagers.get", "compute.instances.create", "compute.instances.delete", "compute.instances.get", "compute.instances.setMetadata", "compute.instances.setServiceAccount", "compute.instances.setTags", "compute.machineTypes.get", "compute.networks.create", "compute.networks.delete", "compute.networks.get", "compute.networks.updatePolicy", "compute.subnetworks.create", "compute.subnetworks.delete", "compute.subnetworks.get", "compute.subnetworks.setPrivateIpGoogleAccess", "compute.subnetworks.update", "compute.subnetworks.use", "compute.subnetworks.useExternalIp", "compute.zones.get", "container.clusters.create", "container.clusters.delete", "container.clusters.get", "container.clusters.update", "container.operations.get"]
+} */
+
+resource "google_project_iam_binding" "service_role_binding" {
+  role = "projects/${data.google_project.project.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
+
+  members = [
+    "serviceAccount:${google_service_account.yael_service_account.email}",
+  ]
+}
+
+/*
+
+# Define the bucket name as a variable
+variable "bucket_name" {
+  description = "The name of the GCP bucket"
+  type        = string
+}
+
+# Define the IAM binding for allUsers
+resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
+  bucket  = var.bucket_name
+  role    = "roles/storage.objectCreator"
+  members = ["allUsers"]
+}
+
+data "google_service_account" "existing_service_account" {
+  account_id = "yael-service-account-1"
+}
+
 
 # Check if the service account already exists
-/*data "google_service_account" "yaelServiceAccount1" {
+data "google_service_account" "yaelServiceAccount1" {
   account_id = "yael-service-account-1"
 }
 
@@ -116,15 +82,18 @@ resource "google_service_account" "create_yaelServiceAccount1" {
   count        = length(data.google_service_account.yaelServiceAccount1) > 0 ? 0 : 1
   account_id   = "yael-service-account-1"
   display_name = "yaelServiceAccount1"
-}*/
+}
 
+# Retrieve the current project ID
+data "google_project" "current" {}
 
-/*# Connect the custom role to the service account
+# Connect the custom role to the service account
 resource "google_project_iam_member" "yaelRole2Binding" {
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
   member  = length(google_service_account.create_yaelServiceAccount1) > 0 ? "serviceAccount:${google_service_account.create_yaelServiceAccount1[0].email}" : null
-}*/
+}
+ */
 
 
 
