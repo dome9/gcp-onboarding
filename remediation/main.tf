@@ -25,6 +25,9 @@ resource "google_project_iam_custom_role" "yaelRole2" {
       permissions,
     ]
   }
+
+  # Force recreation of the resource if it already exists
+  force_new = true
 }
 
 resource "google_project_iam_member" "service_role_binding" {

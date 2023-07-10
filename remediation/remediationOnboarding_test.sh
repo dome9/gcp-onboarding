@@ -48,7 +48,6 @@ rm yael.zip
 terraform init
 #terraform validate
 #terraform refresh
-terraform state rm google_project_iam_custom_role.yaelRole2
 terraform import google_project_iam_custom_role.yaelRole2 projects/$(terraform show -json | jq -r '.values.root_module.resources[] | select(.type == "google_project").values.project_id')/roles/yaelRole2
 
 # Execute terraform plan and capture errors
@@ -61,7 +60,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Execute terraform apply and capture errors
-apply_output=$(terraform apply  "${plan_output_file}" 2>&1)
+apply_output=$(terraform apply "${plan_output_file}" 2>&1)
 if [ $? -ne 0 ]; then
   echo "Error occurred during 'terraform apply':"
   echo "$apply_output"
