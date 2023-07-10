@@ -53,7 +53,7 @@ terraform import google_project_iam_custom_role.yaelRole2 projects/$(terraform s
 
 # Execute terraform plan and capture errors
 plan_output_file="terraform_plan.tfplan"
-plan_output=$(terraform plan -var="bucket_name=${BUCKET_NAME}" -out="${plan_output_file}" 2>&1)
+terraform plan -var="bucket_name=${BUCKET_NAME}" -out="${plan_output_file}"
 if [ $? -ne 0 ]; then
   echo "Error occurred during 'terraform plan':"
   echo "$plan_output"
