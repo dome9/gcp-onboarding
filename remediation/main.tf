@@ -28,8 +28,6 @@ resource "google_project_iam_custom_role" "yaelRole2" {
   }
 }
 
-
-
 data "google_project" "current" {}
 
 resource "google_service_account" "yael_service_account" {
@@ -40,9 +38,8 @@ resource "google_service_account" "yael_service_account" {
 resource "google_project_iam_member" "service_role_binding" {
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
-  member =  "serviceAccount:${google_service_account.current.yael_service_account.email}"
+  member  = "serviceAccount:${google_service_account.yael_service_account.email}"
 }
-
 
 # Define the bucket name as a variable
 variable "bucket_name" {
