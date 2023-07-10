@@ -52,14 +52,13 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
-/*
 
 # Define the bucket name as a variable
 variable "bucket_name" {
   description = "The name of the GCP bucket"
   type        = string
 }
-
+/*
 # Define the IAM binding for allUsers
 resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
   bucket  = var.bucket_name
@@ -92,8 +91,7 @@ resource "google_project_iam_member" "yaelRole2Binding" {
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
   member  = length(google_service_account.create_yaelServiceAccount1) > 0 ? "serviceAccount:${google_service_account.create_yaelServiceAccount1[0].email}" : null
-}
- */
+} */
 
 
 
