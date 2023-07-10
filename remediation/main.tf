@@ -12,22 +12,15 @@ resource "google_service_account" "yael_service_account" {
 }
 
 resource "google_project_iam_custom_role" "yaelRole2" {
-  role_id     = "yaelRole2"
-  title       = "yaelRole2"
-  description = "Custom role with specific permissions"
-  permissions = [
+  count        = can(data.google_project.current) && can(data.google_project.current.project_id) ? 0 : 1
+  role_id      = "yaelRole2"
+  title        = "yaelRole2"
+  description  = "Custom role with specific permissions"
+  permissions  = [
     "cloudsql.instances.get",
   ]
 
-  lifecycle {
-    create_before_destroy = true
-    ignore_changes        = [
-      permissions,
-    ]
-  }
 
-  # Force recreation of the resource if it already exists
-  force_new = true
 }
 
 resource "google_project_iam_member" "service_role_binding" {
