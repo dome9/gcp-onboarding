@@ -147,8 +147,7 @@ if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
 fi
 
 # sink creation in each onboarded project
-for PROJECT_ID in $PROJECTS_TO_ONBOARD
-do
+for PROJECT_ID in $PROJECTS_TO_ONBOARD do
 	sink=$(gcloud logging sinks create "$SINK_NAME" pubsub.googleapis.com/projects/"$CENTRALIZED_PROJECT"/topics/"$TOPIC_NAME" \
             --project="$PROJECT_ID" --log-filter="$LOG_FILTER" 2>&1)
 
