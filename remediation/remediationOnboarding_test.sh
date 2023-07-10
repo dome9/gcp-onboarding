@@ -1,12 +1,14 @@
 #!/bin/bash
 
-# Get the bucket name from command line argument
-if [ $# -ne 1 ]; then
-  echo "Please provide the bucket name as a command line argument."
+# Get the bucket name from command line argument or environment variable
+if [ $# -eq 1 ]; then
+  BUCKET_NAME=$1
+elif [ -n "$TF_BUCKET_NAME" ]; then
+  BUCKET_NAME=$TF_BUCKET_NAME
+else
+  echo "Please provide the bucket name as a command line argument or set the 'TF_BUCKET_NAME' environment variable."
   exit 1
 fi
-
-BUCKET_NAME=$1
 
 # Check if the bucket already exists
 if gsutil ls -b gs://${BUCKET_NAME} >/dev/null 2>&1; then
@@ -46,6 +48,7 @@ rm yael.zip
 terraform init
 #terraform validate
 #terraform refresh
+terraform state rm google_project_iam_custom_role.yaelRole2
 terraform import google_project_iam_custom_role.yaelRole2 projects/$(terraform show -json | jq -r '.values.root_module.resources[] | select(.type == "google_project").values.project_id')/roles/yaelRole2
 
 # Execute terraform plan and capture errors
