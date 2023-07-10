@@ -50,8 +50,6 @@ resource "google_service_account" "yaelServiceAccount1" {
   count        = length(data.google_service_account.existing_service_account) > 0 ? 0 : 1
   account_id   = "yael-service-account-1"
   display_name = "yaelServiceAccount1"
-
-  count = length(data.google_service_account.existing_service_account) > 0 ? 0 : 1
 }
 
 # Retrieve the current project ID
@@ -65,6 +63,7 @@ resource "google_project_iam_binding" "yaelRole2Binding" {
 
   depends_on = [google_service_account.yaelServiceAccount1]
 }
+
 
 
 /*
