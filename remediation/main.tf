@@ -64,7 +64,7 @@ data "google_project" "current" {}
 resource "google_project_iam_member" "yaelRole2Binding" {
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
-  member  = "serviceAccount:${google_service_account.create_yaelServiceAccount1[count.0]}"
+  member  = "serviceAccount:${google_service_account.create_yaelServiceAccount1[0].email}"
 }
 
 
