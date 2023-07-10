@@ -44,9 +44,10 @@ rm yael.zip
 
 # Run Terraform commands
 terraform init
+# Run Terraform commands
 
 # Execute terraform plan and capture errors
-plan_output=$(terraform plan -var="bucket_name=${BUCKET_NAME}" 2>&1)
+plan_output=$(terraform plan -var="bucket_name=${BUCKET_NAME}" -var="project_id=${PROJECT_ID}" 2>&1)
 if [ $? -ne 0 ]; then
   echo "Error occurred during 'terraform plan':"
   echo "$plan_output"
@@ -54,7 +55,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Execute terraform apply and capture errors
-apply_output=$(terraform apply -var="bucket_name=${BUCKET_NAME}" 2>&1)
+apply_output=$(terraform apply -var="bucket_name=${BUCKET_NAME}" -var="project_id=${PROJECT_ID}" 2>&1)
 if [ $? -ne 0 ]; then
   echo "Error occurred during 'terraform apply':"
   echo "$apply_output"
