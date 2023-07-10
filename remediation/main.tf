@@ -50,6 +50,8 @@ resource "google_service_account" "yaelServiceAccount1" {
   count        = length(data.google_service_account.existing_service_account) > 0 ? 0 : 1
   account_id   = "yael-service-account-1"
   display_name = "yaelServiceAccount1"
+
+  count = length(data.google_service_account.existing_service_account) > 0 ? 0 : 1
 }
 
 # Retrieve the current project ID
@@ -60,6 +62,8 @@ resource "google_project_iam_binding" "yaelRole2Binding" {
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
   members = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
+
+  depends_on = [google_service_account.yaelServiceAccount1]
 }
 
 
