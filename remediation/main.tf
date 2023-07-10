@@ -45,10 +45,11 @@ data "google_service_account" "existing_service_account" {
   account_id = "yael-service-account-1"
 }
 
+# Create the service account only if it doesn't exist
 resource "google_service_account" "yaelServiceAccount1" {
-  count         = data.google_service_account.existing_service_account ? 0 : 1
-  account_id    = "yael-service-account-1"
-  display_name  = "yaelServiceAccount1"
+  count        = length(data.google_service_account.existing_service_account) > 0 ? 0 : 1
+  account_id   = "yael-service-account-1"
+  display_name = "yaelServiceAccount1"
 }
 
 # Retrieve the current project ID
