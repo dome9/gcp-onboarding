@@ -52,7 +52,6 @@ data "google_service_account" "yaelServiceAccount1" {
 
 # Create the service account if it doesn't exist
 resource "google_service_account" "create_yaelServiceAccount1" {
-  count        = length(data.google_service_account.yaelServiceAccount1) > 0 ? 0 : 1
   account_id   = "yael-service-account-1"
   display_name = "yaelServiceAccount1"
 }
