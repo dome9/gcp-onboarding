@@ -6,7 +6,7 @@ variable "bucket_name" {
 
 
 resource "google_project_iam_custom_role" "yaelRole2" {
-  count        = data.google_project_iam_custom_role.yaelRole2 ? 0 : 1
+  count        = local.role_exists ? 0 : 1
   role_id      = "yaelRole2"
   title        = "yaelRole2"
   description  = "Custom role with specific permissions"
