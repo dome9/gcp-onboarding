@@ -46,7 +46,7 @@ data "google_service_account" "existing_service_account" {
 }
 
 # Check if the service account already exists
-data "google_service_account" "yaelServiceAccount1" {
+/*data "google_service_account" "yaelServiceAccount1" {
   account_id = "yael-service-account-1"
 }
 
@@ -55,17 +55,27 @@ resource "google_service_account" "create_yaelServiceAccount1" {
   count        = length(data.google_service_account.yaelServiceAccount1) > 0 ? 0 : 1
   account_id   = "yael-service-account-1"
   display_name = "yaelServiceAccount1"
-}
+}*/
 
 # Retrieve the current project ID
 data "google_project" "current" {}
 
-# Connect the custom role to the service account
+resource "google_service_account" "sa-name" {
+  account_id = "sa-name"
+  display_name = "SA"
+}
+
+resource "google_project_iam_member" "firestore_owner_binding" {
+  project = data.google_project.current.project_id
+  role    = google_project_iam_custom_role.yaelRole2.role_id
+  member  = "serviceAccount:${google_service_account.sa-name.email}"
+}
+/*# Connect the custom role to the service account
 resource "google_project_iam_member" "yaelRole2Binding" {
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
   member  = length(google_service_account.create_yaelServiceAccount1) > 0 ? "serviceAccount:${google_service_account.create_yaelServiceAccount1[0].email}" : null
-}
+}*/
 
 
 
