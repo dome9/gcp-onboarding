@@ -43,7 +43,7 @@ resource "google_project_iam_custom_role" "yaelRole2" {
 
 resource "google_project_iam_member" "service_role_binding" {
   project = data.google_project.current.project_id
-  role    = google_project_iam_custom_role.yaelRole2.role_id
+  role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
   member  = "serviceAccount:${google_service_account.yael_service_account.email}"
 }
 
