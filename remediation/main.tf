@@ -33,7 +33,20 @@ resource "google_project_iam_custom_role" "yaelRole2" {
       permissions,
     ]
   }
+
+  # Add this block to force recreation of the resource
+  lifecycle {
+    ignore_changes = [
+      role_id,
+      title,
+      description,
+      permissions,
+    ]
+    create_before_destroy = true
+    force_new             = true
+  }
 }
+
 
 data "google_project" "current" {}
 
