@@ -27,12 +27,6 @@ resource "google_project_iam_custom_role" "yaelRole2" {
     "storage.buckets.setIamPolicy",
   ]
 
-  lifecycle {
-    create_before_destroy = true
-    ignore_changes        = [
-      permissions,
-    ]
-  }
 
   # Add this block to force recreation of the resource
   lifecycle {
