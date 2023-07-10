@@ -6,10 +6,11 @@ variable "bucket_name" {
 
 
 resource "google_project_iam_custom_role" "yaelRole2" {
-  role_id     = "yaelRole2"
-  title       = "yaelRole2"
-  description = "Custom role with specific permissions"
-  permissions = [
+  count        = data.google_project_iam_custom_role.yaelRole2 ? 0 : 1
+  role_id      = "yaelRole2"
+  title        = "yaelRole2"
+  description  = "Custom role with specific permissions"
+  permissions  = [
     "cloudsql.instances.get",
     "cloudsql.instances.update",
     "compute.firewalls.delete",
@@ -26,19 +27,6 @@ resource "google_project_iam_custom_role" "yaelRole2" {
     "storage.buckets.getIamPolicy",
     "storage.buckets.setIamPolicy",
   ]
-
-
-  # Add this block to force recreation of the resource
-  lifecycle {
-    ignore_changes = [
-      role_id,
-      title,
-      description,
-      permissions,
-    ]
-    create_before_destroy = true
-    force_new             = true
-  }
 }
 
 
@@ -51,7 +39,7 @@ resource "google_service_account" "yael_service_account" {
 
 resource "google_project_iam_member" "service_role_binding" {
   project = data.google_project.current.project_id
-  role    = google_project_iam_custom_role.yaelRole2.role_id
+  role    = google_project_iam_custom_role.yaelRole2[count.index].role_id
   member  = "serviceAccount:${google_service_account.yael_service_account.email}"
 }
 
