@@ -61,7 +61,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Execute terraform apply and capture errors
-apply_output=$(terraform apply  "${plan_output_file}" -var="bucket_name=${BUCKET_NAME}" 2>&1)
+apply_output=$(terraform apply  "${plan_output_file}" 2>&1)
 if [ $? -ne 0 ]; then
   echo "Error occurred during 'terraform apply':"
   echo "$apply_output"
