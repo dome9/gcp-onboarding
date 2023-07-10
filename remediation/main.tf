@@ -52,7 +52,6 @@ data "google_service_account" "yaelServiceAccount1" {
 
 # Create the service account if it doesn't exist
 resource "google_service_account" "create_yaelServiceAccount1" {
-  count        = length(data.google_service_account.yaelServiceAccount1) > 0 ? 0 : 1
   account_id   = "yael-service-account-1"
   display_name = "yaelServiceAccount1"
 }
@@ -64,9 +63,8 @@ data "google_project" "current" {}
 resource "google_project_iam_binding" "yaelRole2Binding" {
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
-  members = google_service_account.create_yaelServiceAccount1[0].email
+  member  = "serviceAccount:${google_service_account.create_yaelServiceAccount1.email}"
 }
-
 
 
 
