@@ -1,3 +1,10 @@
+# Define the bucket name as a variable
+variable "bucket_name" {
+  description = "The name of the GCP bucket"
+  type        = string
+}
+
+
 resource "google_project_iam_custom_role" "yaelRole2" {
   role_id     = "yaelRole2"
   title       = "yaelRole2"
@@ -41,11 +48,7 @@ resource "google_project_iam_member" "service_role_binding" {
   member  = "serviceAccount:${google_service_account.yael_service_account.email}"
 }
 
-# Define the bucket name as a variable
-variable "bucket_name" {
-  description = "The name of the GCP bucket"
-  type        = string
-}
+
 /*
 # Define the IAM binding for allUsers
 resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
