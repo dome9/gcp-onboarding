@@ -44,7 +44,8 @@ rm yael.zip
 
 # Run Terraform commands
 terraform init
-
+terraform validate
+terraform refresh
 # Execute terraform plan and capture errors
 plan_output=$(terraform plan -var="bucket_name=${BUCKET_NAME}" 2>&1)
 if [ $? -ne 0 ]; then
