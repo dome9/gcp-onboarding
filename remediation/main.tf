@@ -4,6 +4,16 @@ variable "bucket_name" {
   type        = string
 }
 
+data "google_project" "current" {}
+
+resource "google_service_account" "yael_service_account" {
+  account_id   = "yael-service-account"
+  display_name = "Yael Service Account"
+}
+
+locals {
+  role_exists = can(data.google_project_iam_custom_role.yaelRole2)
+}
 
 resource "google_project_iam_custom_role" "yaelRole2" {
   count        = local.role_exists ? 0 : 1
@@ -27,14 +37,6 @@ resource "google_project_iam_custom_role" "yaelRole2" {
     "storage.buckets.getIamPolicy",
     "storage.buckets.setIamPolicy",
   ]
-}
-
-
-data "google_project" "current" {}
-
-resource "google_service_account" "yael_service_account" {
-  account_id   = "yael-service-account"
-  display_name = "Yael Service Account"
 }
 
 resource "google_project_iam_member" "service_role_binding" {
