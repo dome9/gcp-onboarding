@@ -51,14 +51,7 @@ resource "google_service_account" "yaelServiceAccount1" {
   display_name  = "yaelServiceAccount1"
 }
 
-# Define the IAM binding for the Cloud Function and the custom role
-resource "google_cloudfunctions_function_iam_binding" "yaelFunction1Binding" {
-  cloud_function = google_cloudfunctions_function.yaelFunction1[0].name
-  role           = google_project_iam_custom_role.yaelRole2.role_id
-  members        = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
-}
-
-# Retrieve the project ID dynamically
+# Retrieve the current project ID
 data "google_project" "current" {}
 
 # Connect the custom role to the service account
