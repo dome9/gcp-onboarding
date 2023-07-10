@@ -59,10 +59,27 @@ data "google_project" "current" {}
 resource "google_project_iam_binding" "yaelRole2Binding" {
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.yaelRole2.role_id
-  members = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
-
-  depends_on = [google_service_account.yaelServiceAccount1]
+  members = length(google_service_account.yaelServiceAccount1) > 0 ? ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"] : []
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
