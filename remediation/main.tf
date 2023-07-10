@@ -59,7 +59,7 @@ resource "google_project_iam_binding" "yaelRole2Binding" {
 }
 
 
-<<comment
+/*
 # Define the existing Cloud Function
 data "google_cloudfunctions_function" "existing_function" {
   name   = "yaelFunction1"
@@ -90,4 +90,4 @@ resource "google_cloudfunctions_function_iam_binding" "yaelFunction1Binding" {
   members       = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
 }
 
-comment
+*/
