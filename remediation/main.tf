@@ -46,8 +46,7 @@ resource "google_service_account" "yael_service_account" {
 
 resource "google_project_iam_binding" "service_role_binding" {
   role = "projects/${data.google_project.project.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
-  /* project = data.google_project.project.project_id */
-  project = "chkp-gcp-yaelel-box"
+  project = data.google_project
   members = [
     "serviceAccount:${google_service_account.yael_service_account.email}",
   ]
