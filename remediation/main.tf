@@ -11,20 +11,11 @@ resource "google_service_account" "yael_service_account" {
   display_name = "Yael Service Account"
 }
 
-data "google_project_iam_custom_role" "yaelRole2" {
-  role_id = "yaelRole2"
-}
-
-locals {
-  role_exists = can(data.google_project_iam_custom_role.yaelRole2)
-}
-
-resource "google_project_iam_custom_role" "create_yaelRole2" {
-  count        = local.role_exists ? 0 : 1
-  role_id      = "yaelRole2"
-  title        = "yaelRole2"
-  description  = "Custom role with specific permissions"
-  permissions  = [
+resource "google_project_iam_custom_role" "yaelRole2" {
+  role_id     = "yaelRole2"
+  title       = "yaelRole2"
+  description = "Custom role with specific permissions"
+  permissions = [
     "cloudsql.instances.get",
     "cloudsql.instances.update",
     "compute.firewalls.delete",
@@ -41,11 +32,18 @@ resource "google_project_iam_custom_role" "create_yaelRole2" {
     "storage.buckets.getIamPolicy",
     "storage.buckets.setIamPolicy",
   ]
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [
+      permissions,
+    ]
+  }
 }
 
 resource "google_project_iam_member" "service_role_binding" {
   project = data.google_project.current.project_id
-  role    = google_project_iam_custom_role.create_yaelRole2[count.index].role_id
+  role    = google_project_iam_custom_role.yaelRole2.role_id
   member  = "serviceAccount:${google_service_account.yael_service_account.email}"
 }
 
