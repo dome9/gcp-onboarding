@@ -58,10 +58,7 @@ resource "google_cloudfunctions_function" "yaelFunction12" {
   entry_point           = "main"
   service_account_email = google_service_account.yael_service_account.email
 
-  event_trigger {
-    event_type = "google.storage.object.finalize"
-    resource   = var.bucket_name
-  }
+  https_trigger {}
 
   ingress_settings = "ALLOW_ALL"
 }
