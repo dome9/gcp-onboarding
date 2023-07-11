@@ -5,5 +5,4 @@ google-cloud-logging
 google-cloud-pubsub
 google-auth
 google-cloud-storage
-google-api-python-client
 google-api-core
