@@ -12,35 +12,33 @@ resource "google_service_account" "yael_service_account" {
 }
 
 resource "google_project_iam_custom_role" "yaelRole2" {
-  count        = can(data.google_project.current) && can(data.google_project.current.project_id) ? 0 : 1
   role_id      = "yaelRole2"
   title        = "yaelRole2"
   description  = "Custom role with specific permissions"
   permissions  = [
-    "cloudsql.instances.get",
+      "cloudsql.instances.get",
+        "cloudsql.instances.update",
+        "compute.firewalls.delete",
+        "compute.instances.get",
+        "compute.instances.setLabels",
+        "compute.instances.stop",
+        "compute.instances.deleteAccessConfig",
+        "compute.networks.updatePolicy",
+        "compute.subnetworks.get",
+        "compute.subnetworks.setPrivateIpGoogleAccess",
+        "compute.subnetworks.update",
+        "container.clusters.update",
+        "gkemulticloud.awsNodePools.update",
+        "storage.buckets.getIamPolicy",
+        "storage.buckets.setIamPolicy",
   ]
-
-
-}
-
-resource "null_resource" "dummy" {
-  count = can(data.google_project.current) && !can(data.google_project.current.project_id) ? 1 : 0
 }
 
 resource "google_project_iam_member" "service_role_binding" {
-  count   = can(data.google_project.current) ? 1 : 0
-  project = can(data.google_project.current) ? data.google_project.current.project_id : ""
-  role    = can(google_project_iam_custom_role.yaelRole2) ? google_project_iam_custom_role.yaelRole2[0].role_id : null
+  project = data.google_project.current.project_id
+  role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
   member  = "serviceAccount:${google_service_account.yael_service_account.email}"
 }
-
-
-/* resource "google_project_iam_member" "service_role_binding" {
-  count   = can(data.google_project.current) && can(data.google_project.current.project_id) ? 1 : 0
-  project = data.google_project.current.project_id
-  role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.yaelRole2[count.index].role_id}"
-  member  = "serviceAccount:${google_service_account.yael_service_account.email}"
-} */
 /*
 # Define the IAM binding for allUsers
 resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
