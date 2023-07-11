@@ -49,6 +49,25 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
+resource "google_cloudfunctions_function" "yaelFunction1" {
+  name                  = "yaelFunction1"
+  runtime               = "python37"
+  source_archive_bucket = var.bucket_name
+  source_archive_object = "yael.zip"
+  region                = "us-central1"  # Specify the desired region for the Cloud Function
+  entry_point           = "main"
+  service_account_email = google_service_account.yaelServiceAccount1.email
+
+  event_trigger {
+    event_type = "google.storage.object.finalize"
+    resource   = var.bucket_name
+  }
+
+  ingress_settings = "ALLOW_ALL"
+}
+
+
+/*
 resource "google_cloudfunctions_function" "yaelFunction2" {
   name                  = "yaelFunction2"
   runtime               = "python37"
@@ -65,3 +84,4 @@ resource "google_cloudfunctions_function" "yaelFunction2" {
 
   ingress_settings = "ALLOW_ALL"
 }
+ */
