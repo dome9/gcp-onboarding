@@ -1,17 +1,16 @@
 #!/bin/bash
 
-# Get the bucket name from command line argument or environment variable
-if [ $# -eq 1 ]; then
+# Get the bucket name and region from command line arguments or environment variables
+if [ $# -eq 2 ]; then
   BUCKET_NAME=$1
-elif [ -n "$TF_BUCKET_NAME" ]; then
+  REGION=$2
+elif [ -n "$TF_BUCKET_NAME" ] && [ -n "$TF_REGION" ]; then
   BUCKET_NAME=$TF_BUCKET_NAME
+  REGION=$TF_REGION
 else
-  echo "Please provide the bucket name as a command line argument or set the 'TF_BUCKET_NAME' environment variable."
+  echo "Please provide the bucket name and region as command line arguments or set the 'TF_BUCKET_NAME' and 'TF_REGION' environment variables."
   exit 1
 fi
-
-# Get the region from the current GCP configuration
-REGION=$(gcloud config get-value compute/region 2>/dev/null)
 
 # Check if the bucket already exists
 if gsutil ls -b gs://${BUCKET_NAME} >/dev/null 2>&1; then
