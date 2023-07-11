@@ -48,7 +48,7 @@ resource "google_cloudfunctions_function" "yaelFunction2" {
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
-  region                = google_project.current.region
+  region                = data.google_project.current.region
   entry_point           = "main"
   service_account_email = google_service_account.yael_service_account.email
 
