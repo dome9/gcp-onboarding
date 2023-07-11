@@ -48,7 +48,9 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
-data "google_region" "current_region" {}
+data "google_compute_region" "current_region" {
+  project = data.google_project.current.project_id
+}
 
 /*
 # Define the existing Cloud Function
