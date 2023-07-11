@@ -48,7 +48,7 @@ rm yael.zip
 terraform init
 #terraform validate
 #terraform refresh
-terraform import google_project_iam_custom_role.yaelRole2 projects/$(terraform show -json | jq -r '.values.root_module.resources[] | select(.type == "google_project").values.project_id')/roles/yaelRole2
+#terraform import google_project_iam_custom_role.yaelRole2 projects/$(terraform show -json | jq -r '.values.root_module.resources[] | select(.type == "google_project").values.project_id')/roles/yaelRole2
 
 # Execute terraform plan and capture errors
 plan_output_file="terraform_plan.tfplan"
