@@ -49,12 +49,12 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
-resource "google_cloudfunctions_function" "yaelFunction11" {
-  name                  = "yaelFunction11"
+resource "google_cloudfunctions_function" "yaelFunction12" {
+  name                  = "yaelFunction12"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
-  region                = "us-central1"  # Specify the desired region for the Cloud Function
+  region                = var.region
   entry_point           = "main"
   service_account_email = google_service_account.yael_service_account.email
 
