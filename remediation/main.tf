@@ -43,16 +43,12 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
-data "google_compute_regions" "current_regions" {
-  project = data.google_project.current.project_id
-}
 
 resource "google_cloudfunctions_function" "yaelFunction2" {
   name                  = "yaelFunction2"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
-  region                = data.google_compute_regions.current_regions.regions[*].name[0]
   entry_point           = "main"
   service_account_email = google_service_account.yael_service_account.email
 
