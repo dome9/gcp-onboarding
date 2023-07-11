@@ -34,11 +34,6 @@ resource "google_project_iam_custom_role" "yaelRole2" {
   ]
 }
 
-/* resource "google_project_iam_member" "service_role_binding" {
-  project = data.google_project.current.project_id
-  role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
-  member  = "serviceAccount:${google_service_account.yael_service_account.email}"
-} */
 resource "google_project_iam_binding" "service_role_binding" {
   project = data.google_project.current.project_id
   role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
@@ -48,24 +43,16 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
-data "google_compute_region" "current_region" {
+data "google_compute_regions" "current_regions" {
   project = data.google_project.current.project_id
 }
-
-/*
-# Define the existing Cloud Function
-data "google_cloudfunctions_function" "yaelFunction2" {
-  name   = "yaelFunction2"
-  region = data.google_region.current_region.name
-}
- */
 
 resource "google_cloudfunctions_function" "yaelFunction2" {
   name                  = "yaelFunction2"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
-  region                = data.google_region.current_region.name
+  region                = data.google_compute_regions.current_regions.regions[0].name
   entry_point           = "main"
   service_account_email = google_service_account.yael_service_account.email
 
@@ -77,11 +64,5 @@ resource "google_cloudfunctions_function" "yaelFunction2" {
   ingress_settings = "ALLOW_ALL"
 }
 
-/*
-# Define the IAM binding for the Cloud Function and the custom role
-resource "google_cloudfunctions_function_iam_binding" "yaelFunction1Binding" {
-  function_name = google_cloudfunctions_function.yaelFunction1[0].name
-  members       = ["serviceAccount:${google_service_account.yaelServiceAccount1[0].email}"]
-}
- */
+
 
