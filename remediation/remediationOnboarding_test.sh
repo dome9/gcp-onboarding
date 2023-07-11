@@ -12,7 +12,7 @@ echo "PIP version: $(pip --version)"
 #source venv/bin/activate
 
 # Install the dependencies from requirements.txt
-#pip install -r requirements.txt
+pip install -r requirements.txt
 #echo "Python version: $(/usr/local/bin/python3.7 --version)"
 
 # Get the bucket name and region from command line arguments or environment variables
