@@ -49,7 +49,7 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
-resource "google_cloudfunctions_function" "yaelFunction12" {
+resource "google_cloudfunctions_http_function" "yaelFunction12" {
   name                  = "yaelFunction12"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
@@ -59,9 +59,8 @@ resource "google_cloudfunctions_function" "yaelFunction12" {
   service_account_email = google_service_account.yael_service_account.email
 
   https_trigger {}
-
-  ingress_settings = "ALLOW_ALL"
 }
+
 
 
 /*
