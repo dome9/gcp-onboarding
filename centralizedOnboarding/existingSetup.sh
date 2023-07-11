@@ -38,9 +38,8 @@ if [[ $ONBOARDING_TYPE != "AccountActivity" && $ONBOARDING_TYPE != "NetworkTraff
   echo "invalid onboarding type $ONBOARDING_TYPE, EXITING WITHOUT DEPLOYMENT!"
   exit 1
 
-# Don't change those namings because some validation functions using these values to check onboarding status after onboarding finished.
 AUDIENCE="dome9-gcp-logs-collector"
-SERVICE_ACCOUNT_NAME="cloudguard-logs-auth"
+SERVICE_ACCOUNT_NAME="cloudguard-centralized-auth"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10
 ACK_DEADLINE=60
@@ -53,48 +52,32 @@ echo "Enabling Deployment Manager APIs, which you will need for this deployment.
 gcloud services enable deploymentmanager.googleapis.com
 echo ""
 
-echo""
-echo "Start cleaning redundant resources from previous deployment if exist..."
-echo ""
-
-
-# delete existing service account if exists
-serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME" 2>&1)
-if [[ ! "$serviceAccount" =~ "0 items" ]]; then
-  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com --quiet)
+# service account creation
+if ! gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com &> /dev/null; then
+  serviceAccount=$(gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME --display-name="$SERVICE_ACCOUNT_NAME" 2>&1)
+  echo "$serviceAccount"
   if [[ "$serviceAccount" =~ "ERROR" ]]; then
-    echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME" EXITING WITHOUT DEPLOYMENT"
-    exit 1
+      echo "could not create service account "$SERVICE_ACCOUNT_NAME", EXITING WITHOUT DEPLOYMENT!"
+      exit 1
   fi
 fi
 
-
-# service account creation
-serviceAccount=$(gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME --display-name="$SERVICE_ACCOUNT_NAME" 2>&1)
-echo "$serviceAccount"
-if [[ "$serviceAccount" =~ "ERROR" ]]; then
-    echo "could not create service account "$SERVICE_ACCOUNT_NAME" EXITING WITHOUT DEPLOYMENT"
-    exit 1
-fi
-
-echo ""
-echo "Cleanup completed, starting onboarding process..."
-echo ""
-
 # subscription creation
-pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
-                           --topic="$TOPIC_NAME" \
-                           --ack-deadline="$ACK_DEADLINE" \
-                           --expiration-period="$EXPIRATION_PERIOD" \
-                           --push-endpoint="$ENDPOINT" \
-                           --push-auth-service-account="$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com \
-                           --push-auth-token-audience="$AUDIENCE" \
-                           --max-retry-delay="$MAX_RETRY_DELAY" \
-                           --min-retry-delay="$MIN_RETRY_DELAY")
-echo "$pubsubSubscription"
-if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
-    echo "could not create subscription "$SUBSCRIPTION_NAME" EXITING WITHOUT DEPLOYMENT"
+if ! gcloud pubsub subscriptions describe "$SUBSCRIPTION_NAME" &>/dev/null; then
+  pubsubSubscription=$(gcloud pubsub subscriptions create "$SUBSCRIPTION_NAME" \
+                             --topic="$TOPIC_NAME" \
+                             --ack-deadline="$ACK_DEADLINE" \
+                             --expiration-period="$EXPIRATION_PERIOD" \
+                             --push-endpoint="$ENDPOINT" \
+                             --push-auth-service-account="$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com \
+                             --push-auth-token-audience="$AUDIENCE" \
+                             --max-retry-delay="$MAX_RETRY_DELAY" \
+                             --min-retry-delay="$MIN_RETRY_DELAY")
+  echo "$pubsubSubscription"
+  if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
+    echo "could not create subscription "$SUBSCRIPTION_NAME", EXITING WITHOUT DEPLOYMENT!"
     exit 1
+  fi
 fi
 
 echo ""

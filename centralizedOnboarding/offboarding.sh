@@ -30,8 +30,7 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-SERVICE_ACCOUNT_NAME="cloudguard-logs-authentication"
-SERVICE_ACCOUNT_NAME_FL="cloudguard-fl-authentication"
+SERVICE_ACCOUNT_NAME="cloudguard-centralized-authentication"
 
 echo "setting up default project "$PROJECT""
 gcloud config set project "$PROJECT"
@@ -44,11 +43,10 @@ if $SINKS_PROVIDED; then
   for sink in $(echo "$SINKS" | jq -c '.[]'); do
     PROJECT_ID=$(echo "$sink" | jq -r '.projectId')
     SINK_NAME=$(echo "$sink" | jq -r '.sinkName')
-    sink=$(gcloud logging sinks list --project="$PROJECT_ID" --filter="name.scope(sink):"$SINK_NAME"" 2>&1)
-    if [[ ! "$sink" =~ "0 items" ]]; then
-      sink=$(gcloud logging sinks delete "$SINK_NAME")
+    if gcloud logging sinks describe "$SINK_NAME" --project="$PROJECT_ID" &>/dev/null; then
+      sink=$(gcloud logging sinks delete "$SINK_NAME" 2>&1)
       if [[ "$sink" =~ "ERROR" ]]; then
-        echo "could not delete existing sink "$SINK_NAME" "
+        echo "could not delete existing sink "$SINK_NAME""
       fi
     fi
   done
@@ -57,43 +55,31 @@ fi
 # subscription deletion
 if $SUBSCRIPTIONS_PROVIDED; then
   for SUBSCRIPTION_NAME in $SUBSCRIPTIONS do
-    pubsubSubscription=$(gcloud pubsub subscriptions list --filter="name.scope(subscription):"$SUBSCRIPTION_NAME"" 2>&1)
-      if [[ ! "$pubsubSubscription" =~ "0 items" ]]; then
-        pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME")
-        if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
-          echo "could not delete existing subscription "$SUBSCRIPTION_NAME" "
-        fi
+    if gcloud pubsub subscriptions describe "$SUBSCRIPTION_NAME" &>/dev/null; then
+      pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME" 2>&1)
+      if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
+        echo "could not delete existing subscription "$SUBSCRIPTION_NAME""
       fi
+    fi
   done
 fi
 
 # topics deletion
 if $TOPICS_PROVIDED; then
   for TOPIC_NAME in $TOPICS do
-    topic=$(gcloud pubsub topics list --filter="name.scope(topic):"$TOPIC_NAME"" 2>&1)
-    if [[ ! "$topic" =~ "0 items" ]]; then
-      topic=$(gcloud pubsub topics delete "$TOPIC_NAME")
+    if gcloud pubsub topics describe "$TOPIC_NAME" &>/dev/null; then
+      topic=$(gcloud pubsub topics delete "$TOPIC_NAME" 2>&1)
       if [[ "$topic" =~ "ERROR" ]]; then
-        echo "could not delete existing topic "$TOPIC_NAME" "
+        echo "could not delete existing topic "$TOPIC_NAME""
       fi
     fi
 fi
 
 # service account deletion
-serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME" 2>&1)
-if [[ ! "$serviceAccount" =~ "0 items" ]]; then
-  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com)
+if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_PROJECT".iam.gserviceaccount.com &> /dev/null; then
+  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com 2>&1)
   if [[ "$serviceAccount" =~ "ERROR" ]]; then
-    echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME" "
-  fi
-fi
-
-# service account deletion flowlogs
-serviceAccount=$(gcloud iam service-accounts list --filter="name.scope(service account):$SERVICE_ACCOUNT_NAME_FL" 2>&1)
-if [[ ! "$serviceAccount" =~ "0 items" ]]; then
-  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME_FL"@"$PROJECT".iam.gserviceaccount.com)
-  if [[ "$serviceAccount" =~ "ERROR" ]]; then
-    echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME_FL" "
+    echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME""
   fi
 fi
 

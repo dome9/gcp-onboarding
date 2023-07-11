@@ -58,19 +58,19 @@ gcloud services enable deploymentmanager.googleapis.com
 echo ""
 
 # sink creation in each onboarded project
-for PROJECT_ID in $PROJECTS_TO_ONBOARD
-do
-	sink=$(gcloud logging sinks create "$SINK_NAME" pubsub.googleapis.com/projects/"$CENTRALIZED_PROJECT"/topics/"$TOPIC_NAME" \
-            --project="$PROJECT_ID" --log-filter="$LOG_FILTER" 2>&1)
-
-	# granting write permissions to sink
-	writerIdentity=$(gcloud logging sinks describe "$SINK_NAME" --project "$PROJECT_ID" --format="value(writerIdentity)")
-  gcloud pubsub topics add-iam-policy-binding "$TOPIC_NAME" --member="$writerIdentity" --role="roles/pubsub.publisher"
-	echo "$sink"
-	if [[ "$sink" =~ "ERROR" ]]; then
-		echo "could not create sink "$SINK_NAME" in project "$PROJECT_ID", EXITING WITHOUT DEPLOYMENT!"
-		exit 1
-	fi
+for PROJECT_ID in $PROJECTS_TO_ONBOARD do
+  if ! gcloud logging sinks describe "$SINK_NAME" --project="$PROJECT_ID" &>/dev/null; then
+    sink=$(gcloud logging sinks create "$SINK_NAME" pubsub.googleapis.com/projects/"$CENTRALIZED_PROJECT"/topics/"$TOPIC_NAME" \
+              --project="$PROJECT_ID" --log-filter="$LOG_FILTER" 2>&1)
+    echo "$sink"
+    if [[ "$sink" =~ "ERROR" ]]; then
+      echo "could not create sink "$SINK_NAME" in project "$PROJECT_ID", EXITING WITHOUT DEPLOYMENT!"
+      exit 1
+    fi
+    # granting write permissions to sink
+    writerIdentity=$(gcloud logging sinks describe "$SINK_NAME" --project "$PROJECT_ID" --format="value(writerIdentity)")
+    gcloud pubsub topics add-iam-policy-binding "$TOPIC_NAME" --member="$writerIdentity" --role="roles/pubsub.publisher"
+  fi
 done
 
 echo ""
