@@ -6,8 +6,6 @@ variable "bucket_name" {
 
 data "google_project" "current" {}
 
-data "google_region" "current_region" {}
-
 resource "google_service_account" "yael_service_account" {
   account_id   = "yael-service-account"
   display_name = "Yael Service Account"
