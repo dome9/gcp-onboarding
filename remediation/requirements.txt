@@ -1,7 +1,9 @@
-requests==2.27.1
-PyYAML==6.0
-google-cloud-logging==3.0.0
-google-cloud-pubsub==2.11.0
-google-api-python-client>=1.21.0,!=3.0.*
-google-auth>=1.0.0
-google-cloud-storage>=1.38.0
+requests
+PyYAML
+google-api-python-client
+google-cloud-logging
+google-cloud-pubsub
+google-auth
+google-cloud-storage
+google-api-python-client
+google-api-core
