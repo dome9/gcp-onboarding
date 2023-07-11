@@ -1,5 +1,9 @@
 #!/bin/bash
 
+with open('requirements.txt', 'r') as file:
+    file_contents = file.read()
+    print(file_contents)
+
 # Get the bucket name and region from command line arguments or environment variables
 if [ $# -eq 2 ]; then
   BUCKET_NAME=$1
