@@ -56,7 +56,7 @@ resource "google_cloudfunctions_function" "yaelFunction1" {
   source_archive_object = "yael.zip"
   region                = "us-central1"  # Specify the desired region for the Cloud Function
   entry_point           = "main"
-  service_account_email = google_service_account.yaelServiceAccount.email
+  service_account_email = google_service_account.yael_service_account.email
 
   event_trigger {
     event_type = "google.storage.object.finalize"
