@@ -16,15 +16,38 @@ resource "google_project_iam_custom_role" "yaelRole2" {
   title        = "yaelRole2"
   description  = "Custom role with specific permissions"
   permissions  = [
-      "cloudsql.instances.get"
+        "cloudsql.instances.get",
+        "cloudsql.instances.update",
+        "compute.firewalls.delete",
+        "compute.instances.get",
+        "compute.instances.setLabels",
+        "compute.instances.stop",
+        "compute.instances.deleteAccessConfig",
+        "compute.networks.updatePolicy",
+        "compute.subnetworks.get",
+        "compute.subnetworks.setPrivateIpGoogleAccess",
+        "compute.subnetworks.update",
+        "container.clusters.update",
+        "gkemulticloud.awsNodePools.update",
+        "storage.buckets.getIamPolicy",
+        "storage.buckets.setIamPolicy"
   ]
 }
 
-resource "google_project_iam_member" "service_role_binding" {
+/* resource "google_project_iam_member" "service_role_binding" {
   project = data.google_project.current.project_id
   role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
   member  = "serviceAccount:${google_service_account.yael_service_account.email}"
+} */
+resource "google_project_iam_binding" "service_role_binding" {
+  project = data.google_project.current.project_id
+  role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
+
+  members = [
+    "serviceAccount:${google_service_account.yael_service_account.email}",
+  ]
 }
+
 /*
 # Define the IAM binding for allUsers
 resource "google_storage_bucket_iam_binding" "yaelBucket1AllUsers" {
