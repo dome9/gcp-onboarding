@@ -6,6 +6,8 @@ variable "bucket_name" {
 
 data "google_project" "current" {}
 
+data "google_region" "current_region" {}
+
 resource "google_service_account" "yael_service_account" {
   account_id   = "yael-service-account"
   display_name = "Yael Service Account"
@@ -43,12 +45,12 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
-
 resource "google_cloudfunctions_function" "yaelFunction2" {
   name                  = "yaelFunction2"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
+  region                = data.google_region.current_region.name
   entry_point           = "main"
   service_account_email = google_service_account.yael_service_account.email
 
