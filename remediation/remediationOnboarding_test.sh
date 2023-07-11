@@ -1,7 +1,9 @@
 #!/bin/bash
 
 cat requirements.txt
-
+echo "Running with Python: $(which python)"
+echo "Python version: $(python --version)"
+echo "PIP version: $(pip --version)"
 # Get the bucket name and region from command line arguments or environment variables
 if [ $# -eq 2 ]; then
   BUCKET_NAME=$1
