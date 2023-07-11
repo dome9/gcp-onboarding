@@ -52,7 +52,7 @@ resource "google_cloudfunctions_function" "yaelFunction2" {
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
-  region                = data.google_compute_regions.current_regions.regions[0].name
+  region                = data.google_compute_regions.current_regions.regions[*].name[0]
   entry_point           = "main"
   service_account_email = google_service_account.yael_service_account.email
 
@@ -63,6 +63,3 @@ resource "google_cloudfunctions_function" "yaelFunction2" {
 
   ingress_settings = "ALLOW_ALL"
 }
-
-
-
