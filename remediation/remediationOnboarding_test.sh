@@ -6,14 +6,14 @@ echo "Python version: $(python --version)"
 echo "PIP version: $(pip --version)"
 
 # Create a virtual environment with Python 3.7
-python3.7 -m venv venv
+/usr/bin/python3.7 -m venv venv
 
 # Activate the virtual environment
 source venv/bin/activate
 
 # Install the dependencies from requirements.txt
 pip install -r requirements.txt
-echo "Python version: $(python --version)"
+echo "Python version: $(/usr/bin/python3.7 --version)"
 
 # Get the bucket name and region from command line arguments or environment variables
 if [ $# -eq 2 ]; then
