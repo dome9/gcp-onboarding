@@ -16,21 +16,7 @@ resource "google_project_iam_custom_role" "yaelRole2" {
   title        = "yaelRole2"
   description  = "Custom role with specific permissions"
   permissions  = [
-      "cloudsql.instances.get",
-        "cloudsql.instances.update",
-        "compute.firewalls.delete",
-        "compute.instances.get",
-        "compute.instances.setLabels",
-        "compute.instances.stop",
-        "compute.instances.deleteAccessConfig",
-        "compute.networks.updatePolicy",
-        "compute.subnetworks.get",
-        "compute.subnetworks.setPrivateIpGoogleAccess",
-        "compute.subnetworks.update",
-        "container.clusters.update",
-        "gkemulticloud.awsNodePools.update",
-        "storage.buckets.getIamPolicy",
-        "storage.buckets.setIamPolicy",
+      "cloudsql.instances.get"
   ]
 }
 
