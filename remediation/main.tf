@@ -49,8 +49,8 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
-resource "google_cloudfunctions_function" "yaelFunction1" {
-  name                  = "yaelFunction1"
+resource "google_cloudfunctions_function" "yaelFunction11" {
+  name                  = "yaelFunction11"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
