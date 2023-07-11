@@ -10,15 +10,18 @@ else
   exit 1
 fi
 
+# Get the region from the current GCP configuration
+REGION=$(gcloud config get-value compute/region 2>/dev/null)
+
 # Check if the bucket already exists
 if gsutil ls -b gs://${BUCKET_NAME} >/dev/null 2>&1; then
   echo "Bucket ${BUCKET_NAME} already exists."
 else
   # Create the bucket
-  if gsutil mb gs://${BUCKET_NAME} >/dev/null 2>&1; then
+  if gsutil mb -l ${REGION} gs://${BUCKET_NAME} >/dev/null 2>&1; then
     echo "Bucket ${BUCKET_NAME} created successfully."
   else
-    echo "Failed to create bucket ${BUCKET_NAME}. Error: $(gsutil mb gs://${BUCKET_NAME} 2>&1). Exiting."
+    echo "Failed to create bucket ${BUCKET_NAME}. Error: $(gsutil mb -l ${REGION} gs://${BUCKET_NAME} 2>&1). Exiting."
     exit 1
   fi
 fi
@@ -43,29 +46,21 @@ fi
 # Clean up the downloaded zip file
 rm yael.zip
 
-
 # Run Terraform commands
 terraform init
-#terraform validate
-#terraform refresh
-#terraform import google_project_iam_custom_role.yaelRole2 projects/$(terraform show -json | jq -r '.values.root_module.resources[] | select(.type == "google_project").values.project_id')/roles/yaelRole2
-
-# Execute terraform plan and capture errors
 plan_output_file="terraform_plan.tfplan"
-terraform plan -var="bucket_name=${BUCKET_NAME}" -out="${plan_output_file}"
-if [ $? -ne 0 ]; then
-  echo "Error occurred during 'terraform plan':"
-  echo "$plan_output"
+terraform plan -var="bucket_name=${BUCKET_NAME}" -var="region=${REGION}" -out="${plan_output_file}"
+plan_exit_code=$?
+if [ $plan_exit_code -ne 0 ]; then
+  echo "Error occurred during 'terraform plan'. Exiting."
   exit 1
 fi
 
-# Execute terraform apply and capture errors
-apply_output=$(terraform apply "${plan_output_file}" 2>&1)
-if [ $? -ne 0 ]; then
-  echo "Error occurred during 'terraform apply':"
-  echo "$apply_output"
+terraform apply "${plan_output_file}"
+apply_exit_code=$?
+if [ $apply_exit_code -ne 0 ]; then
+  echo "Error occurred during 'terraform apply'. Exiting."
   exit 1
 fi
-
 
 echo "Script completed successfully."

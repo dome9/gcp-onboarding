@@ -4,6 +4,12 @@ variable "bucket_name" {
   type        = string
 }
 
+# Define the region as a variable
+variable "region" {
+  description = "The region for the GCP resources"
+  type        = string
+}
+
 data "google_project" "current" {}
 
 resource "google_service_account" "yael_service_account" {
@@ -48,7 +54,7 @@ resource "google_cloudfunctions_function" "yaelFunction2" {
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "yael.zip"
-  region                = data.google_project.current.region
+  region                = var.region
   entry_point           = "main"
   service_account_email = google_service_account.yael_service_account.email
 
