@@ -61,13 +61,25 @@ resource "google_cloudfunctions_function" "yaelFunction12" {
   trigger_http = true
 
   ingress_settings = "ALLOW_ALL"
-
-  # Set IAM policy to require authentication
-  iam_member {
-    role    = "roles/cloudfunctions.invoker"
-    member  = "allAuthenticatedUsers"
-  }
 }
+
+resource "google_cloudfunctions_function_iam_policy" "yaelFunction12_iam_policy" {
+  function_id = google_cloudfunctions_function.yaelFunction12.id
+
+  policy_data = <<-EOF
+    {
+      "bindings": [
+        {
+          "role": "roles/cloudfunctions.invoker",
+          "members": [
+            "allAuthenticatedUsers"
+          ]
+        }
+      ]
+    }
+  EOF
+}
+
 
 
 
