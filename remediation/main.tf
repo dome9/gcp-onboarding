@@ -61,25 +61,11 @@ resource "google_cloudfunctions_function" "yaelFunction12" {
   trigger_http = true
 
   ingress_settings = "ALLOW_ALL"
-  labels = {
-    "deployment-tool" = "terraform"
-  }
 
   # Set the IAM policy to require authentication
-  iam_policy {
-    etag = data.google_iam_policy.iam_policy.etag
-    policy_data = <<-EOF
-      {
-        "bindings": [
-          {
-            "role": "roles/cloudfunctions.invoker",
-            "members": [
-              "allAuthenticatedUsers"
-            ]
-          }
-        ]
-      }
-    EOF
+  service_account_iam_binding {
+    role    = "roles/cloudfunctions.invoker"
+    members = ["allAuthenticatedUsers"]
   }
 }
 
