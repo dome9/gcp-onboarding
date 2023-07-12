@@ -63,14 +63,15 @@ resource "google_cloudfunctions_function" "yaelFunction12" {
   ingress_settings = "ALLOW_ALL"
 }
 
-resource "google_cloudfunctions_function_iam_binding" "yaelFunction12_iam_binding" {
-  project      = data.google_project.current.project_id
-  region       = var.region
-  cloud_function_id = google_cloudfunctions_function.yaelFunction12.name
+resource "google_cloudfunctions_function_iam_member" "yaelFunction12_iam_member" {
+  project     = data.google_project.current.project_id
+  region      = var.region
+  cloud_function = google_cloudfunctions_function.yaelFunction12.name
 
-  role    = "roles/cloudfunctions.invoker"
-  members = ["allAuthenticatedUsers"]
+  role   = "roles/cloudfunctions.invoker"
+  member = "allAuthenticatedUsers"
 }
+
 
 
 
