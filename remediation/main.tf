@@ -61,26 +61,28 @@ resource "google_cloudfunctions_function" "yaelFunction12" {
   trigger_http = true
 
   ingress_settings = "ALLOW_ALL"
-}
-
-
-
-
-/*
-resource "google_cloudfunctions_function" "yaelFunction2" {
-  name                  = "yaelFunction2"
-  runtime               = "python37"
-  source_archive_bucket = var.bucket_name
-  source_archive_object = "yael.zip"
-  region                = var.region
-  entry_point           = "main"
-  service_account_email = google_service_account.yael_service_account.email
-
-  event_trigger {
-    event_type = "google.storage.object.finalize"
-    resource   = var.bucket_name
+  labels = {
+    "deployment-tool" = "terraform"
   }
 
-  ingress_settings = "ALLOW_ALL"
+  # Set the IAM policy to require authentication
+  iam_policy {
+    etag = data.google_iam_policy.iam_policy.etag
+    policy_data = <<-EOF
+      {
+        "bindings": [
+          {
+            "role": "roles/cloudfunctions.invoker",
+            "members": [
+              "allAuthenticatedUsers"
+            ]
+          }
+        ]
+      }
+    EOF
+  }
 }
- */
+
+
+
+
