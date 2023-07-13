@@ -36,7 +36,8 @@ resource "google_project_iam_custom_role" "yaelRole2" {
         "container.clusters.update",
         "gkemulticloud.awsNodePools.update",
         "storage.buckets.getIamPolicy",
-        "storage.buckets.setIamPolicy"
+        "storage.buckets.setIamPolicy",
+        "cloudfunctions.functions.invoke"
   ]
 }
 
