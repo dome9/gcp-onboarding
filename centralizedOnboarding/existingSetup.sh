@@ -5,7 +5,6 @@ usage() {
   echo "Usage: $0 [OPTIONS]"
   echo "Options:"
   echo "  --endpoint=<ENDPOINT>             Specify the cloudguard endpoint"
-  echo "  --onboarding-type=<TYPE>          Specify the onboarding type"
   echo "  --centralized-project=<PROJECT>   Specify the centralized project id"
   echo "  --topic-name=<TOPIC>              Specify the topic name"
   echo "  --subscription-name=<SUBSCRIPTION> Specify the subscription name"
@@ -15,7 +14,6 @@ usage() {
 while [[ "$#" -gt 0 ]]; do
   case $1 in
     --endpoint=*) ENDPOINT="${1#*=}";;
-    --onboarding-type=*) ONBOARDING_TYPE="${1#*=}";;
     --centralized-project=*) CENTRALIZED_PROJECT="${1#*=}";;
     --topic-name=*) TOPIC_NAME="${1#*=}";;
     --subscription-name=*) SUBSCRIPTION_NAME="${1#*=}";;
@@ -28,15 +26,11 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-if [[ -z "$ENDPOINT" || -z "$ONBOARDING_TYPE" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SUBSCRIPTION_NAME" ]]; then
+if [[ -z "$ENDPOINT" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SUBSCRIPTION_NAME" ]]; then
   echo "Missing one or more required arguments."
   usage
   exit 1
 fi
-
-if [[ $ONBOARDING_TYPE != "AccountActivity" && $ONBOARDING_TYPE != "NetworkTraffic" ]]; then
-  echo "invalid onboarding type $ONBOARDING_TYPE, EXITING WITHOUT DEPLOYMENT!"
-  exit 1
 
 AUDIENCE="dome9-gcp-logs-collector"
 SERVICE_ACCOUNT_NAME="cloudguard-centralized-auth"

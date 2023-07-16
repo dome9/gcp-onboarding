@@ -4,12 +4,13 @@
 usage() {
   echo "Usage: $0 [OPTIONS]"
   echo "Options:"
-  echo "  --endpoint=<ENDPOINT>             Specify the cloudguard endpoint"
-  echo "  --onboarding-type=<TYPE>          Specify the onboarding type"
-  echo "  --centralized-project=<PROJECT>   Specify the centralized project"
-  echo "  --topic-name=<TOPIC>              Specify the topic name"
+  echo "  --endpoint=<ENDPOINT>              Specify the cloudguard endpoint"
+  echo "  --onboarding-type=<TYPE>           Specify the onboarding type"
+  echo "  --centralized-project=<PROJECT>    Specify the centralized project"
+  echo "  --topic-name=<TOPIC>               Specify the topic name"
   echo "  --subscription-name=<SUBSCRIPTION> Specify the subscription name"
-  echo "  --projects-to-onboard=<PROJECTS>  Specify the projects to onboard (space-separated, ex: \"projectA projectB ...\")"
+  echo "  --sink-name=<SINK>                 Specify the sink name"
+  echo "  --projects-to-onboard=<PROJECTS>   Specify the projects to onboard (space-separated, ex: \"projectA projectB ...\")"
 }
 
 # Parse the named arguments
@@ -20,6 +21,7 @@ while [[ "$#" -gt 0 ]]; do
     --centralized-project=*) CENTRALIZED_PROJECT="${1#*=}";;
     --topic-name=*) TOPIC_NAME="${1#*=}";;
     --subscription-name=*) SUBSCRIPTION_NAME="${1#*=}";;
+    --sink-name=*) SINK_NAME="${1#*=}";;
     --projects-to-onboard=*) PROJECTS_TO_ONBOARD="${1#*=}";;
     *)
       echo "Invalid option: $1"
@@ -30,7 +32,7 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-if [[ -z "$ENDPOINT" || -z "$ONBOARDING_TYPE" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SUBSCRIPTION_NAME" || -z "$PROJECTS_TO_ONBOARD" ]]; then
+if [[ -z "$ENDPOINT" || -z "$ONBOARDING_TYPE" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SUBSCRIPTION_NAME" || -z "$SINK_NAME" || -z "$PROJECTS_TO_ONBOARD" ]]; then
   echo "Missing one or more required arguments."
   usage
   exit 1
@@ -47,7 +49,6 @@ else
 fi
 
 SERVICE_ACCOUNT_NAME="cloudguard-centralized-auth"
-SINK_NAME="cloudguard-$ONBOARDING_TYPE-sink-to-centralized"
 AUDIENCE="dome9-gcp-logs-collector"
 MAX_RETRY_DELAY=60
 MIN_RETRY_DELAY=10

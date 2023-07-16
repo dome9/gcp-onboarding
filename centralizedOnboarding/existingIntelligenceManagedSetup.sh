@@ -8,6 +8,7 @@ usage() {
   echo "  --onboarding-type=<TYPE>          Specify the onboarding type"
   echo "  --centralized-project=<PROJECT>   Specify the centralized project id"
   echo "  --topic-name=<TOPIC>              Specify the topic name"
+  echo "  --sink-name=<SINK>                Specify the sink name"
   echo "  --projects-to-onboard=<PROJECTS>  Specify the projects to onboard (space-separated, ex: \"projectA projectB ...\")"
 }
 
@@ -18,6 +19,7 @@ while [[ "$#" -gt 0 ]]; do
     --onboarding-type=*) ONBOARDING_TYPE="${1#*=}";;
     --centralized-project=*) CENTRALIZED_PROJECT="${1#*=}";;
     --topic-name=*) TOPIC_NAME="${1#*=}";;
+    --sink-name=*) SINK_NAME="${1#*=}";;
     --projects-to-onboard=*) PROJECTS_TO_ONBOARD="${1#*=}";;
     *)
       echo "Invalid option: $1"
@@ -28,7 +30,7 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-if [[ -z "$ENDPOINT" || -z "$ONBOARDING_TYPE" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SUBSCRIPTION_NAME" ]]; then
+if [[ -z "$ENDPOINT" || -z "$ONBOARDING_TYPE" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SINK_NAME" || -z "$PROJECTS_TO_ONBOARD" ]]; then
   echo "Missing one or more required arguments."
   usage
   exit 1
