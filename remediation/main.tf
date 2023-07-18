@@ -1,12 +1,11 @@
-# Define the bucket name as a variable
+
 variable "bucket_name" {
-  description = "The name of the GCP bucket"
+  description = "GCP bucket for temporary storing the function code"
   type        = string
 }
 
-# Define the region as a variable
 variable "region" {
-  description = "The region for the GCP resources"
+  description = "The region of the GCP resources"
   type        = string
 }
 
