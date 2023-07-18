@@ -4,10 +4,10 @@
 usage() {
   echo "Usage: $0 [OPTIONS]"
   echo "Options:"
-  echo "  --endpoint=<ENDPOINT>             Specify the cloudguard endpoint"
-  echo "  --centralized-project=<PROJECT>   Specify the centralized project id"
-  echo "  --topic-name=<TOPIC>              Specify the topic name"
-  echo "  --subscription-name=<SUBSCRIPTION> Specify the subscription name"
+  echo "  --endpoint=<ENDPOINT>              Specify the cloudguard endpoint"
+  echo "  --centralized-project=<PROJECT>    Specify the centralized project id"
+  echo "  --topic-name=<TOPIC>               Specify the PubSub topic name"
+  echo "  --subscription-name=<SUBSCRIPTION> Specify the PubSub subscription name"
 }
 
 # Parse the named arguments

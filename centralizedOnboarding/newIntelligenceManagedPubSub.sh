@@ -7,9 +7,9 @@ usage() {
   echo "  --endpoint=<ENDPOINT>              Specify the cloudguard endpoint"
   echo "  --onboarding-type=<TYPE>           Specify the onboarding type"
   echo "  --centralized-project=<PROJECT>    Specify the centralized project"
-  echo "  --topic-name=<TOPIC>               Specify the topic name"
-  echo "  --subscription-name=<SUBSCRIPTION> Specify the subscription name"
-  echo "  --sink-name=<SINK>                 Specify the sink name"
+  echo "  --topic-name=<TOPIC>               Specify the PubSub topic name"
+  echo "  --subscription-name=<SUBSCRIPTION> Specify the PubSub subscription name"
+  echo "  --sink-name=<SINK>                 Specify the logging sink name"
   echo "  --projects-to-onboard=<PROJECTS>   Specify the projects to onboard (space-separated, ex: \"projectA projectB ...\")"
 }
 
@@ -102,7 +102,8 @@ if ! gcloud pubsub subscriptions describe "$SUBSCRIPTION_NAME" &>/dev/null; then
 fi
 
 # sink creation in each onboarded project
-for PROJECT_ID in $PROJECTS_TO_ONBOARD do
+for PROJECT_ID in $PROJECTS_TO_ONBOARD
+do
   if ! gcloud logging sinks describe "$SINK_NAME" --project="$PROJECT_ID" &>/dev/null; then
     sink=$(gcloud logging sinks create "$SINK_NAME" pubsub.googleapis.com/projects/"$CENTRALIZED_PROJECT"/topics/"$TOPIC_NAME" \
               --project="$PROJECT_ID" --log-filter="$LOG_FILTER" 2>&1)
