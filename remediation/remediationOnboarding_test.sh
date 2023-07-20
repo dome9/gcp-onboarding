@@ -30,7 +30,7 @@ else
 fi
 
 
-ZIP_URL="https://yael-test-1.s3.amazonaws.com/yael.zip"
+ZIP_URL="https://dome9-backend-artifacts.s3.amazonaws.com/gcpcloudbots/cloud-bots-gcp.zip"
 if wget -q ${ZIP_URL} -O yael.zip; then
   echo "Zip file downloaded successfully."
 else
