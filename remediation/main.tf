@@ -12,7 +12,7 @@ variable "region" {
 data "google_project" "current" {}
 
 resource "google_service_account" "cloudguard_cloudbots_remediation_serviceaccount" {
-  account_id   = "cloudguard-cloudbots-remediation-serviceaccount"
+  account_id   = "cloudbots-remediation"
   display_name = "CloudGuard CloudBots Remediation ServiceAccount"
 }
 
