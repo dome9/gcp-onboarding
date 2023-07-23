@@ -11,14 +11,14 @@ variable "region" {
 
 data "google_project" "current" {}
 
-resource "google_service_account" "yael_service_account" {
-  account_id   = "yael-service-account"
-  display_name = "Yael Service Account"
+resource "google_service_account" "CloudGuard-CloudBots-Remediation-ServiceAccount" {
+  account_id   = "CloudGuard-CloudBots-Remediation-ServiceAccount"
+  display_name = "CloudGuard-CloudBots-Remediation-ServiceAccount"
 }
 
-resource "google_project_iam_custom_role" "yaelRole2" {
-  role_id      = "yaelRole2"
-  title        = "yaelRole2"
+resource "google_project_iam_custom_role" "CloudBotsRemediationRole" {
+  role_id      = "CloudBotsRemediationRole"
+  title        = "CloudGuard-CloudBots-Remediation-Role"
   description  = "Custom role with specific permissions"
   permissions  = [
         "cloudsql.instances.get",
@@ -42,31 +42,31 @@ resource "google_project_iam_custom_role" "yaelRole2" {
 
 resource "google_project_iam_binding" "service_role_binding" {
   project = data.google_project.current.project_id
-  role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.yaelRole2.role_id}"
+  role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.CloudBotsRemediationRole.role_id}"
 
   members = [
-    "serviceAccount:${google_service_account.yael_service_account.email}",
+    "serviceAccount:${google_service_account.CloudGuard-CloudBots-Remediation-ServiceAccount.email}",
   ]
 }
 
-resource "google_cloudfunctions_function" "yaelFunction12" {
-  name                  = "yaelFunction12"
+resource "google_cloudfunctions_function" "CloudGuard-CloudBots-Remediation" {
+  name                  = "CloudGuard-CloudBots-Remediation"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
-  source_archive_object = "yael.zip"
+  source_archive_object = "cloud-bots-gcp.zip"
   region                = var.region
   entry_point           = "main"
-  service_account_email = google_service_account.yael_service_account.email
+  service_account_email = google_service_account.CloudGuard-CloudBots-Remediation-ServiceAccount.email
 
   trigger_http = true
 
   ingress_settings = "ALLOW_ALL"
 }
 
-resource "google_cloudfunctions_function_iam_member" "yaelFunction12_iam_member" {
+resource "google_cloudfunctions_function_iam_member" "CloudGuard-CloudBots-Remediation_iam_member" {
   project     = data.google_project.current.project_id
   region      = var.region
-  cloud_function = google_cloudfunctions_function.yaelFunction12.name
+  cloud_function = google_cloudfunctions_function.CloudGuard-CloudBots-Remediation.name
 
   role   = "roles/cloudfunctions.invoker"
   member = "allAuthenticatedUsers"
