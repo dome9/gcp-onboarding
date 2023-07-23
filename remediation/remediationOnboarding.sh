@@ -30,11 +30,15 @@ else
   exit 1
 fi
 
-if gsutil cp -f cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
+if gsutil -m rm -f gs://${BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
+  echo "Previous zip file removed from the GCP bucket."
+fi
+
+if gsutil cp cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
   echo "Zip file uploaded to GCP bucket successfully."
 else
   echo "Failed to upload the zip file to the GCP bucket. Error:"
-  gsutil cp -f cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip 2>&1
+  gsutil cp cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip 2>&1
   exit 1
 fi
 
