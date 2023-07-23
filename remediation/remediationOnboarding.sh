@@ -30,18 +30,16 @@ else
   exit 1
 fi
 
-if gsutil cp cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
+if gsutil cp -f cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
   echo "Zip file uploaded to GCP bucket successfully."
 else
   echo "Failed to upload the zip file to the GCP bucket. Error:"
-  gsutil cp cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip 2>&1
+  gsutil cp -f cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip 2>&1
   exit 1
 fi
 
 rm cloud-bots-gcp.zip
 
-# Set the region as an environment variable for Terraform
-export TF_VAR_region=${REGION}
 
 terraform init
 plan_output_file="terraform_plan.tfplan"
