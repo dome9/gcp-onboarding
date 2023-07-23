@@ -12,7 +12,7 @@ variable "region" {
 data "google_project" "current" {}
 
 resource "google_service_account" "cloudguard_cloudbots_remediation_serviceaccount {
-  account_id   = "cloudguard_cloudbots_remediation_serviceaccount"
+  account_id   = "cloudguard-cloudbots-remediation-serviceaccount"
   display_name = "CloudGuard CloudBots Remediation ServiceAccount"
 }
 
@@ -49,8 +49,8 @@ resource "google_project_iam_binding" "service_role_binding" {
   ]
 }
 
-resource "google_cloudfunctions_function" "CloudGuard-CloudBots-Remediation" {
-  name                  = "CloudGuard-CloudBots-Remediation"
+resource "google_cloudfunctions_function" "CloudGuardCloudBotsRemediationFunction" {
+  name                  = "CloudGuardCloudBotsRemediationfunction"
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "cloud-bots-gcp.zip"
@@ -63,20 +63,11 @@ resource "google_cloudfunctions_function" "CloudGuard-CloudBots-Remediation" {
   ingress_settings = "ALLOW_ALL"
 }
 
-resource "google_cloudfunctions_function_iam_member" "CloudGuard-CloudBots-Remediation_iam_member" {
+resource "google_cloudfunctions_function_iam_member" "CloudGuardCloudBotsRemediationFunction_iam_member" {
   project     = data.google_project.current.project_id
   region      = var.region
-  cloud_function = google_cloudfunctions_function.CloudGuard-CloudBots-Remediation.name
+  cloud_function = google_cloudfunctions_function.CloudGuardCloudBotsRemediationFunction.name
 
   role   = "roles/cloudfunctions.invoker"
   member = "allAuthenticatedUsers"
 }
-
-
-
-
-
-
-
-
-
