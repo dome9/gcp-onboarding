@@ -11,9 +11,9 @@ variable "region" {
 
 data "google_project" "current" {}
 
-resource "google_service_account" "CloudGuard-CloudBots-Remediation-ServiceAccount" {
+resource "google_service_account" "cloudguard-cloudbots-remediation-serviceaccount" {
   account_id   = "cloudguard-cloudbots-remediation-serviceaccount"
-  display_name = "CloudGuard-CloudBots-Remediation-ServiceAccount"
+  display_name = "cloudguard-cloudbots-remediation-serviceaccount"
 }
 
 resource "google_project_iam_custom_role" "CloudBotsRemediationRole" {
@@ -45,7 +45,7 @@ resource "google_project_iam_binding" "service_role_binding" {
   role    = "projects/${data.google_project.current.project_id}/roles/${google_project_iam_custom_role.CloudBotsRemediationRole.role_id}"
 
   members = [
-    "serviceAccount:${google_service_account.CloudGuard-CloudBots-Remediation-ServiceAccount.email}",
+    "serviceAccount:${google_service_account.cloudguard-cloudbots-remediation-serviceaccount.email}",
   ]
 }
 
@@ -56,7 +56,7 @@ resource "google_cloudfunctions_function" "CloudGuard-CloudBots-Remediation" {
   source_archive_object = "cloud-bots-gcp.zip"
   region                = var.region
   entry_point           = "main"
-  service_account_email = google_service_account.CloudGuard-CloudBots-Remediation-ServiceAccount.email
+  service_account_email = google_service_account.cloudguard-cloudbots-remediation-serviceaccount.email
 
   trigger_http = true
 
