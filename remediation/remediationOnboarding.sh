@@ -37,7 +37,7 @@ fi
 if gsutil cp cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
   echo "Zip file uploaded to GCP bucket successfully."
 else
-  echo "Failed to upload the zip file to the GCP bucket. Error:"
+  echo "Failed to upload the zip file to GCP bucket. Error:"
   gsutil cp cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip 2>&1
   exit 1
 fi
