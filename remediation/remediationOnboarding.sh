@@ -46,13 +46,12 @@ fi
 
 rm cloud-bots-gcp.zip
 
-
 terraform init
 plan_output_file="terraform_plan.tfplan"
 terraform plan -var="function_name=${FUNCTION_NAME}" -var="region=${REGION}" -var="bucket_name=${TEMP_BUCKET_NAME}" -out="${plan_output_file}"
 plan_exit_code=$?
 if [ $plan_exit_code -ne 0 ]; then
-  echo "Error occurred during 'terraform plan'.
+  echo "Error occurred during 'terraform plan'."
   exit 1
 fi
 
