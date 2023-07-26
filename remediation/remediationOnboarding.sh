@@ -1,22 +1,24 @@
 #!/bin/bash
 
+TEMP_TEMP_BUCKET_NAME="temp-gcp-bucket"
+REGION="us-central1"
+
 if [ $# -lt 1 ]; then
-  echo "Usage: $0 <BUCKET_NAME>"
+  echo "Usage: $0 <FUNCTION_NAME>"
   exit 1
 fi
 
-BUCKET_NAME=$1
-REGION="us-central1"
+FUNCTION_NAME=$1
 
-if gsutil ls -b gs://${BUCKET_NAME} >/dev/null 2>&1; then
-  echo "Bucket ${BUCKET_NAME} exists."
+if gsutil ls -b gs://${TEMP_TEMP_BUCKET_NAME} >/dev/null 2>&1; then
+  echo "Bucket ${TEMP_TEMP_BUCKET_NAME} exists."
 else
-  echo "Bucket ${BUCKET_NAME} does not exist."
-  if gsutil mb -l ${REGION} gs://${BUCKET_NAME} >/dev/null 2>&1; then
-    echo "Bucket ${BUCKET_NAME} created successfully."
+  echo "Bucket ${TEMP_TEMP_BUCKET_NAME} does not exist."
+  if gsutil mb -l ${REGION} gs://${TEMP_TEMP_BUCKET_NAME} >/dev/null 2>&1; then
+    echo "Bucket ${TEMP_TEMP_BUCKET_NAME} created successfully."
   else
-    echo "Failed to create bucket ${BUCKET_NAME}. Error:"
-    gsutil mb -l ${REGION} gs://${BUCKET_NAME} 2>&1
+    echo "Failed to create bucket ${TEMP_TEMP_BUCKET_NAME}. Error:"
+    gsutil mb -l ${REGION} gs://${TEMP_TEMP_BUCKET_NAME} 2>&1
     exit 1
   fi
 fi
@@ -30,15 +32,15 @@ else
   exit 1
 fi
 
-if gsutil -m rm -f gs://${BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
+if gsutil -m rm -f gs://${TEMP_BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
   echo "Previous zip file removed from the GCP bucket."
 fi
 
-if gsutil cp cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
+if gsutil cp cloud-bots-gcp.zip gs://${TEMP_BUCKET_NAME}/cloud-bots-gcp.zip >/dev/null 2>&1; then
   echo "Zip file uploaded to GCP bucket successfully."
 else
   echo "Failed to upload the zip file to GCP bucket. Error:"
-  gsutil cp cloud-bots-gcp.zip gs://${BUCKET_NAME}/cloud-bots-gcp.zip 2>&1
+  gsutil cp cloud-bots-gcp.zip gs://${TEMP_BUCKET_NAME}/cloud-bots-gcp.zip 2>&1
   exit 1
 fi
 
@@ -47,7 +49,7 @@ rm cloud-bots-gcp.zip
 
 terraform init
 plan_output_file="terraform_plan.tfplan"
-terraform plan -var="bucket_name=${BUCKET_NAME}" -var="region=${REGION}" -out="${plan_output_file}"
+terraform plan -var="function_name=${FUNCTION_NAME}" -var="region=${REGION}" -out="${plan_output_file}"
 plan_exit_code=$?
 if [ $plan_exit_code -ne 0 ]; then
   echo "Error occurred during 'terraform plan'."
@@ -60,5 +62,9 @@ if [ $apply_exit_code -ne 0 ]; then
   echo "Error occurred during 'terraform apply'."
   exit 1
 fi
+
+
+gsutil -m rm -r gs://${TEMP_TEMP_BUCKET_NAME}
+echo "Bucket ${TEMP_TEMP_BUCKET_NAME} deleted successfully."
 
 echo "Script completed successfully."

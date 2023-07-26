@@ -1,6 +1,6 @@
 
-variable "bucket_name" {
-  description = "GCP bucket for temporary storing the function code"
+variable "function_name" {
+  description = "GCP function to be triggered for remediation"
   type        = string
 }
 
@@ -51,7 +51,7 @@ resource "google_project_iam_binding" "service_role_binding" {
 }
 
 resource "google_cloudfunctions_function" "CloudGuardCloudBotsRemediationFunction" {
-  name                  = "CloudGuardCloudBotsRemediationfunction"
+  name                  = function_name
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "cloud-bots-gcp.zip"
