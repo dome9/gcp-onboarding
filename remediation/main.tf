@@ -9,6 +9,11 @@ variable "region" {
   type        = string
 }
 
+variable "bucket_name" {
+  description = "The name of the GCS bucket for storing the Cloud Function source code"
+  type        = string
+}
+
 data "google_project" "current" {}
 
 resource "google_service_account" "cloudguard_cloudbots_remediation_serviceaccount" {
@@ -51,7 +56,7 @@ resource "google_project_iam_binding" "service_role_binding" {
 }
 
 resource "google_cloudfunctions_function" "CloudGuardCloudBotsRemediationFunction" {
-  name                  = function_name
+  name                  = var.function_name
   runtime               = "python37"
   source_archive_bucket = var.bucket_name
   source_archive_object = "cloud-bots-gcp.zip"
@@ -65,8 +70,8 @@ resource "google_cloudfunctions_function" "CloudGuardCloudBotsRemediationFunctio
 }
 
 resource "google_cloudfunctions_function_iam_member" "CloudGuardCloudBotsRemediationFunction_iam_member" {
-  project     = data.google_project.current.project_id
-  region      = var.region
+  project        = data.google_project.current.project_id
+  region         = var.region
   cloud_function = google_cloudfunctions_function.CloudGuardCloudBotsRemediationFunction.name
 
   role   = "roles/cloudfunctions.invoker"
