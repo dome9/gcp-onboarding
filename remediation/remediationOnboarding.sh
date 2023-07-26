@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEMP_TEMP_BUCKET_NAME="temp-gcp-bucket"
+TEMP_BUCKET_NAME="temp-gcp-bucket"
 REGION="us-central1"
 
 if [ $# -lt 1 ]; then
@@ -10,15 +10,15 @@ fi
 
 FUNCTION_NAME=$1
 
-if gsutil ls -b gs://${TEMP_TEMP_BUCKET_NAME} >/dev/null 2>&1; then
-  echo "Bucket ${TEMP_TEMP_BUCKET_NAME} exists."
+if gsutil ls -b gs://${TEMP_BUCKET_NAME} >/dev/null 2>&1; then
+  echo "Bucket ${TEMP_BUCKET_NAME} exists."
 else
-  echo "Bucket ${TEMP_TEMP_BUCKET_NAME} does not exist."
-  if gsutil mb -l ${REGION} gs://${TEMP_TEMP_BUCKET_NAME} >/dev/null 2>&1; then
-    echo "Bucket ${TEMP_TEMP_BUCKET_NAME} created successfully."
+  echo "Bucket ${TEMP_BUCKET_NAME} does not exist."
+  if gsutil mb -l ${REGION} gs://${TEMP_BUCKET_NAME} >/dev/null 2>&1; then
+    echo "Bucket ${TEMP_BUCKET_NAME} created successfully."
   else
-    echo "Failed to create bucket ${TEMP_TEMP_BUCKET_NAME}. Error:"
-    gsutil mb -l ${REGION} gs://${TEMP_TEMP_BUCKET_NAME} 2>&1
+    echo "Failed to create bucket ${TEMP_BUCKET_NAME}. Error:"
+    gsutil mb -l ${REGION} gs://${TEMP_BUCKET_NAME} 2>&1
     exit 1
   fi
 fi
@@ -63,8 +63,7 @@ if [ $apply_exit_code -ne 0 ]; then
   exit 1
 fi
 
-
-gsutil -m rm -r gs://${TEMP_TEMP_BUCKET_NAME}
-echo "Bucket ${TEMP_TEMP_BUCKET_NAME} deleted successfully."
+gsutil -m rm -r gs://${TEMP_BUCKET_NAME}
+echo "Bucket ${TEMP_BUCKET_NAME} deleted successfully."
 
 echo "Script completed successfully."
