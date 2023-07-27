@@ -11,8 +11,6 @@ SUBSCRIPTION_NAME_FL="cloudguard-fl-subscription"
 
 echo "setting up default project "$PROJECT""
 gcloud config set project "$PROJECT"
-echo "Enabling Deployment Manager APIs, which you will need for the offboarding."
-gcloud services enable deploymentmanager.googleapis.com
 
 # sink deletion
 sink=$(gcloud logging sinks list --filter="name.scope(sink):"$SINK_NAME"" 2>&1)
