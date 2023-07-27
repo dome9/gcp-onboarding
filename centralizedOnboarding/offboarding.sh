@@ -40,8 +40,9 @@ done
 SERVICE_ACCOUNT_NAME="cloudguard-centralized-auth"
 echo "setting up default project "$PROJECT""
 gcloud config set project "$PROJECT"
-echo "Enabling Deployment Manager APIs, which you will need for the offboarding."
-gcloud services enable deploymentmanager.googleapis.com
+echo ""
+echo "about to delete resources related to CloudGuard deployment for "$PROJECT" project"
+echo ""
 
 # sinks deletion
 # Example input: --sinks='[{"projectId":"project1", "sinkName":"sink1"}, {"projectId":"project2", "sinkName":"sink2"}]'
@@ -51,7 +52,7 @@ if $SINKS_PROVIDED; then
     PROJECT_ID=$(echo "$sink" | jq -r '.projectId')
     SINK_NAME=$(echo "$sink" | jq -r '.sinkName')
     if gcloud logging sinks describe "$SINK_NAME" --project="$PROJECT_ID" &>/dev/null; then
-      sink=$(gcloud logging sinks delete "$SINK_NAME" --project="$PROJECT_ID" 2>&1)
+      sink=$(gcloud logging sinks delete "$SINK_NAME" --project="$PROJECT_ID" --quiet 2>&1)
       echo $sink
       if [[ "$sink" =~ "ERROR" ]]; then
         echo "could not delete existing sink "$SINK_NAME""
@@ -65,7 +66,7 @@ if $SUBSCRIPTIONS_PROVIDED; then
   for SUBSCRIPTION_NAME in $SUBSCRIPTIONS
   do
     if gcloud pubsub subscriptions describe "$SUBSCRIPTION_NAME" &>/dev/null; then
-      pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME" 2>&1)
+      pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME" --quiet 2>&1)
       echo $pubsubSubscription
       if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
         echo "could not delete existing subscription "$SUBSCRIPTION_NAME""
@@ -79,7 +80,7 @@ if $TOPICS_PROVIDED; then
   for TOPIC_NAME in $TOPICS
   do
     if gcloud pubsub topics describe "$TOPIC_NAME" &>/dev/null; then
-      topic=$(gcloud pubsub topics delete "$TOPIC_NAME" 2>&1)
+      topic=$(gcloud pubsub topics delete "$TOPIC_NAME" --quiet 2>&1)
       echo $topic
       if [[ "$topic" =~ "ERROR" ]]; then
         echo "could not delete existing topic "$TOPIC_NAME""
@@ -90,7 +91,7 @@ fi
 
 # service account deletion
 if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com &> /dev/null; then
-  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com 2>&1)
+  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com --quiet 2>&1)
   echo $serviceAccount
   if [[ "$serviceAccount" =~ "ERROR" ]]; then
     echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME""

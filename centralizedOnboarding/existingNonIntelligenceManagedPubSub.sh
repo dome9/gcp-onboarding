@@ -42,8 +42,8 @@ EXPIRATION_PERIOD="never"
 echo""
 echo "setting up default project $CENTRALIZED_PROJECT"
 gcloud config set project $CENTRALIZED_PROJECT
-echo "Enabling Deployment Manager APIs, which you will need for this deployment."
-gcloud services enable deploymentmanager.googleapis.com
+echo ""
+echo "about to deploy resources related to CloudGuard for $CENTRALIZED_PROJECT project"
 echo ""
 
 # service account creation
