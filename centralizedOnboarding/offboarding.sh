@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Function to display usage information
-usage() {
+EchoUsage() {
   echo "Usage: $0 [OPTIONS]"
   echo "Options:"
   echo "  --project-id=<PROJECT>          Specify the project to offboard"
@@ -31,7 +31,7 @@ while [[ "$#" -gt 0 ]]; do
       SINKS_PROVIDED=true;;
     *)
       echo "Invalid option: $1"
-      usage
+      EchoUsage
       exit 1
       ;;
   esac
