@@ -9,71 +9,50 @@ SERVICE_ACCOUNT_NAME_FL="cloudguard-fl-authentication"
 SINK_NAME_FL="cloudguard-fl-sink"
 SUBSCRIPTION_NAME_FL="cloudguard-fl-subscription"
 
-echo "setting up default project "$PROJECT""
+echo "Setting up default project "$PROJECT""
 gcloud config set project "$PROJECT"
+echo ""
+echo "About to delete resources related to CloudGuard deployment for "$PROJECT" project"
+echo ""
 
 # sink deletion
 if gcloud logging sinks describe "$SINK_NAME" &>/dev/null; then
-  sink=$(gcloud logging sinks delete "$SINK_NAME")
-    if [[ "$sink" =~ "ERROR" ]]; then
-      echo "could not delete existing sink "$SINK_NAME" "
-    fi
+  gcloud logging sinks delete "$SINK_NAME"
 fi
 
 # sink deletion flowlogs
 if gcloud logging sinks describe "$SINK_NAME_FL" &>/dev/null; then
-  sink=$(gcloud logging sinks delete "$SINK_NAME_FL")
-    if [[ "$sink" =~ "ERROR" ]]; then
-      echo "could not delete existing sink "$SINK_NAME_FL" "
-    fi
+  gcloud logging sinks delete "$SINK_NAME_FL"
 fi
 
 # subscription deletion
 if gcloud pubsub subscriptions describe "$SUBSCRIPTION_NAME" &>/dev/null; then
-  pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME")
-    if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
-      echo "could not delete existing subscription "$SUBSCRIPTION_NAME" "
-    fi
+  gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME"
 fi
 
 # subscription deletion flowlogs
 if gcloud pubsub subscriptions describe "$SUBSCRIPTION_NAME_FL" &>/dev/null; then
-  pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME_FL")
-    if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
-      echo "could not delete existing subscription "$SUBSCRIPTION_NAME_FL" "
-    fi
+  gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME_FL"
 fi
 
 # topic deletion
 if gcloud pubsub topics describe "$TOPIC_NAME" &>/dev/null; then
-  topic=$(gcloud pubsub topics delete "$TOPIC_NAME")
-  if [[ "$topic" =~ "ERROR" ]]; then
-    echo "could not delete existing topic "$TOPIC_NAME" "
-  fi
+  gcloud pubsub topics delete "$TOPIC_NAME"
 fi
 
 # topic deletion flowlogs
 if gcloud pubsub topics describe "$TOPIC_NAME_FL" &>/dev/null; then
-  topic=$(gcloud pubsub topics delete "$TOPIC_NAME_FL")
-  if [[ "$topic" =~ "ERROR" ]]; then
-    echo "could not delete existing topic "$TOPIC_NAME_FL" "
-  fi
+  gcloud pubsub topics delete "$TOPIC_NAME_FL"
 fi
 
 # service account deletion
 if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com &> /dev/null; then
-  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com)
-  if [[ "$serviceAccount" =~ "ERROR" ]]; then
-    echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME" "
-  fi
+  gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com
 fi
 
 # service account deletion flowlogs
 if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME_FL"@"$PROJECT".iam.gserviceaccount.com &> /dev/null; then
-  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME_FL"@"$PROJECT".iam.gserviceaccount.com)
-  if [[ "$serviceAccount" =~ "ERROR" ]]; then
-    echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME_FL" "
-  fi
+  gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME_FL"@"$PROJECT".iam.gserviceaccount.com
 fi
 
 green='\033[0;32m'

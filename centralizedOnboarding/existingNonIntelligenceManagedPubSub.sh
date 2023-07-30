@@ -1,13 +1,32 @@
 #!/bin/bash
 
-# Function to display usage information
-usage() {
+EchoUsage() {
   echo "Usage: $0 [OPTIONS]"
   echo "Options:"
   echo "  --endpoint=<ENDPOINT>              Specify the cloudguard endpoint"
   echo "  --centralized-project=<PROJECT>    Specify the centralized project id"
   echo "  --topic-name=<TOPIC>               Specify the PubSub topic name"
   echo "  --subscription-name=<SUBSCRIPTION> Specify the PubSub subscription name"
+}
+
+EchoValidatePermissions(){
+  echo "Before proceeding with the deployment, please ensure that the identity running this script has the following roles and permissions attached in the relevant projects:"
+  echo ""
+
+  echo "In $1:"
+  echo "- Service Account Admin"
+  echo "- Pub/Sub Admin"
+  echo "- Logging Admin"
+  echo ""
+
+  read -p "Are you ready to proceed? (y/n): " answer
+
+  answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+
+  if [[ ! "$answer" == "y" ]]; then
+    echo "Invalid response, exit deployment."
+    exit 1
+  fi
 }
 
 # Parse the named arguments
@@ -19,16 +38,18 @@ while [[ "$#" -gt 0 ]]; do
     --subscription-name=*) SUBSCRIPTION_NAME="${1#*=}";;
     *)
       echo "Invalid option: $1"
-      usage
+      EchoUsage
       exit 1
       ;;
   esac
   shift
 done
 
+EchoValidatePermissions $CENTRALIZED_PROJECT
+
 if [[ -z "$ENDPOINT" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SUBSCRIPTION_NAME" ]]; then
   echo "Missing one or more required arguments."
-  usage
+  EchoUsage
   exit 1
 fi
 
@@ -51,7 +72,7 @@ if ! gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME"@"$CENTRALIZED_
   serviceAccount=$(gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME --display-name="$SERVICE_ACCOUNT_NAME" 2>&1)
   echo "$serviceAccount"
   if [[ "$serviceAccount" =~ "ERROR" ]]; then
-      echo "could not create service account "$SERVICE_ACCOUNT_NAME", EXITING WITHOUT DEPLOYMENT!"
+      echo "Could not create service account "$SERVICE_ACCOUNT_NAME", EXITING WITHOUT DEPLOYMENT!"
       exit 1
   fi
 fi
@@ -69,7 +90,7 @@ if ! gcloud pubsub subscriptions describe "$SUBSCRIPTION_NAME" &>/dev/null; then
                              --min-retry-delay="$MIN_RETRY_DELAY")
   echo "$pubsubSubscription"
   if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
-    echo "could not create subscription "$SUBSCRIPTION_NAME", EXITING WITHOUT DEPLOYMENT!"
+    echo "Could not create subscription "$SUBSCRIPTION_NAME", EXITING WITHOUT DEPLOYMENT!"
     exit 1
   fi
 fi

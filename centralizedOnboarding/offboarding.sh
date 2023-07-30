@@ -13,6 +13,7 @@ usage() {
 SINKS_PROVIDED=false
 TOPICS_PROVIDED=false
 SUBSCRIPTIONS_PROVIDED=false
+SERVICE_ACCOUNT_NAME="cloudguard-centralized-auth"
 
 # Parse the named arguments
 while [[ "$#" -gt 0 ]]; do
@@ -37,11 +38,37 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-SERVICE_ACCOUNT_NAME="cloudguard-centralized-auth"
-echo "setting up default project "$PROJECT""
+echo "Before proceeding with the offboarding, please ensure that the identity running this script has the following roles and permissions attached in the relevant projects:"
+echo""
+
+if $TOPICS_PROVIDED && $SUBSCRIPTIONS_PROVIDED; then
+  echo "In $PROJECT:"
+  echo "- Service Account Admin"
+  echo "- Pub/Sub Admin"
+  echo "- Logging Admin"
+  echo ""
+elif $SUBSCRIPTIONS_PROVIDED; then
+  echo "In $PROJECT:"
+  echo "- Pub/Sub Admin"
+  echo ""
+fi
+
+if $SINKS_PROVIDED; then
+  projectIds=()
+  for sink in $(echo "$SINKS" | jq -c '.[]'); do
+    PROJECT_ID=$(echo "$sink" | jq -r '.projectId')
+    projectIds+=("$PROJECT_ID")
+  done
+
+  echo "In ${projectIds[@]}:"
+  echo "- Logging Admin"
+  echo ""
+fi
+
+echo "Setting up default project "$PROJECT""
 gcloud config set project "$PROJECT"
 echo ""
-echo "about to delete resources related to CloudGuard deployment for "$PROJECT" project"
+echo "About to delete resources related to CloudGuard deployment for "$PROJECT" project"
 echo ""
 
 # sinks deletion
@@ -52,11 +79,7 @@ if $SINKS_PROVIDED; then
     PROJECT_ID=$(echo "$sink" | jq -r '.projectId')
     SINK_NAME=$(echo "$sink" | jq -r '.sinkName')
     if gcloud logging sinks describe "$SINK_NAME" --project="$PROJECT_ID" &>/dev/null; then
-      sink=$(gcloud logging sinks delete "$SINK_NAME" --project="$PROJECT_ID" --quiet 2>&1)
-      echo $sink
-      if [[ "$sink" =~ "ERROR" ]]; then
-        echo "could not delete existing sink "$SINK_NAME""
-      fi
+      gcloud logging sinks delete "$SINK_NAME" --project="$PROJECT_ID"
     fi
   done
 fi
@@ -66,11 +89,7 @@ if $SUBSCRIPTIONS_PROVIDED; then
   for SUBSCRIPTION_NAME in $SUBSCRIPTIONS
   do
     if gcloud pubsub subscriptions describe "$SUBSCRIPTION_NAME" &>/dev/null; then
-      pubsubSubscription=$(gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME" --quiet 2>&1)
-      echo $pubsubSubscription
-      if [[ "$pubsubSubscription" =~ "ERROR" ]]; then
-        echo "could not delete existing subscription "$SUBSCRIPTION_NAME""
-      fi
+      gcloud pubsub subscriptions delete "$SUBSCRIPTION_NAME"
     fi
   done
 fi
@@ -80,22 +99,14 @@ if $TOPICS_PROVIDED; then
   for TOPIC_NAME in $TOPICS
   do
     if gcloud pubsub topics describe "$TOPIC_NAME" &>/dev/null; then
-      topic=$(gcloud pubsub topics delete "$TOPIC_NAME" --quiet 2>&1)
-      echo $topic
-      if [[ "$topic" =~ "ERROR" ]]; then
-        echo "could not delete existing topic "$TOPIC_NAME""
-      fi
+      gcloud pubsub topics delete "$TOPIC_NAME"
     fi
    done
 fi
 
 # service account deletion
 if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com &> /dev/null; then
-  serviceAccount=$(gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com --quiet 2>&1)
-  echo $serviceAccount
-  if [[ "$serviceAccount" =~ "ERROR" ]]; then
-    echo "could not delete existing service account "$SERVICE_ACCOUNT_NAME""
-  fi
+  gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME"@"$PROJECT".iam.gserviceaccount.com
 fi
 
 green='\033[0;32m'

@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Function to display usage information
-usage() {
+EchoUsage() {
   echo "Usage: $0 [OPTIONS]"
   echo "Options:"
   echo "  --endpoint=<ENDPOINT>             Specify the cloudguard endpoint"
@@ -10,6 +9,24 @@ usage() {
   echo "  --topic-name=<TOPIC>              Specify the PubSub topic name"
   echo "  --sink-name=<SINK>                Specify the logging sink name"
   echo "  --projects-to-onboard=<PROJECTS>  Specify the projects to onboard (space-separated, ex: \"projectA projectB ...\")"
+}
+
+EchoValidatePermissions(){
+  echo "Before proceeding with the deployment, please ensure that the identity running this script has the following roles and permissions attached in the relevant projects:"
+  echo ""
+
+  echo "In $PROJECTS_TO_ONBOARD:"
+  echo "- Logging Admin"
+  echo ""
+
+  read -p "Are you ready to proceed? (y/n): " answer
+
+  answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+
+  if [[ ! "$answer" == "y" ]]; then
+    echo "Invalid response, exit deployment."
+    exit 1
+  fi
 }
 
 # Parse the named arguments
@@ -23,16 +40,18 @@ while [[ "$#" -gt 0 ]]; do
     --projects-to-onboard=*) PROJECTS_TO_ONBOARD="${1#*=}";;
     *)
       echo "Invalid option: $1"
-      usage
+      EchoUsage
       exit 1
       ;;
   esac
   shift
 done
 
+EchoValidatePermissions $PROJECTS_TO_ONBOARD
+
 if [[ -z "$ENDPOINT" || -z "$ONBOARDING_TYPE" || -z "$CENTRALIZED_PROJECT" || -z "$TOPIC_NAME" || -z "$SINK_NAME" || -z "$PROJECTS_TO_ONBOARD" ]]; then
   echo "Missing one or more required arguments."
-  usage
+  EchoUsage
   exit 1
 fi
 
@@ -52,10 +71,10 @@ ACK_DEADLINE=60
 EXPIRATION_PERIOD="never"
 
 echo""
-echo "setting up default project $CENTRALIZED_PROJECT"
+echo "Setting up default project $CENTRALIZED_PROJECT"
 gcloud config set project $CENTRALIZED_PROJECT
 echo ""
-echo "about to deploy resources related to CloudGuard for $CENTRALIZED_PROJECT project"
+echo "About to deploy resources related to CloudGuard for $PROJECTS_TO_ONBOARD projects"
 echo ""
 
 # sink creation in each onboarded project
@@ -66,7 +85,7 @@ do
               --project="$PROJECT_ID" --log-filter="$LOG_FILTER" 2>&1)
     echo "$sink"
     if [[ "$sink" =~ "ERROR" ]]; then
-      echo "could not create sink "$SINK_NAME" in project "$PROJECT_ID", EXITING WITHOUT DEPLOYMENT!"
+      echo "Could not create sink "$SINK_NAME" in project "$PROJECT_ID", EXITING WITHOUT DEPLOYMENT!"
       exit 1
     fi
     # granting write permissions to sink
