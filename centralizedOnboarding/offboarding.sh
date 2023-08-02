@@ -38,12 +38,13 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
+echo""
 echo "Before proceeding with the offboarding, please ensure that the identity running this script has the following roles and permissions attached in the relevant projects:"
 echo""
 
 if $TOPICS_PROVIDED && $SUBSCRIPTIONS_PROVIDED; then
   echo "In $PROJECT:"
-  echo "- Service Account Admin"
+  echo "- Editor"
   echo "- Pub/Sub Admin"
   echo "- Logging Admin"
   echo ""

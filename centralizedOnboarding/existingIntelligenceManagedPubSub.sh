@@ -12,6 +12,7 @@ EchoUsage() {
 }
 
 EchoValidatePermissions(){
+  echo ""
   echo "Before proceeding with the deployment, please ensure that the identity running this script has the following roles and permissions attached in the relevant projects:"
   echo ""
 

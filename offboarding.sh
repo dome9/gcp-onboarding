@@ -9,6 +9,14 @@ SERVICE_ACCOUNT_NAME_FL="cloudguard-fl-authentication"
 SINK_NAME_FL="cloudguard-fl-sink"
 SUBSCRIPTION_NAME_FL="cloudguard-fl-subscription"
 
+
+echo""
+echo "Before proceeding with the offboarding, please ensure that the identity running this script has the following roles and permissions attached in the relevant projects:"
+echo""
+echo "In $PROJECT:"
+echo "- Editor"
+echo ""
+
 echo "Setting up default project "$PROJECT""
 gcloud config set project "$PROJECT"
 echo ""
