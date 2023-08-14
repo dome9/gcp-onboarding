@@ -79,6 +79,7 @@ if $SINKS_PROVIDED; then
   do
     PROJECT_ID=$(echo "$sink" | jq -r '.projectId')
     SINK_NAME=$(echo "$sink" | jq -r '.sinkName')
+    TOPIC_NAME=$(echo "$sink" | jq -r '.topicName')
     if gcloud logging sinks describe "$SINK_NAME" --project="$PROJECT_ID" &>/dev/null; then
       gcloud logging sinks delete "$SINK_NAME" --project="$PROJECT_ID"
     fi
