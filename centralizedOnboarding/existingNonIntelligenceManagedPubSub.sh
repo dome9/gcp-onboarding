@@ -17,7 +17,6 @@ EchoValidatePermissions(){
   echo "In $1:"
   echo "- Editor"
   echo "- Pub/Sub Admin"
-  echo "- Logging Admin"
   echo ""
 
   read -p "Are you ready to proceed? (y/n): " answer
