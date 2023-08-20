@@ -284,7 +284,7 @@ def get_topics_from_intelligence(token, project_id, region):
         "projectId": project_id
     }
     try:
-        response = requests.post(f'{domain}/v2/intelligence/gcp/connected_topics',
+        response = requests.post(f'{domain}/v2/intelligence/gcp/connected-topics',
                                  data=json.dumps(body), headers=headers)
         if response.status_code != 200 and response.status_code != 201:
             raise Exception(f"Failed to get Pub/Sub topics from Intelligence: {response.text}")
