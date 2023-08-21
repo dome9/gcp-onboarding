@@ -1,11 +1,7 @@
 import argparse
-
-from google.oauth2 import service_account
-from utils import (
-    delete_service_account,
-    get_token, validate_region, delete_pubsub_topics, delete_pubsub_subscriptions, delete_logging_sinks,
-    get_connected_sinks_from_intelligence, cloudguard_offboarding_request, get_connected_topics_from_intelligence
-)
+from centralizedOnboarding.api.services.clouguard_service import CloudGuardService
+from centralizedOnboarding.api.services.google_cloud_service import GoogleCloudService
+from utils import validate_region, create_resource_lists_to_delete
 
 
 def parse_arguments():
@@ -30,50 +26,28 @@ if __name__ == "__main__":
     credentials_path = args.google_credentials_path
 
     try:
-        service_account_name = "cloudguard-centralized-auth"
-        credentials = service_account.Credentials.from_service_account_file(
-            filename=credentials_path
-        )
 
-        token = get_token(api_key, api_secret, region)
-        connected_topics = get_connected_topics_from_intelligence(token, project_id, region)
-        topic_list = []
-        subscription_list = []
-        sink_list = []
-        service_account_list = []
+        cloudguard_service = CloudGuardService(api_key, api_secret, region)
+        google_cloud_service = GoogleCloudService(credentials_path)
 
-        # current project is centralized
-        if connected_topics['topics']:
-            for topic in connected_topics:
-                if topic['isIntelligenceManagedTopic']:
-                    topic_list.append(topic['topicName'])
-                    subscription_list.append(topic['subscriptionName'])
-                    sink_list.extend(topic['connectedSinks'])
-                    service_account_list.append(service_account_name)
-                else:
-                    subscription_list.append(topic['subscriptionName'])
-                    service_account_list.append(service_account_name)
+        connected_topics = cloudguard_service.get_connected_topics_from_intelligence(project_id)
+        topic_list, subscription_list, sink_list, service_account_list = create_resource_lists_to_delete(
+            cloudguard_service, connected_topics, project_id)
 
-        # current project sending to centralized or from standard onboarding
+        user_confirmation = input(
+            "Do you want to delete CloudGuard related resources that created during the onboarding of this project? (yes/no): ")
+
+        if user_confirmation.lower() == "yes":
+            google_cloud_service.delete_cloudguard_resources(project_id, service_account_list, topic_list,
+                                                             subscription_list, sink_list)
+            print("CloudGuard resources have been deleted.")
+        elif user_confirmation.lower() == "no":
+            print("CloudGuard resources will not be deleted, you can delete them manually")
         else:
-            connected_sinks = get_connected_sinks_from_intelligence(token, project_id, region)
-            if connected_sinks['sinks']:
-                sink_list.extend(connected_sinks['sinks'])
-
-            # current project onboarded with standard onboarding
-            else:
-                topic_list.extend([f'projects/{project_id}/topics/cloudguard-topic', f'projects/{project_id}/topics/cloudguard-fl-topic'])
-                subscription_list.extend([f'projects/{project_id}/subscriptions/cloudguard-subscription', f'projects/{project_id}/subscriptions/cloudguard-fl-subscription'])
-                sink_list.extend([{"sinkName": "cloudguard-sink", "projectId": f"{project_id}"}, {"sinkName": "cloudguard-fl-sink", "projectId": f"{project_id}"}])
-                service_account_list.extend(["cloudguard-logs-authentication", "cloudguard-fl-authentication"])
-
-        delete_service_account(project_id, service_account_list, credentials)
-        delete_pubsub_topics(topic_list, credentials)
-        delete_pubsub_subscriptions(subscription_list, credentials)
-        delete_logging_sinks(sink_list, credentials)
+            print("Invalid input. Please enter 'yes' or 'no'.")
 
         # Cloud Guard offboarding API
-        cloudguard_offboarding_request(project_id, token, region)
+        cloudguard_service.cloudguard_offboarding_request(project_id)
         print(f"Project {project_id} successfully offboarded from CloudGuard")
     except Exception as e:
         print(f"Error occurred in onboarding process, Error: {e}")

@@ -1,15 +1,12 @@
 import argparse
-from google.oauth2 import service_account
 import time
+
+from centralizedOnboarding.api.services.clouguard_service import CloudGuardService
+from centralizedOnboarding.api.services.google_cloud_service import GoogleCloudService
 from utils import (
     md5_hash_from_timestamp,
-    getLogFilter,
+    get_log_filter,
     get_validator_endpoint,
-    create_service_account,
-    create_pubsub_topic,
-    create_pubsub_subscription,
-    create_logging_sink,
-    cloudguard_onboarding_request, get_token,
     validate_region, validate_log_type, validate_boolean
 )
 
@@ -45,7 +42,7 @@ if __name__ == "__main__":
     credentials_path = args.google_credentials_path
     try:
         timestamp_hash = md5_hash_from_timestamp(int(time.time()))
-        log_filter = getLogFilter(log_type)
+        log_filter = get_log_filter(log_type)
         validator_endpoint = get_validator_endpoint(region, log_type)
         service_account_name = "cloudguard-centralized-auth"
         topic_id = f"cloudguard-centralized-{log_type}-topic"
@@ -54,19 +51,17 @@ if __name__ == "__main__":
         logic_log_type = 'GcpActivity' if log_type == 'AccountActivity' else 'GcpFlowLogs'
 
         # Deploy resources in GCP
-        credentials = service_account.Credentials.from_service_account_file(
-            filename=credentials_path
-        )
-        # Create service account
-        cloudguard_service_account = create_service_account(project_id, service_account_name, credentials)
+        cloudguard_service = CloudGuardService(api_key, api_secret, region)
+        google_cloud_service = GoogleCloudService(credentials_path)
+    # Create service account
+        cloudguard_service_account = google_cloud_service.create_service_account(project_id, service_account_name)
         # Create pubsub topic
-        cloudguard_topic = create_pubsub_topic(project_id, topic_id, credentials)
+        cloudguard_topic = google_cloud_service.create_pubsub_topic(project_id, topic_id)
         # Create the pubsub subscription
-        cloudguard_subscription = create_pubsub_subscription(project_id, subscription_id, cloudguard_topic,
-                                                             cloudguard_service_account, validator_endpoint,
-                                                             credentials)
+        cloudguard_subscription = google_cloud_service.create_pubsub_subscription(project_id, subscription_id, cloudguard_topic,
+                                                             cloudguard_service_account, validator_endpoint)
         # Create the logging sinks for each project to onboard
-        cloudguard_sinks = [create_logging_sink(sink_project_id, sink_name, cloudguard_topic, log_filter, credentials)
+        cloudguard_sinks = [google_cloud_service.create_logging_sink(sink_project_id, sink_name, cloudguard_topic, log_filter)
                             for sink_project_id in projects_to_onboard + [project_id]]
 
         # Cloud Guard onboarding API
@@ -80,8 +75,7 @@ if __name__ == "__main__":
             "IsAutoDiscoveryEnabled": enable_auto_discovery,
             "IsIntelligenceManagedTopic": True
         }
-        token = get_token(api_key, api_secret, region)
-        cloudguard_onboarding_request(token, body, region)
+        cloudguard_service.cloudguard_onboarding_request(body)
         print(f"Project {project_id} successfully onboarded to CloudGuard")
     except Exception as e:
         print(f"Error occurred in onboarding process, Error: {e}")

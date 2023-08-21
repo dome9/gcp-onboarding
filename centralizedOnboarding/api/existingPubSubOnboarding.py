@@ -1,24 +1,21 @@
 import argparse
-
-from google.oauth2 import service_account
 import time
+from centralizedOnboarding.api.services.clouguard_service import CloudGuardService
+from centralizedOnboarding.api.services.google_cloud_service import GoogleCloudService
 from utils import (
     md5_hash_from_timestamp,
-    getLogFilter,
+    get_log_filter,
     get_validator_endpoint,
-    create_service_account,
-    create_pubsub_subscription,
-    create_logging_sink,
-    cloudguard_onboarding_request,
     parse_topic_name,
-    get_topics_from_intelligence,
-    get_token, validate_region, validate_pubsub_topic, validate_log_type, validate_boolean, get_topics_from_gcp
+    validate_region, validate_pubsub_topic, validate_log_type, validate_boolean
 )
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="GCP Existing Centralized Pub/Sub Onboarding Script")
-    parser.add_argument("--projects-to-onboard", type=str, help="Projects you want to onboard as a single string separated by spaces", default=[], nargs='+')
+    parser.add_argument("--projects-to-onboard", type=str,
+                        help="Projects you want to onboard as a single string separated by spaces", default=[],
+                        nargs='+')
     parser.add_argument("--region", type=validate_region,
                         help="The CloudGuard region you use (us/eu1/ap1/ap2/ap3/cace1)")
     parser.add_argument("--pubsub-topic", type=validate_pubsub_topic,
@@ -47,20 +44,16 @@ if __name__ == "__main__":
 
     try:
         timestamp_hash = md5_hash_from_timestamp(int(time.time()))
-        log_filter = getLogFilter(log_type)
+        log_filter = get_log_filter(log_type)
         validator_endpoint = get_validator_endpoint(region, log_type)
         service_account_name = "cloudguard-centralized-auth"
-        cloudguard_topic_id = f"cloudguard-centralized-{log_type}-topic"
         cloudguard_subscription_id = f"cloudguard-centralized-{log_type}-subscription-{timestamp_hash}"
         cloudguard_sink_name = f"cloudguard-{log_type}-sink-to-{project_id}"
         logic_log_type = 'GcpActivity' if log_type == 'AccountActivity' else 'GcpFlowLogs'
 
-        credentials = service_account.Credentials.from_service_account_file(
-            filename=credentials_path
-        )
-
-        token = get_token(api_key, api_secret, region)
-        connected_topics = get_topics_from_gcp(token, project_id, region)
+        cloudguard_service = CloudGuardService(api_key, api_secret, region)
+        google_cloud_service = GoogleCloudService(credentials_path)
+        connected_topics = cloudguard_service.get_topics_from_gcp(project_id)
         connected_topic = next((t for t in connected_topics if t['topicName'] == topic_name), None)
         if not connected_topic:
             raise Exception(f"Pub/Sub topic {topic_name} not exists in your GCP account, exit deployment")
@@ -81,7 +74,8 @@ if __name__ == "__main__":
             # if topic intelligenceManaged create sinks in onboarded projects
             if connected_topic['isIntelligenceManagedTopic']:
                 cloudguard_sinks = [
-                    create_logging_sink(sink_project_id, cloudguard_sink_name, topic_name, log_filter, credentials)
+                    google_cloud_service.create_logging_sink(sink_project_id, cloudguard_sink_name, topic_name,
+                                                             log_filter)
                     for sink_project_id in projects_to_onboard + [project_id]
                 ]
                 onboarding_body.update({
@@ -96,17 +90,19 @@ if __name__ == "__main__":
         # new user's not connected topic,
         else:
             # Create service account
-            cloudguard_service_account = create_service_account(project_id, service_account_name, credentials)
+            cloudguard_service_account = google_cloud_service.create_service_account(project_id, service_account_name)
             # Create the pubsub subscription
-            cloudguard_subscription = create_pubsub_subscription(project_id, cloudguard_subscription_id, topic_name,
-                                                                 cloudguard_service_account, validator_endpoint,
-                                                                 credentials)
+            cloudguard_subscription = google_cloud_service.create_pubsub_subscription(project_id,
+                                                                                      cloudguard_subscription_id,
+                                                                                      topic_name,
+                                                                                      cloudguard_service_account,
+                                                                                      validator_endpoint)
             onboarding_body.update({
                 "SubscriptionName": cloudguard_subscription,
             })
 
         # Cloud Guard onboarding API
-        cloudguard_onboarding_request(token, onboarding_body, region)
+        cloudguard_service.cloudguard_onboarding_request(onboarding_body)
         print(f"Project {project_id} successfully onboarded to CloudGuard")
     except Exception as e:
         print(f"Error occurred in onboarding process, {e}")
