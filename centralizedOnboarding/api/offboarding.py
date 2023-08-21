@@ -3,9 +3,8 @@ import argparse
 from google.oauth2 import service_account
 from utils import (
     delete_service_account,
-    get_topics_from_intelligence,
     get_token, validate_region, delete_pubsub_topics, delete_pubsub_subscriptions, delete_logging_sinks,
-    get_connected_sinks_from_intelligence, cloudguard_offboarding_request
+    get_connected_sinks_from_intelligence, cloudguard_offboarding_request, get_connected_topics_from_intelligence
 )
 
 
@@ -37,7 +36,7 @@ if __name__ == "__main__":
         )
 
         token = get_token(api_key, api_secret, region)
-        connected_topics = get_topics_from_intelligence(token, project_id, region)
+        connected_topics = get_connected_topics_from_intelligence(token, project_id, region)
         topic_list = []
         subscription_list = []
         sink_list = []

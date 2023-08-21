@@ -12,7 +12,7 @@ from utils import (
     cloudguard_onboarding_request,
     parse_topic_name,
     get_topics_from_intelligence,
-    get_token, validate_region, validate_pubsub_topic, validate_log_type, validate_boolean
+    get_token, validate_region, validate_pubsub_topic, validate_log_type, validate_boolean, get_topics_from_gcp
 )
 
 
@@ -60,8 +60,10 @@ if __name__ == "__main__":
         )
 
         token = get_token(api_key, api_secret, region)
-        connected_topics = get_topics_from_intelligence(token, project_id, region)
-        connected_topic = next((t for t in connected_topics['topic'] if t['topicName'] == topic_name), None)
+        connected_topics = get_topics_from_gcp(token, project_id, region)
+        connected_topic = next((t for t in connected_topics if t['topicName'] == topic_name), None)
+        if not connected_topic:
+            raise Exception(f"Pub/Sub topic {topic_name} not exists in your GCP account, exit deployment")
         onboarding_body = {
             "LogType": logic_log_type,
             "CentralizedProject": project_id,
@@ -73,7 +75,7 @@ if __name__ == "__main__":
             "IsIntelligenceManagedTopic": False
         }
         # already connected topic to intelligence
-        if connected_topic:
+        if connected_topic['isConnectedToIntelligence']:
             if connected_topic['logType'] != logic_log_type:
                 raise Exception(f"Topic {topic_name} already onboarded to different logType, exiting deployment")
             # if topic intelligenceManaged create sinks in onboarded projects

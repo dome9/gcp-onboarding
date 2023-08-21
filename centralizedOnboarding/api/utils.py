@@ -273,7 +273,27 @@ def cloudguard_offboarding_request(project_id, token, region):
         raise Exception(f"Failed to offboard , {e}")
 
 
-def get_topics_from_intelligence(token, project_id, region):
+def get_topics_from_gcp(token, project_id, region):
+    domain = get_cloudguard_domain(region)
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        "Authorization": f"Bearer {token}"
+    }
+    body = {
+        "projectId": project_id
+    }
+    try:
+        response = requests.post(f'{domain}/v2/intelligence/gcp/pubsub-topics',
+                                 data=json.dumps(body), headers=headers)
+        if response.status_code != 200 and response.status_code != 201:
+            raise Exception(f"Failed to get Pub/Sub topics from Intelligence: {response.text}")
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Failed to get Pub/Sub topics from Intelligence: {e}")
+
+
+def get_connected_topics_from_intelligence(token, project_id, region):
     domain = get_cloudguard_domain(region)
     headers = {
         'Content-Type': 'application/json',
