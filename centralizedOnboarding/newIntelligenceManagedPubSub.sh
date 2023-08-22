@@ -23,7 +23,8 @@ EchoValidatePermissions(){
   echo "- Logging Admin"
   echo ""
 
-  echo "In $2:"
+  projectsToOnboard=($2)
+  echo "In ${projectsToOnboard[*]}:"
   echo "- Logging Admin"
   echo ""
 

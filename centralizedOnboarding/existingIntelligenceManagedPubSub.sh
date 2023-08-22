@@ -16,7 +16,8 @@ EchoValidatePermissions(){
   echo "Before proceeding with the deployment, please ensure that the identity running this script has the following roles and permissions attached in the relevant projects:"
   echo ""
 
-  echo "In $PROJECTS_TO_ONBOARD:"
+  projectsToOnboard=($PROJECTS_TO_ONBOARD)
+  echo "In ${projectsToOnboard[*]}:"
   echo "- Logging Admin"
   echo ""
 
