@@ -24,7 +24,10 @@ EchoValidatePermissions(){
 
   answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
 
-  if [[ ! "$answer" == "y" ]]; then
+  if [[ $answer == "n" ]]; then
+      echo "You choose to not proceed, exit deployment"
+      exit 1
+  elif [[ ! "$answer" == "y" ]]; then
     echo "Invalid response, exit deployment."
     exit 1
   fi
