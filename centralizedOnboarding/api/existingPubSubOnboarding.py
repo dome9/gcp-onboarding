@@ -53,10 +53,12 @@ if __name__ == "__main__":
 
         cloudguard_service = CloudGuardService(api_key, api_secret, region)
         google_cloud_service = GoogleCloudService(credentials_path)
+
         connected_topics = cloudguard_service.get_topics_from_gcp(project_id)
         connected_topic = next((t for t in connected_topics if t['topicName'] == topic_name), None)
         if not connected_topic:
             raise Exception(f"Pub/Sub topic {topic_name} not exists in your GCP account, exit deployment")
+
         onboarding_body = {
             "LogType": logic_log_type,
             "CentralizedProject": project_id,
@@ -67,10 +69,12 @@ if __name__ == "__main__":
             "IsAutoDiscoveryEnabled": enable_auto_discovery,
             "IsIntelligenceManagedTopic": False
         }
+
         # already connected topic to intelligence
         if connected_topic['isConnectedToIntelligence']:
             if connected_topic['logType'] != logic_log_type:
                 raise Exception(f"Topic {topic_name} already onboarded to different logType, exiting deployment")
+
             # if topic intelligenceManaged create sinks in onboarded projects
             if connected_topic['isIntelligenceManagedTopic']:
                 cloudguard_sinks = [
@@ -91,6 +95,7 @@ if __name__ == "__main__":
         else:
             # Create service account
             cloudguard_service_account = google_cloud_service.create_service_account(project_id, service_account_name)
+
             # Create the pubsub subscription
             cloudguard_subscription = google_cloud_service.create_pubsub_subscription(project_id,
                                                                                       cloudguard_subscription_id,

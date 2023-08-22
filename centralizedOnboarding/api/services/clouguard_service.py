@@ -12,9 +12,9 @@ class CloudGuardService:
 
     def get_cloudguard_domain(self):
         return (
-            'https://api.941298424820.dev.falconetix.com'
+            'https://api.941298424820.dev.falconetix.com/v2'
             if self.region == "us"
-            else f'https://api.{self.region}.dome9.com'
+            else f'https://api.{self.region}.dome9.com/v2'
         )
 
     def get_token(self):
@@ -24,7 +24,7 @@ class CloudGuardService:
         }
         try:
             response = requests.post(
-                f"{self.domain}/v2/auth/assume-role/jwt",
+                f"{self.domain}/auth/assume-role/jwt",
                 headers=headers,
                 json={},
                 auth=(self.api_key, self.api_secret)
@@ -44,24 +44,25 @@ class CloudGuardService:
         }
         try:
             response = requests.post(
-                f"{self.domain}/v2/intelligence/gcp/{sub_domain}",
+                f"{self.domain}/{sub_domain}",
                 data=json.dumps(data),
                 headers=headers
             )
             if response.status_code != 200 and response.status_code != 201:
                 raise Exception(f"Failed to call CloudGuard API: {response.text}")
+            return response
         except requests.exceptions.RequestException as e:
             raise Exception(f"Failed to call CloudGuard API: {e}")
 
     def cloudguard_onboarding_request(self, data):
-        self.call_cloudguard_api("onboarding", data)
+        return self.call_cloudguard_api("intelligence/gcp/onboarding", data)
 
     def cloudguard_offboarding_request(self, project_id):
         data = {
             "cloudAccountId": project_id,
             "vendor": "GCP"
         }
-        self.call_cloudguard_api("view/magellan/disable-magellan-for-cloud-account", data)
+        return self.call_cloudguard_api("view/magellan/disable-magellan-for-cloud-account", data)
 
     def get_topics_from_gcp(self, project_id):
         body = {

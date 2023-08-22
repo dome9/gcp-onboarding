@@ -82,7 +82,7 @@ def create_resource_lists_to_delete(cloudguard_service, connected_topics, projec
 
     # current project is centralized
     if connected_topics['topics']:
-        for topic in connected_topics:
+        for topic in connected_topics['topics']:
             if topic['isIntelligenceManagedTopic']:
                 topic_list.append(topic['topicName'])
                 subscription_list.append(topic['subscriptionName'])

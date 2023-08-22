@@ -50,16 +50,19 @@ if __name__ == "__main__":
         sink_name = f"cloudguard-{log_type}-sink-to-{project_id}"
         logic_log_type = 'GcpActivity' if log_type == 'AccountActivity' else 'GcpFlowLogs'
 
-        # Deploy resources in GCP
         cloudguard_service = CloudGuardService(api_key, api_secret, region)
         google_cloud_service = GoogleCloudService(credentials_path)
-    # Create service account
+
+        # Create service account
         cloudguard_service_account = google_cloud_service.create_service_account(project_id, service_account_name)
+
         # Create pubsub topic
         cloudguard_topic = google_cloud_service.create_pubsub_topic(project_id, topic_id)
+
         # Create the pubsub subscription
         cloudguard_subscription = google_cloud_service.create_pubsub_subscription(project_id, subscription_id, cloudguard_topic,
                                                              cloudguard_service_account, validator_endpoint)
+
         # Create the logging sinks for each project to onboard
         cloudguard_sinks = [google_cloud_service.create_logging_sink(sink_project_id, sink_name, cloudguard_topic, log_filter)
                             for sink_project_id in projects_to_onboard + [project_id]]
@@ -75,6 +78,7 @@ if __name__ == "__main__":
             "IsAutoDiscoveryEnabled": enable_auto_discovery,
             "IsIntelligenceManagedTopic": True
         }
+
         cloudguard_service.cloudguard_onboarding_request(body)
         print(f"Project {project_id} successfully onboarded to CloudGuard")
     except Exception as e:
