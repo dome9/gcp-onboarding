@@ -88,7 +88,7 @@ echo""
 echo "Setting up default project $CENTRALIZED_PROJECT"
 gcloud config set project $CENTRALIZED_PROJECT
 echo""
-echo "About to deploy resources related to CloudGuard for $CENTRALIZED_PROJECT $PROJECTS_TO_ONBOARD projects"
+echo "About to deploy resources related to CloudGuard for $PROJECTS_TO_ONBOARD projects"
 echo ""
 
 # service account creation
