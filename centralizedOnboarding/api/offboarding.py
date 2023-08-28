@@ -29,10 +29,8 @@ if __name__ == "__main__":
 
         cloudguard_service = CloudGuardService(api_key, api_secret, region)
         google_cloud_service = GoogleCloudService(credentials_path)
-
-        connected_topics = cloudguard_service.get_connected_topics_from_intelligence(project_id)
         topic_list, subscription_list, sink_list, service_account_list = create_resource_lists_to_delete(
-            cloudguard_service, connected_topics, project_id)
+            google_cloud_service, cloudguard_service, project_id)
 
         user_confirmation = input(
             "Do you want to delete CloudGuard related resources that created during the onboarding of this project? (yes/no): ")

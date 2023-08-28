@@ -2,6 +2,22 @@ import hashlib
 import re
 import argparse
 
+CENTRALIZED_SERVICE_ACCOUNT_NAME = "cloudguard-centralized-auth"
+sink_mappings = {
+    'cloudguard-fl-sink': {
+        'topic_name': 'projects/{}/topics/cloudguard-fl-topic',
+        'subscription_name': 'projects/{}/subscriptions/cloudguard-fl-subscription',
+        'sink_info': {"sinkName": "cloudguard-fl-sink", "projectId": None},
+        'service_account_name': "cloudguard-fl-authentication"
+    },
+    'cloudguard-sink': {
+        'topic_name': 'projects/{}/topics/cloudguard-topic',
+        'subscription_name': 'projects/{}/subscriptions/cloudguard-subscription',
+        'sink_info': {"sinkName": "cloudguard-sink", "projectId": None},
+        'service_account_name': "cloudguard-logs-authentication"
+    }
+}
+
 
 def validate_region(region):
     valid_regions = ['us', 'eu1', 'ap1', 'ap2', 'ap3', 'cace1']
@@ -73,36 +89,43 @@ def get_validator_endpoint(region, log_type):
             print("Invalid region.")
 
 
-def create_resource_lists_to_delete(cloudguard_service, connected_topics, project_id):
-    service_account_name = "cloudguard-centralized-auth"
+def create_resource_lists_to_delete(google_cloud_service, cloudguard_service, project_id):
     topic_list = []
     subscription_list = []
     sink_list = []
     service_account_list = []
 
+    connected_topics = cloudguard_service.get_connected_topics_from_intelligence(project_id)
+    connected_sinks = cloudguard_service.get_connected_sinks_from_intelligence(project_id)
+    sinks_from_gcp = google_cloud_service.list_logging_sinks(project_id)
+
     # current project is centralized
-    if connected_topics['topics']:
-        for topic in connected_topics['topics']:
-            if topic['isIntelligenceManagedTopic']:
-                topic_list.append(topic['topicName'])
-                subscription_list.append(topic['subscriptionName'])
-                sink_list.extend(topic['connectedSinks'])
-                service_account_list.append(service_account_name)
-            else:
-                subscription_list.append(topic['subscriptionName'])
-                service_account_list.append(service_account_name)
-
-        # current project sending to centralized or from standard onboarding
-    else:
-        connected_sinks = cloudguard_service.get_connected_sinks_from_intelligence(project_id)
-        if connected_sinks['sinks']:
-            sink_list.extend(connected_sinks['sinks'])
-
-        # current project onboarded with standard onboarding
+    for topic in connected_topics.get('topics', []):
+        if topic['isIntelligenceManagedTopic']:
+            topic_list.append(topic['topicName'])
+            subscription_list.append(topic['subscriptionName'])
+            sink_list.extend(topic['connectedSinks'])
         else:
-            topic_list.extend([f'projects/{project_id}/topics/cloudguard-topic', f'projects/{project_id}/topics/cloudguard-fl-topic'])
-            subscription_list.extend([f'projects/{project_id}/subscriptions/cloudguard-subscription', f'projects/{project_id}/subscriptions/cloudguard-fl-subscription'])
-            sink_list.extend([{"sinkName": "cloudguard-sink", "projectId": f"{project_id}"}, {"sinkName": "cloudguard-fl-sink", "projectId": f"{project_id}"}])
-            service_account_list.extend(["cloudguard-logs-authentication", "cloudguard-fl-authentication"])
+            subscription_list.append(topic['subscriptionName'])
+        service_account_list.append(CENTRALIZED_SERVICE_ACCOUNT_NAME)
+
+    # current project sending to centralized and has intelligence managed sink
+    if not connected_topics['topics']:
+        for sink in connected_sinks.get('sinks', []):
+            sink_list.append(sink)
+
+    # current project is from standard onboarding or not has intelligence managed sink
+    if not connected_topics['topics'] and not connected_sinks['sinks']:
+        for sink in sinks_from_gcp:
+            for sink_name, mapping in sink_mappings.items():
+
+                # from standard onboarding, delete resources related to standard onboarding
+                if sink_name in sink.name:
+                    mapping['sink_info']['projectId'] = project_id
+                    topic_list.append(mapping['topic_name'].format(project_id))
+                    subscription_list.append(mapping['subscription_name'].format(project_id))
+                    sink_list.append(mapping['sink_info'])
+                    service_account_list.append(mapping['service_account_name'])
+                    break
 
     return topic_list, subscription_list, sink_list, service_account_list

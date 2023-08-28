@@ -30,7 +30,7 @@ class CloudGuardService:
                 auth=(self.api_key, self.api_secret)
             )
             if response.status_code != 200 and response.status_code != 201:
-                raise Exception(f"Failed to get CloudGuard token: {response.text}")
+                raise Exception(f"Failed to get CloudGuard token: {response.reason}")
             response_data = response.json()
             return response_data["token"]
         except requests.exceptions.RequestException as e:
