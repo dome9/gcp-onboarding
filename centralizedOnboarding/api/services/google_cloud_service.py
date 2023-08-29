@@ -155,6 +155,13 @@ class GoogleCloudService:
             except Exception as e:
                 print(f"Failed to delete sink: {sink['sinkName']}, {e}")
 
+    def list_logging_sinks(self, sink_project_id):
+        try:
+            logging_client = logging.Client(project=sink_project_id, credentials=self.credentials)
+            return list(logging_client.list_sinks())
+        except Exception as e:
+            raise Exception(f"Failed to list sinks in {sink_project_id} project, {e}")
+
     def delete_cloudguard_resources(self, project_id, service_account_list, topic_list, subscription_list, sink_list):
         self.delete_service_accounts(project_id, service_account_list)
         self.delete_pubsub_topics(topic_list)
