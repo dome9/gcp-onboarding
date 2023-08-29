@@ -1,6 +1,6 @@
 import argparse
-from centralizedOnboarding.api.services.clouguard_service import CloudGuardService
-from centralizedOnboarding.api.services.google_cloud_service import GoogleCloudService
+from services.clouguard_service import CloudGuardService
+from services.google_cloud_service import GoogleCloudService
 from utils import validate_region, create_resource_lists_to_delete
 
 

@@ -12,7 +12,7 @@ class CloudGuardService:
 
     def get_cloudguard_domain(self):
         return (
-            'https://api.dome9.com/v2'
+            'https://api.941298424820.dev.falconetix.com/v2'
             if self.region == "us"
             else f'https://api.{self.region}.dome9.com/v2'
         )
