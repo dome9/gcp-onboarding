@@ -1,8 +1,7 @@
 import argparse
 import time
-
-from centralizedOnboarding.api.services.clouguard_service import CloudGuardService
-from centralizedOnboarding.api.services.google_cloud_service import GoogleCloudService
+from services.clouguard_service import CloudGuardService
+from services.google_cloud_service import GoogleCloudService
 from utils import (
     md5_hash_from_timestamp,
     get_log_filter,

@@ -128,10 +128,10 @@ class GoogleCloudService:
             logging_client = logging.Client(project=sink_project_id, credentials=self.credentials)
             sink = logging_client.sink(sink_name, filter_=log_filter, destination=f"pubsub.googleapis.com/{topic_name}")
             if sink.exists():
-                print(f"Sink {sink.name} already exists.")
+                print(f"Sink {sink.name} already exists in {sink_project_id}.")
             else:
                 sink.create(unique_writer_identity=True)
-                print(f"Created sink {sink.name}")
+                print(f"Created sink {sink.name} in {sink_project_id}")
                 policy = pubsub_publisher_client.get_iam_policy(request={"resource": topic_name})
                 policy.bindings.add(role="roles/pubsub.publisher", members=[sink.writer_identity])
                 pubsub_publisher_client.set_iam_policy(
