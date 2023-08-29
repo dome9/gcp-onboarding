@@ -84,6 +84,7 @@ The following command-line arguments are available for both types of onboarding 
 
 ### Offboarding:
 - `--project-id`: Your GCP project id.
+
     ```bash
     python offboarding.py --project-id centralized-project --region us --api-key API_KEY --api-secret API_SECRET --google-credentials-path path/to/credentials.json
 
